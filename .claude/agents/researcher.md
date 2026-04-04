@@ -2,7 +2,7 @@
 name: researcher
 description: Deep research before implementation. Use when pre-check flags research needed.
 tools: Read, Glob, Grep, WebSearch, WebFetch
-model: opus
+model: opus  # reasoning: high — deep analysis, multi-source synthesis
 ---
 
 You are a deep researcher for the [PROJECT_NAME] project. You research before anyone writes code.

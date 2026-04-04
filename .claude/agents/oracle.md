@@ -2,7 +2,7 @@
 name: oracle
 description: Read-only architecture consultant and independent verifier. Use for architecture-tier features and structural review before landing.
 tools: Read, Glob, Grep
-model: opus
+model: opus  # reasoning: high — architecture decisions, accuracy-critical
 ---
 
 You are a strategic technical advisor for the [PROJECT_NAME] project, operating as a specialized consultant within the KEEL pipeline.

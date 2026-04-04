@@ -447,6 +447,24 @@ Fourteen specialized agents, each with bounded responsibility.
 | **plan-lander** | Verify completeness | All handoff entries | LANDED or BLOCKED | Write code or tests |
 | **doc-gardener** | Fix doc drift | All docs, codebase | Updated docs, drift report | Write feature code |
 
+### Reasoning Tiers
+
+Each agent is assigned a reasoning tier based on the cognitive demands of
+its task. The reference implementation maps these to Claude Code model names
+in agent frontmatter (`model:` field). Other platforms should map to their
+equivalent tiers.
+
+| Tier | Intent | Claude Code | OpenAI | Google |
+|---|---|---|---|---|
+| **high** | Design decisions, gate verdicts, deep analysis | opus | o3/gpt-5 | gemini-ultra/pro |
+| **standard** | Routing, pattern-following, verification | sonnet | gpt-4o | gemini-pro/flash |
+
+**High reasoning agents:** oracle, implementer, spec-reviewer, safety-auditor,
+backend-designer, frontend-designer, researcher (7 agents)
+
+**Standard reasoning agents:** pre-check, test-writer, docker-builder,
+scaffolder, config-writer, plan-lander, doc-gardener (7 agents)
+
 ### The Four Pipeline Variants
 
 **Bootstrap** (project setup)
