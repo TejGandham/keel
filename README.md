@@ -42,7 +42,7 @@ KEEL encodes everything an agent needs into the repository itself:
 2. **Invariants define what's forbidden** — domain safety rules, mechanically enforced
 3. **A feature backlog decomposes work** — smallest independently testable units
 4. **A pipeline enforces the sequence** — spec → test → code → verify → land
-5. **Agents execute each pipeline stage** — 13 specialized roles from pre-check to plan-lander
+5. **Agents execute each pipeline stage** — 14 specialized roles from pre-check to plan-lander
 
 ## Quick Start
 
@@ -62,7 +62,7 @@ See [docs/process/QUICK-START.md](docs/process/QUICK-START.md) for the full walk
 
 | Component | Location | Purpose |
 |-|-|-|
-| **13 Agent Definitions** | `.claude/agents/` | Specialized roles: pre-check, test-writer, implementer, safety-auditor, etc. |
+| **14 Agent Definitions** | `.claude/agents/` | Specialized roles: pre-check, oracle, test-writer, implementer, safety-auditor, etc. |
 | **3 Skills** | `.claude/skills/` | dev-up (start env), keel-pipeline (orchestrate), safety-check (audit) |
 | **2 Hooks** | `.claude/hooks/` | safety-gate (pre-edit), doc-gate (post-commit) |
 | **Process Docs** | `docs/process/` | THE-KEEL-PROCESS, QUICK-START, GLOSSARY, ANTI-PATTERNS, etc. |
@@ -81,10 +81,10 @@ See [docs/process/QUICK-START.md](docs/process/QUICK-START.md) for the full walk
 ## The Pipeline
 
 ```
-pre-check → researcher? → designer? → test-writer → implementer → spec-reviewer → safety-auditor? → plan-lander
+pre-check → researcher? → oracle? → designer? → test-writer → implementer → spec-reviewer → safety-auditor? → oracle-verify? → plan-lander
 ```
 
-Each stage reads the handoff file, does its work, appends its output. The orchestrator (human) kicks off each stage and reviews gates.
+Each stage reads the handoff file, does its work, appends its output. The orchestrator dispatches each stage and reviews gates. Oracle runs for architecture-tier features (consultation before design, verification before landing).
 
 ## Case Study: Repo Man
 

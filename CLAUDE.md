@@ -20,8 +20,8 @@ is agent-agnostic; the reference implementation uses Claude Code.
 ## Directory Map
 
 ```
-.claude/agents/     13 agent definitions (pre-check, test-writer, etc.)
-.claude/skills/     3 skills (dev-up, keel-pipeline, safety-check)
+.claude/agents/     14 agent definitions (pre-check, oracle, test-writer, etc.)
+.claude/skills/     4 skills (dev-up, keel-pipeline, keel-adopt, safety-check)
 .claude/hooks/      2 hooks (safety-gate, doc-gate)
 docs/process/       Process guides (THE-KEEL-PROCESS, QUICK-START, etc.)
 docs/               Framework-level templates (north-star, specs, design docs)

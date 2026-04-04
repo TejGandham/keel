@@ -19,11 +19,11 @@
   - F01: docker-builder → plan-lander
   - F02: scaffolder → plan-lander
   - F03: config-writer → plan-lander
-- **Backend:** pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → plan-lander
-- **Frontend:** pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → plan-lander
+- **Backend:** pre-check → researcher? → oracle? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → oracle-verify? → plan-lander
+- **Frontend:** pre-check → researcher? → oracle? → frontend-designer → test-writer → implementer → spec-reviewer → oracle-verify? → plan-lander
 - **Cross-cutting:** pre-check → test-writer → implementer → plan-lander
 
-**Execution Brief** — The structured output of the pre-check agent. Contains: spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, and routing decisions (designer needed? researcher needed?).
+**Execution Brief** — The structured output of the pre-check agent. Contains: intent classification, complexity tier, spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, constraints for downstream (MUST/MUST NOT), and routing decisions (designer needed? researcher needed? oracle needed?).
 
 **Orchestrator** — The human who steers the KEEL process: kicks off features, reviews agent output, commits landed code, updates the backlog, and archives handoffs. The orchestrator does not write code.
 
@@ -38,3 +38,15 @@
 **RED → GREEN Flow** — The handoff between test-writer and implementer. Test-writer produces failing tests (RED state). Implementer writes code to pass them (GREEN state). Neither crosses the boundary: test-writer never writes implementation, implementer never modifies tests.
 
 **Lifecycle** — The "L" in KEEL. The full arc: north star → spec → backlog → pipeline → landed feature → garbage collection. Every feature goes through this complete cycle.
+
+**Oracle** — Read-only architecture consultant agent with two invocation modes: CONSULT (Step 1.7, before design) provides architecture guidance for complex features; VERIFY (Step 7.5, before landing) performs independent structural review. Gated by pre-check's complexity classification — only runs for architecture-tier features.
+
+**Intent Classification** — Pre-check's mandatory first step. Categorizes work as refactoring, build, mid-sized, architecture, or research. Determines pipeline routing: which optional agents run, complexity tier, and whether Oracle is needed.
+
+**Complexity Tier** — Pre-check's assessment of feature scope: trivial (skip designer), standard (normal pipeline), complex (all gates), architecture-tier (Oracle consultation + verification). Drives pipeline routing decisions.
+
+**Wisdom Accumulation** — Pattern where agents propagate context downstream through structured Decisions (choices made and why) and Constraints (MUST/MUST NOT for downstream agents) in the handoff file. Prevents agents from repeating upstream mistakes or violating upstream decisions.
+
+**Structured Rejection** — Pattern where gate agents (spec-reviewer, safety-auditor) output a machine-readable `**Verdict:**` field as their first line. The pipeline branches on this verdict. Max 2 spec-review loops, max 3 safety-auditor loops before escalating to human.
+
+**Pragmatic Minimalism** — Oracle's core decision framework: bias toward simplicity, leverage what exists, prioritize developer experience, one clear path, match depth to complexity. Ported from OMA (Oh My OpenAgent).
