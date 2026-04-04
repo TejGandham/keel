@@ -426,7 +426,7 @@ GOOD: "All data-access modules go through the repository interface"  (architectu
 
 ## 8. Agent Roles and Pipelines
 
-Thirteen specialized agents, each with bounded responsibility.
+Fourteen specialized agents, each with bounded responsibility.
 
 ### Agent Roster
 
@@ -435,14 +435,15 @@ Thirteen specialized agents, each with bounded responsibility.
 | **docker-builder** | Build + verify container | core-beliefs, north-star | Docker build report (pass/fail, tool versions) | Modify Dockerfile or compose files |
 | **scaffolder** | Project skeleton | Stack, structure spec | Scaffolded project | Write business logic |
 | **config-writer** | Test infra, configs, behaviours | Architecture, testing strategy | Config files, helpers | Write feature code |
-| **pre-check** | Evaluate, decide skips | Backlog entry, specs | Skip/include report | Write code or tests |
+| **pre-check** | Classify intent, evaluate readiness, route pipeline | Backlog entry, specs | Execution brief with intent, complexity, constraints | Write code or tests |
 | **researcher** | Investigate unknowns | Pre-check questions | Research findings | Make design decisions |
 | **backend-designer** | Module interfaces, data flow | Spec, architecture | Signatures, integration points | Write implementation |
 | **frontend-designer** | Component hierarchy | Spec, UI design doc | Component tree, event flow | Write backend code |
 | **test-writer** | Failing tests from spec | Spec, designer output | Test files (all RED) | Write implementation |
 | **implementer** | Code to pass tests | Failing tests, spec | Implementation (all GREEN) | Modify tests |
-| **spec-reviewer** | Verify spec match | Spec, implementation | Review report (PASS/FAIL) | Modify code |
-| **safety-auditor** | Verify invariants | Core-beliefs, implementation | Audit report (PASS/FAIL) | Modify code |
+| **spec-reviewer** | Verify spec match | Spec, implementation | Verdict: CONFORMANT or DEVIATION | Modify code |
+| **safety-auditor** | Verify invariants | Core-beliefs, implementation | Verdict: PASS or VIOLATION | Modify code |
+| **oracle** | Architecture consultation + verification | Spec, handoff, ARCHITECTURE.md | Guidance (CONSULT) or Verdict: SOUND/UNSOUND (VERIFY) | Modify code |
 | **plan-lander** | Verify completeness | All handoff entries | LANDED or BLOCKED | Write code or tests |
 | **doc-gardener** | Fix doc drift | All docs, codebase | Updated docs, drift report | Write feature code |
 
@@ -459,20 +460,23 @@ config-writer  --> plan-lander
 **Backend** (foundation and service features)
 
 ```
-pre-check --> researcher? --> backend-designer? --> test-writer --> implementer --> spec-reviewer --> safety-auditor? --> plan-lander
+pre-check --> researcher? --> oracle? --> backend-designer? --> test-writer --> implementer --> spec-reviewer --> safety-auditor? --> oracle-verify? --> plan-lander
 ```
 
-`?` = conditionally included. Pre-check decides. Designer skipped for
-straightforward additions. Safety-auditor only for domain-critical modules.
+`?` = conditionally included. Pre-check classifies intent and complexity,
+then decides which optional agents run. Designer skipped for trivial features.
+Safety-auditor only for domain-critical modules. Oracle runs for
+architecture-tier complexity (consultation before design, verification before
+landing).
 
 **Frontend** (UI features)
 
 ```
-pre-check --> researcher? --> frontend-designer --> test-writer --> implementer --> spec-reviewer --> plan-lander
+pre-check --> researcher? --> oracle? --> frontend-designer --> test-writer --> implementer --> spec-reviewer --> oracle-verify? --> plan-lander
 ```
 
 Frontend-designer always included. No safety-auditor (UI does not execute
-domain-critical operations directly).
+domain-critical operations directly). Oracle for architecture-tier only.
 
 **Cross-cutting** (test infrastructure, fixtures)
 
@@ -492,12 +496,17 @@ Example handoff (from Repo Man):
 status: IN_PROGRESS
 pipeline: backend
 spec_ref: mvp-spec:4.3.1
-needs: F12 (DONE)
-acceptance: async fetch, :fetching state, serialization guard
 
 ## pre-check
+Intent: build
+Complexity: standard
 Designer needed: NO
-Safety auditor: YES
+Safety auditor needed: YES
+Oracle needed: NO
+
+### Constraints for downstream
+- MUST: use Task.Supervisor for async operations (pattern in repo_server.ex)
+- MUST NOT: add --force or --rebase flags to any git command
 
 ## test-writer
 Tests: 5 cases in repo_server_test.exs (all RED)
@@ -505,12 +514,25 @@ Tests: 5 cases in repo_server_test.exs (all RED)
 ## implementer
 Files: repo_server.ex, application.ex -- Tests: 5/5 GREEN
 
+### Decisions
+- Used Task.Supervisor.async_nolink for crash isolation
+- Broadcast via Phoenix.PubSub after fetch completes
+
+## spec-reviewer
+**Verdict:** CONFORMANT
+spec-review-attempt: 1
+
 ## safety-auditor
-PASSED. No --force, no --rebase. Task.Supervisor isolates crashes.
+**Verdict:** PASS
+No --force, no --rebase. Task.Supervisor isolates crashes.
 
 ## plan-lander
 Status: LANDED
 ```
+
+Each agent reads upstream **Decisions** and **Constraints** before starting
+its own work. This wisdom accumulation prevents downstream agents from
+repeating upstream mistakes or violating upstream design choices.
 
 On completion, move from `active/handoffs/` to `completed/handoffs/`.
 
@@ -521,6 +543,11 @@ to garbage collect. The `keel-pipeline` skill handles the mechanics (staging
 files, drafting commit messages, moving handoffs, updating docs) but presents
 each repo-mutating action for human approval before executing. The orchestrator
 steers — the pipeline executes on their behalf.
+
+**The orchestrator does not write code.** When code quality issues are found
+(Step 5), findings are sent back to the implementer agent for fixing. When
+spec-reviewer returns DEVIATION or safety-auditor returns VIOLATION, the
+orchestrator routes findings to the implementer — it does not fix code itself.
 
 ### The Missing Capability Principle
 
@@ -620,17 +647,34 @@ change.
 
 | Stage | Human action |
 |---|---|
-| Pre-check | Does the skip/include decision make sense? |
+| Pre-check | Does intent/complexity classification make sense? Routing correct? |
 | Researcher | Are findings relevant? Missing context? |
+| Oracle (consult) | Does architecture guidance align with your vision? |
 | Designer | Does the design match your mental model? |
 | Test-writer | Do tests cover spec assertions? |
 | Implementer | Do tests pass? Is code reasonable? |
-| Spec-reviewer | Do you agree with findings? |
-| Safety-auditor | Comfortable with the safety analysis? |
+| Spec-reviewer | CONFORMANT or DEVIATION — do you agree? |
+| Safety-auditor | PASS or VIOLATION — comfortable with the analysis? |
+| Oracle (verify) | SOUND or UNSOUND — architecture still solid after implementation? |
 | Plan-lander | Is the feature complete? |
 
 At each stage: **proceed**, **redo** (with more context), **fix** (update
 spec), or **abort** (rare).
+
+### Structured Verdicts and Loop Control
+
+Gate agents (spec-reviewer, safety-auditor, Oracle) output a structured
+`**Verdict:**` as their first line. The pipeline branches on this:
+
+- **Spec-reviewer:** max 2 loops. DEVIATION sends findings to implementer.
+  After 2 attempts, escalate to human — decompose the feature or fix the spec.
+- **Safety-auditor:** max 3 loops. VIOLATION is never negotiable — fix the code.
+  After 3 attempts, escalate — the invariant rule itself may need review.
+- **Oracle (verify):** max 1 retry. UNSOUND sends architecture findings to
+  implementer, then reruns the full gate sequence (spec-reviewer → safety →
+  Oracle). If still UNSOUND, escalate.
+
+See `docs/process/FAILURE-PLAYBOOK.md` for the full decision tree.
 
 ### The Commit Ritual
 
@@ -678,23 +722,34 @@ Each entry: checkbox, date, source, enough context for a future agent.
 
 ### The Autonomy Progression
 
-| Stage | Human involvement | Agent capability |
-|---|---|---|
-| **1. Full review** | Reviews every output | Single pipeline stages |
-| **2. Agent-to-agent review** | Reviews final output only | Spec-reviewer + safety-auditor catch issues |
-| **3. Agent self-validation** | Spot-checks | Full pipeline with self-review |
-| **4. Agent end-to-end** | Approves in batch | Drives features pre-check to landed |
+| Stage | Human involvement | Agent capability | What enables it |
+|---|---|---|---|
+| **1. Full review** | Reviews every output | Single pipeline stages | Base pipeline |
+| **2. Agent-to-agent review** | Reviews final output only | Spec-reviewer + safety-auditor catch issues | Reliable gate agents over 5-10 features |
+| **3. Self-correcting pipeline** | Reviews escalations only | Pipeline diagnoses failures and reroutes | Structured rejection, wisdom accumulation, intent classification |
+| **4. Agent end-to-end** | Approves in batch | Drives features pre-check to landed | Mechanical enforcement + Oracle verification |
 
 ### What Enables Each Transition
 
-**1 to 2:** Spec-reviewer and safety-auditor produce reliable reports over
+**1 to 2:** Spec-reviewer and safety-auditor produce reliable verdicts over
 5-10 features. Human trusts review agents.
 
-**2 to 3:** Mechanical enforcement in place -- structural tests, linters,
-formatter, safety invariant tests. The agent cannot land a feature that
-violates invariants.
+**2 to 3:** The pipeline gains self-correction through three OMA-derived
+patterns:
+- **Structured rejection:** Gate agents output machine-readable verdicts
+  (CONFORMANT/DEVIATION, PASS/VIOLATION). The pipeline branches on these and
+  routes failures back to the implementer with specific findings. Bounded
+  loops prevent infinite thrashing (max 2 spec-review, max 3 safety).
+- **Wisdom accumulation:** Each agent propagates Decisions and Constraints
+  downstream through the handoff file. Downstream agents read upstream context
+  before starting — preventing repeated mistakes and contradictory choices.
+- **Intent classification:** Pre-check classifies work intent (refactoring,
+  build, mid-sized, architecture, research) and complexity tier (trivial →
+  architecture-tier). This drives routing: trivial features skip the designer,
+  architecture-tier features invoke Oracle.
 
-**3 to 4:** The agent orchestrates its own pipeline. Reads backlog, identifies
+**3 to 4:** The agent orchestrates its own pipeline. Oracle provides
+architecture-level verification for complex features. Reads backlog, identifies
 next feature, runs stages, reports results. Human reviews in batch.
 
 From the OpenAI article: "single Codex runs work on a task for upwards of six
