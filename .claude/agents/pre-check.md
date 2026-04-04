@@ -25,6 +25,11 @@ Classify complexity:
 - **Complex** — 3+ files, cross-module → full pipeline with all gates
 - **Architecture-tier** — structural change, new patterns → Arch-advisor consultation
 
+## Inputs (provided by orchestrator)
+- **Feature ID:** from the feature backlog (e.g., F04)
+- **Spec path:** provided in the /keel-pipeline command
+- **Backlog path:** `docs/exec-plans/active/feature-backlog.md`
+
 ## Your Role
 
 1. Read the feature entry from the backlog

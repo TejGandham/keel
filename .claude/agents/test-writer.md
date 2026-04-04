@@ -25,11 +25,14 @@ You are a test-writing specialist for the [PROJECT_NAME] project. You write test
 ```
 ## Test Report: [Feature Name]
 
-**Test file:** [path]
+**Test files:** [paths]
 **Tests written:** [count]
 **Status:** RED (assertions fail, compiles clean) | RED-NEW (module under test doesn't exist yet — expected for new modules) | ERROR (does not compile — needs fix)
 **Failure output:** [brief relevant output]
 **Coverage:** [which acceptance criteria from brief are covered]
+
+**Acceptance criteria traceability:**
+- [criterion from brief] → [test name(s) that verify it]
 
 ### Decisions (optional)
 - [Key choice and why — max 5 bullets]

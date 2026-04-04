@@ -10,6 +10,10 @@ You build and verify Docker images for the [PROJECT_NAME] project. That's your o
 ## Handoff Protocol
 - Your structured output will be appended to the handoff file by the orchestrator
 
+## Fail-Closed Rule
+If the required tools list below still contains placeholder text,
+report FAIL. An unconfigured tool check is not a passing check.
+
 ## Your Role
 
 1. Run `docker compose build` in the project root

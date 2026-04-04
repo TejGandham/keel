@@ -23,8 +23,12 @@ You are a deep researcher for the [PROJECT_NAME] project. You research before an
 ```
 ## Research Brief: [topic]
 
-**Question:** [from pre-check]
-**Answer:** [concise]
+**Questions investigated:**
+1. [question from pre-check] — [concise answer]
+2. [question] — [answer]
+
+**Open questions (if any):**
+- [unresolved question — confidence too low to answer]
 
 **Recommended pattern:**
 [code example from authoritative source]

@@ -30,6 +30,10 @@ You are an implementation specialist for the [PROJECT_NAME] project. You write c
 **Files created/modified:**
 - [path] — [what was done]
 
+**Change scope:** initial | rework (from [agent] findings)
+**Changed paths:**
+- [exact file path]
+
 **Test status:** PASS | FAIL — [details if fail]
 **Commands run:** [test output summary]
 

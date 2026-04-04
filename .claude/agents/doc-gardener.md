@@ -43,14 +43,10 @@ This is a BATCH operation run periodically, not per-feature. For per-feature doc
 **Date:** [date]
 **Code state:** [latest known state]
 
-**Stale:**
-- [doc:section] — says [X], actually [Y]
-
-**Missing:**
-- [thing in code not documented]
-
-**Accurate:**
-- [docs confirmed correct]
+**Findings:**
+- [STALE] [file:section] — [what's wrong] — Owner: [who should fix]
+- [MISSING] [topic] — [what should exist] — Owner: [who should create]
+- [ACCURATE] [file] — verified current
 
 **Next hop:** orchestrator (to apply fixes)
 ```

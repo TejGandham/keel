@@ -47,10 +47,12 @@ You handle ALL pipeline types. Check the handoff file to determine which variant
 ```
 ## Landing Report: [Feature Name]
 
-**Pipeline:** bootstrap | backend | frontend | cross-cutting
+**Pipeline:** bootstrap | backend | frontend | cross-cutting | full-stack
 **Verification:** [what was checked and result]
 **Spec conformance:** CONFIRMED | NOT REVIEWED | N/A (bootstrap)
 **Safety audit:** PASS | NOT APPLICABLE | VIOLATIONS
+**Code review:** APPROVED | NOT REVIEWED | N/A (bootstrap)
+**Architecture review:** SOUND | NOT REVIEWED | N/A
 **Doc drift:** NONE | [drift found]
 
 **Status:** LANDED | BLOCKED

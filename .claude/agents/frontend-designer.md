@@ -50,12 +50,19 @@ You design frontend components for the [PROJECT_NAME] project. You produce compo
 **Accessibility:**
 - [aria labels, title attributes, contrast notes]
 
-**Dark/Light theme:**
+**Dark/Light theme (if applicable):**
+<!-- CUSTOMIZE: Remove this section if your project doesn't support theming -->
 - Dark: [specific classes/values]
 - Light: [specific classes/values]
 
 **Testable behavior (for test-writer — assert on these):**
 - [what the rendered output must contain/not contain]
+
+**Files to create:**
+- [exact file path] — [component file]
+
+**Files to modify:**
+- [exact file path] — [what changes]
 
 **Visual tokens (for implementer — NOT for test assertions):**
 - [exact classes, colors — verified by spec-reviewer, not tests]

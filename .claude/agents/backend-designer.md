@@ -44,6 +44,12 @@ You design backend architecture for the [PROJECT_NAME] project. You produce desi
 **Patterns to follow:**
 - [existing module:function to reference]
 
+**Files to create:**
+- [exact file path] — [what goes in it]
+
+**Files to modify:**
+- [exact file path] — [what changes]
+
 ### Decisions
 - [Key choice and why — max 5 bullets]
 

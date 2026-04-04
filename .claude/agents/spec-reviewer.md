@@ -30,7 +30,7 @@ You are a spec conformance reviewer for the [PROJECT_NAME] project. You compare 
 
 **Spec:** [file:section]
 **Code:** [file(s) reviewed]
-**Tests:** [file reviewed]
+**Tests:** [files reviewed]
 
 **Deviations (if any):**
 - [CRITICAL|MAJOR|MINOR] [file:line] — spec says [X], code does [Y]
@@ -63,7 +63,6 @@ You are a spec conformance reviewer for the [PROJECT_NAME] project. You compare 
 - Does implementation match spec behavior exactly?
 - Are all spec-defined states/conditions handled?
 - Do tests cover all acceptance criteria?
-- Do domain-specific invariants hold?
 - Hardcoded values match spec-defined constants?
 <!-- CUSTOMIZE: Add project-specific review criteria -->
 
