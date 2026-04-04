@@ -1,6 +1,6 @@
 # KEEL
 
-**Knowledge-Encoded Engineering Lifecycle** — spec in, stable tested code out.
+**Knowledge-Encoded Engineering Lifecycle** — a process framework for AI-assisted development. Spec in, stable tested code out.
 
 ## The Problem
 
@@ -36,11 +36,19 @@ Gates self-correct: deviation → fix → retry (bounded). Escalates to you inst
 
 **[How it works in detail →](docs/HOW-IT-WORKS.md)**
 
+## Who This Is For
+
+- **Solo devs or small teams (1-3)** with an AI agent as primary implementer
+- **Projects that grow** — today's 3 features become next month's 30
+- **Any AI agent platform** — process is agent-agnostic; reference implementation uses Claude Code
+
+Not for: one-off scripts, throwaway prototypes, <5 feature projects.
+
 ## Install
 
 ```bash
 cd my-project    # new or existing
-git clone --depth 1 https://github.com/<owner>/keel.git /tmp/keel
+git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
 /tmp/keel/scripts/install.sh
 rm -rf /tmp/keel
 ```
@@ -58,14 +66,6 @@ Installs 14 agents, 3 skills, 2 hooks, and doc structure into your project. Neve
 
 **Existing codebase?** Run `/keel-adopt` after install.
 **Full manifest:** [INSTALL.md](docs/INSTALL.md) | **Remove:** [UNINSTALL.md](docs/UNINSTALL.md)
-
-## Who This Is For
-
-- **Solo devs or small teams (1-3)** with an AI agent as primary implementer
-- **Projects that grow** — today's 3 features become next month's 30
-- **Any AI agent platform** — process is agent-agnostic, reference uses Claude Code
-
-Not for: one-off scripts, throwaway prototypes, <5 feature projects.
 
 ## Case Study
 

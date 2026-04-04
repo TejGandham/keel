@@ -454,10 +454,10 @@ its task. The reference implementation maps these to Claude Code model names
 in agent frontmatter (`model:` field). Other platforms should map to their
 equivalent tiers.
 
-| Tier | Intent | Claude Code | OpenAI | Google |
-|---|---|---|---|---|
-| **high** | Design decisions, gate verdicts, deep analysis | opus | o3/gpt-5 | gemini-ultra/pro |
-| **standard** | Routing, pattern-following, verification | sonnet | gpt-4o | gemini-pro/flash |
+| Tier | Intent | Claude Code | Other platforms |
+|---|---|---|---|
+| **high** | Design decisions, gate verdicts, deep analysis | opus | Your platform's highest-tier model |
+| **standard** | Routing, pattern-following, verification | sonnet | Your platform's standard-tier model |
 
 **High reasoning agents:** oracle, implementer, spec-reviewer, safety-auditor,
 backend-designer, frontend-designer, researcher (7 agents)

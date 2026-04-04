@@ -7,7 +7,7 @@ scaffolding (agents, skills, doc structure). Nothing is overwritten.
 
 ```bash
 cd your-project
-git clone --depth 1 https://github.com/<owner>/keel.git /tmp/keel
+git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
 /tmp/keel/scripts/install.sh
 rm -rf /tmp/keel
 ```
@@ -111,7 +111,7 @@ docs/
 The installer is a one-time copy. To update agents or skills later:
 
 ```bash
-git clone --depth 1 https://github.com/<owner>/keel.git /tmp/keel
+git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
 
 # Update specific agents (review diff before overwriting)
 diff /tmp/keel/.claude/agents/oracle.md .claude/agents/oracle.md

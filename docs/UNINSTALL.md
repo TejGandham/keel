@@ -6,15 +6,15 @@ created yourself are untouched.
 
 ## Quick Uninstall
 
+The installer bundles `keel-uninstall.sh` into your project:
+
 ```bash
 cd your-project
-# Review what will be deleted first
-cat /path/to/keel/docs/UNINSTALL.md  # this file
-
-# Then run:
-/path/to/keel/scripts/uninstall.sh
-# OR manually follow the steps below
+.claude/keel-uninstall.sh
 ```
+
+The script only removes known KEEL files by exact name. It prompts before
+deleting and shows what will be kept. Or follow the manual steps below.
 
 ## What Gets Removed
 

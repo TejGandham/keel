@@ -2,7 +2,7 @@
 # KEEL Installer — Add KEEL to any project directory.
 #
 # Usage (from your project root):
-#   curl -fsSL https://raw.githubusercontent.com/<owner>/keel/main/scripts/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/anthropics/keel/main/scripts/install.sh | bash
 #   OR
 #   /path/to/keel/scripts/install.sh
 #
@@ -31,7 +31,7 @@ else
   KEEL_SRC=$(mktemp -d)
   trap "rm -rf $KEEL_SRC" EXIT
   echo "Downloading KEEL..."
-  git clone --depth 1 --quiet https://github.com/<owner>/keel.git "$KEEL_SRC"
+  git clone --depth 1 --quiet https://github.com/anthropics/keel.git "$KEEL_SRC"
   echo "Downloaded."
 fi
 
@@ -92,33 +92,41 @@ echo "Installing KEEL agents and skills..."
 
 mkdir -p "$PROJECT_DIR/.claude"
 
-if [ -d "$PROJECT_DIR/.claude/agents" ]; then
-  echo "  .claude/agents/ already exists — skipping (won't overwrite your customizations)"
-else
-  cp -r "$KEEL_SRC/.claude/agents" "$PROJECT_DIR/.claude/agents"
-  echo "  .claude/agents/ — 14 agent definitions installed"
-fi
+# Merge agents — copy each file individually, skip if exists
+mkdir -p "$PROJECT_DIR/.claude/agents"
+agent_count=0
+for agent in "$KEEL_SRC/.claude/agents/"*.md; do
+  name=$(basename "$agent")
+  if [ ! -f "$PROJECT_DIR/.claude/agents/$name" ]; then
+    cp "$agent" "$PROJECT_DIR/.claude/agents/$name"
+    agent_count=$((agent_count + 1))
+  fi
+done
+echo "  .claude/agents/ — $agent_count new agents installed (existing kept)"
 
-if [ -d "$PROJECT_DIR/.claude/skills" ]; then
-  echo "  .claude/skills/ already exists — skipping"
-else
-  # Copy only KEEL skills, not third-party ones
-  mkdir -p "$PROJECT_DIR/.claude/skills"
-  for skill in keel-pipeline keel-adopt safety-check; do
-    if [ -d "$KEEL_SRC/.claude/skills/$skill" ]; then
-      cp -r "$KEEL_SRC/.claude/skills/$skill" "$PROJECT_DIR/.claude/skills/$skill"
+# Merge skills — copy each skill dir individually, skip if exists
+mkdir -p "$PROJECT_DIR/.claude/skills"
+skill_count=0
+for skill in keel-pipeline keel-adopt safety-check; do
+  if [ -d "$KEEL_SRC/.claude/skills/$skill" ] && [ ! -d "$PROJECT_DIR/.claude/skills/$skill" ]; then
+    cp -r "$KEEL_SRC/.claude/skills/$skill" "$PROJECT_DIR/.claude/skills/$skill"
+    skill_count=$((skill_count + 1))
+  fi
+done
+echo "  .claude/skills/ — $skill_count new skills installed (existing kept)"
+
+# Merge hooks — copy each hook individually, skip if exists
+if [ -d "$KEEL_SRC/.claude/hooks" ]; then
+  mkdir -p "$PROJECT_DIR/.claude/hooks"
+  hook_count=0
+  for hook in "$KEEL_SRC/.claude/hooks/"*; do
+    name=$(basename "$hook")
+    if [ ! -f "$PROJECT_DIR/.claude/hooks/$name" ]; then
+      cp "$hook" "$PROJECT_DIR/.claude/hooks/$name"
+      hook_count=$((hook_count + 1))
     fi
   done
-  echo "  .claude/skills/ — pipeline, adopt, safety-check installed"
-fi
-
-if [ -d "$PROJECT_DIR/.claude/hooks" ] || [ -d "$KEEL_SRC/.claude/hooks" ]; then
-  if [ -d "$KEEL_SRC/.claude/hooks" ] && [ ! -d "$PROJECT_DIR/.claude/hooks" ]; then
-    cp -r "$KEEL_SRC/.claude/hooks" "$PROJECT_DIR/.claude/hooks"
-    echo "  .claude/hooks/ — safety-gate, doc-gate installed"
-  else
-    echo "  .claude/hooks/ already exists — skipping"
-  fi
+  echo "  .claude/hooks/ — $hook_count new hooks installed (existing kept)"
 fi
 
 # --- Copy template docs ---
@@ -135,6 +143,10 @@ copy_if_missing() {
     echo "  $(basename "$dst") — created"
   fi
 }
+
+# Uninstall script — always copy so users can remove KEEL later
+copy_if_missing "$KEEL_SRC/scripts/uninstall.sh" "$PROJECT_DIR/.claude/keel-uninstall.sh"
+chmod +x "$PROJECT_DIR/.claude/keel-uninstall.sh" 2>/dev/null || true
 
 # Root files
 copy_if_missing "$KEEL_SRC/template/CLAUDE.md" "$PROJECT_DIR/CLAUDE.md"

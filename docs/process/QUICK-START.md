@@ -32,7 +32,7 @@ The framework catches you when ad-hoc prompting stops scaling.
 mkdir my-project && cd my-project && git init
 
 # Install KEEL into your project
-git clone --depth 1 https://github.com/<owner>/keel.git /tmp/keel
+git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
 /tmp/keel/scripts/install.sh
 rm -rf /tmp/keel
 ```

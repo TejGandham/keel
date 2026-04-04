@@ -111,6 +111,12 @@ for d in "${KEEL_PROCESS_DOCS[@]}"; do
   fi
 done
 
+# --- Remove bundled uninstall script ---
+if [ -f ".claude/keel-uninstall.sh" ]; then
+  rm -f ".claude/keel-uninstall.sh"
+  echo "  Removed .claude/keel-uninstall.sh"
+fi
+
 # --- Clean up empty directories (only if empty) ---
 rmdir .claude/agents 2>/dev/null && echo "  Removed empty .claude/agents/" || true
 rmdir .claude/skills 2>/dev/null && echo "  Removed empty .claude/skills/" || true

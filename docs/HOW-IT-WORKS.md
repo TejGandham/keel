@@ -145,7 +145,7 @@ Pre-check flags these anti-patterns for downstream agents:
 
 The reference implementation uses Claude Code. The process is agent-agnostic.
 
-| Tier | Claude Code | OpenAI | Google |
-|-|-|-|-|
-| **High reasoning** | opus | o3/gpt-5 | gemini-ultra/pro |
-| **Standard reasoning** | sonnet | gpt-4o | gemini-pro/flash |
+| Tier | Claude Code | Other platforms |
+|-|-|-|
+| **High reasoning** | opus | Your platform's highest-tier model |
+| **Standard reasoning** | sonnet | Your platform's standard-tier model |
