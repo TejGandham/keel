@@ -106,6 +106,18 @@ docs/
 5. **`docs/product-specs/`** — Write your first spec
 6. **Run:** `/keel-pipeline my-feature docs/product-specs/my-spec.md`
 
+### `scripts/validate-handoff.py` — handoff file validator
+
+Validates any completed handoff file for structural integrity:
+
+```bash
+python scripts/validate-handoff.py docs/exec-plans/completed/handoffs/
+python scripts/validate-handoff.py docs/exec-plans/active/handoffs/F13.md
+```
+
+Checks: YAML frontmatter, pipeline-aware sections, gate verdicts, routing
+fields, status consistency. Zero dependencies (Python 3.10+).
+
 ## Important: Your Customizations Live in Agent Files
 
 KEEL agents contain `<!-- CUSTOMIZE -->` sections where you add your
