@@ -28,8 +28,16 @@ graph LR
 
     Today -->|evolve| End State
 
-    style T4 fill:#fff3cd,stroke:#ffc107
-    style E6 fill:#d4edda,stroke:#28a745
+    style T1 fill:#F57F17,stroke:#E65100,color:#000
+    style T2 fill:#F57F17,stroke:#E65100,color:#000
+    style T3 fill:#F57F17,stroke:#E65100,color:#000
+    style T4 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style E1 fill:#1976D2,stroke:#0D47A1,color:#fff
+    style E2 fill:#00796B,stroke:#004D40,color:#fff
+    style E3 fill:#00796B,stroke:#004D40,color:#fff
+    style E4 fill:#00796B,stroke:#004D40,color:#fff
+    style E5 fill:#00796B,stroke:#004D40,color:#fff
+    style E6 fill:#388E3C,stroke:#1B5E20,color:#fff
 ```
 
 ## The Principle

@@ -10,9 +10,9 @@ AI agents forget between sessions. Feature 2 breaks Feature 1. A rules file work
 graph LR
     S1["Session 1<br/><b>Build X</b><br/>Works!"] --> S2["Session 2<br/><b>Build Y</b><br/>Breaks X"]
     S2 --> S3["Session 3<br/><b>Fix X</b><br/>Breaks Y"]
-    style S1 fill:#d4edda,stroke:#28a745
-    style S2 fill:#fff3cd,stroke:#ffc107
-    style S3 fill:#f8d7da,stroke:#dc3545
+    style S1 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style S2 fill:#F57F17,stroke:#E65100,color:#000
+    style S3 fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
 > Knowledge evaporates. Each feature is a fresh start.
@@ -23,12 +23,12 @@ KEEL encodes everything into the repo and runs a self-correcting pipeline.
 
 ```mermaid
 graph LR
-    subgraph You write
+    subgraph input [You write]
         Spec[Product spec]
         Inv[Domain invariants]
         Arch[Architecture doc]
     end
-    subgraph KEEL does
+    subgraph pipeline [KEEL does]
         P1[14 agents execute pipeline]
         P2[Tests before code]
         P3[Code verified against spec]
@@ -38,7 +38,17 @@ graph LR
     Spec --> P1
     Inv --> P4
     Arch --> P3
-    P5 --> Out[Tested, spec-conformant, safe code]
+    P5 --> Out[Tested, spec-conformant,<br/>safe code]
+
+    style Spec fill:#1976D2,stroke:#0D47A1,color:#fff
+    style Inv fill:#1976D2,stroke:#0D47A1,color:#fff
+    style Arch fill:#1976D2,stroke:#0D47A1,color:#fff
+    style P1 fill:#00796B,stroke:#004D40,color:#fff
+    style P2 fill:#00796B,stroke:#004D40,color:#fff
+    style P3 fill:#00796B,stroke:#004D40,color:#fff
+    style P4 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style P5 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style Out fill:#388E3C,stroke:#1B5E20,color:#fff
 ```
 
 Gates self-correct: deviation → fix → retry (bounded). Escalates to you instead of thrashing. Knowledge flows forward through handoff files — Feature 20 benefits from Features 1–19.

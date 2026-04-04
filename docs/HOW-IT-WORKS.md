@@ -29,11 +29,21 @@ graph TD
     SA -.-|max 3 loops| ESC2[escalate to human]
     OV -.-|max 1 retry| ESC3[escalate to human]
 
-    style Spec fill:#e3f2fd,stroke:#1976d2
-    style PL fill:#d4edda,stroke:#28a745
-    style ESC1 fill:#f8d7da,stroke:#dc3545
-    style ESC2 fill:#f8d7da,stroke:#dc3545
-    style ESC3 fill:#f8d7da,stroke:#dc3545
+    style Spec fill:#1976D2,stroke:#0D47A1,color:#fff
+    style PC fill:#303F9F,stroke:#1A237E,color:#fff
+    style R fill:#303F9F,stroke:#1A237E,color:#fff
+    style OC fill:#303F9F,stroke:#1A237E,color:#fff
+    style D fill:#00796B,stroke:#004D40,color:#fff
+    style TW fill:#00796B,stroke:#004D40,color:#fff
+    style IMP fill:#00796B,stroke:#004D40,color:#fff
+    style CR fill:#546E7A,stroke:#37474F,color:#fff
+    style SR fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style SA fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style OV fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style PL fill:#388E3C,stroke:#1B5E20,color:#fff
+    style ESC1 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style ESC2 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style ESC3 fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
 **The pipeline self-corrects.** Spec-reviewer finds a deviation → routes
@@ -77,6 +87,21 @@ graph LR
         SC[scaffolder]
         CW[config-writer]
     end
+
+    style PC2 fill:#303F9F,stroke:#1A237E,color:#fff
+    style RS fill:#303F9F,stroke:#1A237E,color:#fff
+    style OR fill:#303F9F,stroke:#1A237E,color:#fff
+    style DG fill:#303F9F,stroke:#1A237E,color:#fff
+    style DE fill:#00796B,stroke:#004D40,color:#fff
+    style TW2 fill:#00796B,stroke:#004D40,color:#fff
+    style IM fill:#00796B,stroke:#004D40,color:#fff
+    style SR2 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style SA2 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style OV2 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style PL2 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style DB fill:#546E7A,stroke:#37474F,color:#fff
+    style SC fill:#546E7A,stroke:#37474F,color:#fff
+    style CW fill:#546E7A,stroke:#37474F,color:#fff
 ```
 
 | Tier | Agents | Why |
@@ -109,12 +134,18 @@ graph LR
         F3 -->|max 1| E3[escalate]
     end
 
-    style N1 fill:#d4edda,stroke:#28a745
-    style N2 fill:#d4edda,stroke:#28a745
-    style N3 fill:#d4edda,stroke:#28a745
-    style E1 fill:#f8d7da,stroke:#dc3545
-    style E2 fill:#f8d7da,stroke:#dc3545
-    style E3 fill:#f8d7da,stroke:#dc3545
+    style SR3 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style SA3 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style OV3 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style N1 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style N2 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style N3 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style F1 fill:#F57F17,stroke:#E65100,color:#000
+    style F2 fill:#F57F17,stroke:#E65100,color:#000
+    style F3 fill:#F57F17,stroke:#E65100,color:#000
+    style E1 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style E2 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style E3 fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
 MINOR-only deviations → CONFORMANT with notes (don't burn loops).
@@ -130,12 +161,12 @@ tree when gates fail.
 
 ```mermaid
 graph LR
-    PC3[pre-check<br/><b>Constraints:</b><br/>MUST / MUST NOT] --> DE3[designer<br/><b>Decisions:</b><br/>chose X<br/><b>Constraints:</b><br/>MUST / MUST NOT]
-    DE3 --> IM3[implementer<br/><b>Decisions:</b><br/>chose Y<br/><i>no constraints —<br/>can't bind own<br/>reviewers</i>]
+    PC3["pre-check<br/><b>Constraints:</b><br/>MUST / MUST NOT"] --> DE3["designer<br/><b>Decisions:</b> chose X<br/><b>Constraints:</b> MUST / MUST NOT"]
+    DE3 --> IM3["implementer<br/><b>Decisions:</b> chose Y<br/><i>no constraints —<br/>can't bind own reviewers</i>"]
 
-    style PC3 fill:#e3f2fd,stroke:#1976d2
-    style DE3 fill:#e8f5e9,stroke:#388e3c
-    style IM3 fill:#fff3e0,stroke:#f57c00
+    style PC3 fill:#303F9F,stroke:#1A237E,color:#fff
+    style DE3 fill:#00796B,stroke:#004D40,color:#fff
+    style IM3 fill:#F57F17,stroke:#E65100,color:#000
 ```
 
 Decision-heavy agents (pre-check, designers, oracle) produce both Decisions
@@ -168,10 +199,19 @@ graph LR
     C3 --> R3[all gates]
     C4 --> R4[Oracle consult + verify]
 
-    style R1 fill:#f5f5f5,stroke:#9e9e9e
-    style R2 fill:#e3f2fd,stroke:#1976d2
-    style R3 fill:#fff3e0,stroke:#f57c00
-    style R4 fill:#fce4ec,stroke:#c62828
+    style I1 fill:#303F9F,stroke:#1A237E,color:#fff
+    style I2 fill:#303F9F,stroke:#1A237E,color:#fff
+    style I3 fill:#303F9F,stroke:#1A237E,color:#fff
+    style I4 fill:#303F9F,stroke:#1A237E,color:#fff
+    style I5 fill:#303F9F,stroke:#1A237E,color:#fff
+    style C1 fill:#546E7A,stroke:#37474F,color:#fff
+    style C2 fill:#00796B,stroke:#004D40,color:#fff
+    style C3 fill:#F57F17,stroke:#E65100,color:#000
+    style C4 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style R1 fill:#546E7A,stroke:#37474F,color:#fff
+    style R2 fill:#00796B,stroke:#004D40,color:#fff
+    style R3 fill:#F57F17,stroke:#E65100,color:#000
+    style R4 fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
 This prevents over-engineering trivial changes and ensures complex changes
