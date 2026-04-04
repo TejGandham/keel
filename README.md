@@ -118,18 +118,18 @@ Each stage reads the handoff file, does its work, appends its output. The orches
 
 [`examples/repo-man/`](examples/repo-man/) is a complete Phoenix LiveView dashboard built entirely with KEEL. 31 features, ~3000 lines of Elixir, 250+ tests, all driven by specs and executed through the pipeline. See [the case study](examples/repo-man/CASE-STUDY.md) for lessons learned.
 
-## Process Documentation
+## Documentation
 
 | Document | Purpose |
 |-|-|
+| [INSTALL.md](docs/INSTALL.md) | What gets installed, full artifact inventory |
+| [UNINSTALL.md](docs/UNINSTALL.md) | Clean removal of all KEEL artifacts |
 | [THE-KEEL-PROCESS.md](docs/process/THE-KEEL-PROCESS.md) | Comprehensive guide (everything) |
 | [QUICK-START.md](docs/process/QUICK-START.md) | First afternoon with KEEL (greenfield) |
 | [BROWNFIELD.md](docs/process/BROWNFIELD.md) | Adopting KEEL in an existing codebase |
 | [GLOSSARY.md](docs/process/GLOSSARY.md) | KEEL terminology |
 | [FAILURE-PLAYBOOK.md](docs/process/FAILURE-PLAYBOOK.md) | What to do when the pipeline stalls |
 | [ANTI-PATTERNS.md](docs/process/ANTI-PATTERNS.md) | 10 patterns that break the process |
-| [AUTONOMY-PROGRESSION.md](docs/process/AUTONOMY-PROGRESSION.md) | From full oversight to agent autonomy |
-| [OPENAI-FOUNDATIONS.md](docs/process/OPENAI-FOUNDATIONS.md) | OpenAI's harness engineering adaptation |
 
 ## License
 
