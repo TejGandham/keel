@@ -405,11 +405,11 @@ defmodule RepoManWeb.DashboardLiveTest do
 
   defp stub_topic_git do
     RepoMan.Git.Mock
-    |> stub(:current_branch, fn _path -> {:ok, "feat/SHRED-2926-email"} end)
+    |> stub(:current_branch, fn _path -> {:ok, "feat/FEAT-2926-email"} end)
     |> stub(:default_branch, fn _path -> {:ok, "master"} end)
     |> stub(:ahead_behind, fn _path, _branch -> {:ok, {2, 0}} end)
     |> stub(:dirty_files, fn _path -> {:ok, []} end)
-    |> stub(:local_branches, fn _path -> {:ok, ["master", "feat/SHRED-2926-email"]} end)
+    |> stub(:local_branches, fn _path -> {:ok, ["master", "feat/FEAT-2926-email"]} end)
     |> stub(:last_fetch_time, fn _path -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
   end
 
@@ -456,7 +456,7 @@ defmodule RepoManWeb.DashboardLiveTest do
       {:ok, _view, html} = live(conn, ~p"/")
 
       assert html =~ "font-mono"
-      assert html =~ "feat/SHRED-2926-email"
+      assert html =~ "feat/FEAT-2926-email"
     end
 
     test "shows 'Not on default branch' reason", %{conn: conn, test_dir: test_dir} do

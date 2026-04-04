@@ -3,7 +3,7 @@ defmodule RepoMan.RepoDiscovery do
   Scans a directory for immediate subdirectories that are git repositories.
 
   Used at startup and on page load to discover repos under the configured
-  `REPOMAN_PATH` (defaults to `~/src/shred/`). Hidden directories (starting
+  `REPOMAN_PATH` (defaults to `~/src/repos/`). Hidden directories (starting
   with `.`) are ignored.
 
   Returns a sorted list of `%{name: String.t(), path: String.t()}` maps.

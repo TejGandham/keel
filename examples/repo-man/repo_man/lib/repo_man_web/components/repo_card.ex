@@ -561,7 +561,7 @@ defmodule RepoManWeb.RepoCard do
   end
 
   defp to_host_path(container_path) do
-    repos_path = Application.get_env(:repo_man, :repos_path, "/shred")
+    repos_path = Application.get_env(:repo_man, :repos_path, "/repos")
     host_repos_path = Application.get_env(:repo_man, :host_repos_path, repos_path)
     String.replace_prefix(container_path, repos_path, host_repos_path)
   end

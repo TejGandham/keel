@@ -27,7 +27,7 @@ Non-negotiable principles that govern every decision in Repo Man.
 
 - No local Elixir/Erlang installation. Ever.
 - If it doesn't work in Docker, it doesn't work.
-- Container must have git and access to `~/src/shred/` via volume mount.
+- Container must have git and access to `~/src/repos/` via volume mount.
 
 ## Brand Personality
 
@@ -120,7 +120,7 @@ Validates the full stack boots correctly inside Docker.
 - `docker compose run --rm app mix test` passes
 - `docker compose up` + `curl localhost:4000` returns 200
 - `REPOMAN_PATH` validated at `Application.start` — crash if inaccessible
-- Test suite uses `/tmp` for repos, never touches real `~/src/shred/`
+- Test suite uses `/tmp` for repos, never touches real `~/src/repos/`
 
 ### Testing Infrastructure
 

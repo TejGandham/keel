@@ -561,7 +561,7 @@ Test flow:
 3. Click ↻ → badge shows countdown from `10`
 4. Click ↻ → badge shows countdown from `30`
 5. Click ↻ → badge shows `off` (gray, inactive)
-6. While on `off`, run `touch ~/src/shred/AXO471/newfile` from terminal — UI should NOT update
+6. While on `off`, run `touch ~/src/repos/my-project/newfile` from terminal — UI should NOT update
 7. Click ↻ → badge shows `2s` — UI should update within 2 seconds showing dirty file
 8. Reload page — interval is preserved
 9. Verify Fetch All / Pull All still work independently of refresh timer

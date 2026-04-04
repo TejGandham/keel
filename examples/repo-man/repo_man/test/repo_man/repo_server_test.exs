@@ -26,7 +26,7 @@ defmodule RepoMan.RepoServerTest do
   end
 
   defp repo_info(registry, task_supervisor \\ nil, pubsub \\ nil) do
-    base = %{name: "AXO471", path: "/fake/path/AXO471", registry: registry}
+    base = %{name: "my-project", path: "/fake/path/my-project", registry: registry}
 
     base =
       if task_supervisor do
@@ -44,12 +44,12 @@ defmodule RepoMan.RepoServerTest do
 
   defp stub_clean_repo do
     RepoMan.Git.Mock
-    |> expect(:current_branch, fn "/fake/path/AXO471" -> {:ok, "master"} end)
-    |> expect(:default_branch, fn "/fake/path/AXO471" -> {:ok, "master"} end)
-    |> expect(:ahead_behind, fn "/fake/path/AXO471", "master" -> {:ok, {0, 0}} end)
-    |> expect(:dirty_files, fn "/fake/path/AXO471" -> {:ok, []} end)
-    |> expect(:local_branches, fn "/fake/path/AXO471" -> {:ok, []} end)
-    |> expect(:last_fetch_time, fn "/fake/path/AXO471" -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
+    |> expect(:current_branch, fn "/fake/path/my-project" -> {:ok, "master"} end)
+    |> expect(:default_branch, fn "/fake/path/my-project" -> {:ok, "master"} end)
+    |> expect(:ahead_behind, fn "/fake/path/my-project", "master" -> {:ok, {0, 0}} end)
+    |> expect(:dirty_files, fn "/fake/path/my-project" -> {:ok, []} end)
+    |> expect(:local_branches, fn "/fake/path/my-project" -> {:ok, []} end)
+    |> expect(:last_fetch_time, fn "/fake/path/my-project" -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
   end
 
   describe "start_link/1" do
@@ -62,8 +62,8 @@ defmodule RepoMan.RepoServerTest do
       status = RepoServer.get_status(pid)
 
       assert %RepoStatus{} = status
-      assert status.name == "AXO471"
-      assert status.path == "/fake/path/AXO471"
+      assert status.name == "my-project"
+      assert status.path == "/fake/path/my-project"
       assert status.current_branch == "master"
       assert status.default_branch == "master"
       assert status.on_default? == true
@@ -102,7 +102,7 @@ defmodule RepoMan.RepoServerTest do
       dirty_files = [%{status: "M", path: "lib/app.ex"}, %{status: "??", path: "new.txt"}]
 
       RepoMan.Git.Mock
-      |> expect(:current_branch, fn _ -> {:ok, "feat/SHRED-123"} end)
+      |> expect(:current_branch, fn _ -> {:ok, "feat/FEAT-123"} end)
       |> expect(:default_branch, fn _ -> {:ok, "master"} end)
       |> expect(:ahead_behind, fn _, "master" -> {:ok, {2, 1}} end)
       |> expect(:dirty_files, fn _ -> {:ok, dirty_files} end)
@@ -113,7 +113,7 @@ defmodule RepoMan.RepoServerTest do
 
       status = RepoServer.get_status(pid)
 
-      assert status.current_branch == "feat/SHRED-123"
+      assert status.current_branch == "feat/FEAT-123"
       assert status.default_branch == "master"
       assert status.on_default? == false
       assert status.dirty_count == 2
@@ -128,7 +128,7 @@ defmodule RepoMan.RepoServerTest do
       pid = start_supervised!({RepoServer, repo_info(registry)})
 
       # Look up by name in the registry
-      assert [{^pid, _}] = Registry.lookup(registry, "AXO471")
+      assert [{^pid, _}] = Registry.lookup(registry, "my-project")
     end
   end
 
@@ -141,7 +141,7 @@ defmodule RepoMan.RepoServerTest do
       status = RepoServer.get_status(pid)
 
       assert %RepoStatus{} = status
-      assert status.name == "AXO471"
+      assert status.name == "my-project"
     end
 
     test "can be called via registry name", %{registry: registry} do
@@ -149,11 +149,11 @@ defmodule RepoMan.RepoServerTest do
 
       _pid = start_supervised!({RepoServer, repo_info(registry)})
 
-      via = {:via, Registry, {registry, "AXO471"}}
+      via = {:via, Registry, {registry, "my-project"}}
       status = RepoServer.get_status(via)
 
       assert %RepoStatus{} = status
-      assert status.name == "AXO471"
+      assert status.name == "my-project"
     end
   end
 
@@ -172,7 +172,7 @@ defmodule RepoMan.RepoServerTest do
       status = RepoServer.get_status(pid)
 
       assert %RepoStatus{} = status
-      assert status.name == "AXO471"
+      assert status.name == "my-project"
       assert status.last_error != nil
       assert status.severity == :error
     end
@@ -190,7 +190,7 @@ defmodule RepoMan.RepoServerTest do
       stub_clean_repo()
 
       # fetch will block until we send the gate signal
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" ->
         send(test_pid, :fetch_started)
         # Block until the test signals us to continue
         receive do
@@ -233,7 +233,7 @@ defmodule RepoMan.RepoServerTest do
       stub_clean_repo()
 
       # First fetch blocks
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" ->
         send(test_pid, :fetch_started)
 
         receive do
@@ -270,7 +270,7 @@ defmodule RepoMan.RepoServerTest do
     } do
       stub_clean_repo()
 
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" -> :ok end)
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" -> :ok end)
       stub_status_refresh()
 
       pid = start_supervised!({RepoServer, repo_info(registry, task_sup)})
@@ -296,7 +296,7 @@ defmodule RepoMan.RepoServerTest do
       |> expect(:last_fetch_time, fn _ -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
 
       # Fetch succeeds
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" -> :ok end)
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" -> :ok end)
 
       # After fetch, status refresh shows behind by 3 (updated)
       RepoMan.Git.Mock
@@ -328,7 +328,7 @@ defmodule RepoMan.RepoServerTest do
     } do
       stub_clean_repo()
 
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" ->
         {:error, "fatal: unable to access remote"}
       end)
 
@@ -361,7 +361,7 @@ defmodule RepoMan.RepoServerTest do
       |> expect(:last_fetch_time, fn _ -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
 
       # pull_ff_only blocks until we signal
-      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/my-project" ->
         send(test_pid, :pull_started)
 
         receive do
@@ -441,7 +441,7 @@ defmodule RepoMan.RepoServerTest do
       |> expect(:last_fetch_time, fn _ -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
 
       # First pull blocks
-      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/my-project" ->
         send(test_pid, :pull_started)
 
         receive do
@@ -486,7 +486,7 @@ defmodule RepoMan.RepoServerTest do
       |> expect(:last_fetch_time, fn _ -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
 
       # Pull succeeds
-      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/AXO471" -> :ok end)
+      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/my-project" -> :ok end)
 
       # After pull, status refresh shows behind by 0 (pulled)
       RepoMan.Git.Mock
@@ -524,7 +524,7 @@ defmodule RepoMan.RepoServerTest do
       |> expect(:local_branches, fn _ -> {:ok, []} end)
       |> expect(:last_fetch_time, fn _ -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
 
-      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/my-project" ->
         {:error, "fatal: Not possible to fast-forward, aborting."}
       end)
 
@@ -553,7 +553,7 @@ defmodule RepoMan.RepoServerTest do
       _pid = start_supervised!({RepoServer, repo_info(registry, nil, pubsub)})
 
       assert_receive {:repo_updated, %RepoStatus{} = status}, 1_000
-      assert status.name == "AXO471"
+      assert status.name == "my-project"
       assert status.operation == :idle
     end
 
@@ -566,7 +566,7 @@ defmodule RepoMan.RepoServerTest do
 
       stub_clean_repo()
 
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" -> :ok end)
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" -> :ok end)
       stub_status_refresh()
 
       pid = start_supervised!({RepoServer, repo_info(registry, task_sup, pubsub)})
@@ -592,7 +592,7 @@ defmodule RepoMan.RepoServerTest do
 
       stub_clean_repo()
 
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" ->
         {:error, "fatal: unable to access remote"}
       end)
 
@@ -627,7 +627,7 @@ defmodule RepoMan.RepoServerTest do
       |> expect(:local_branches, fn _ -> {:ok, []} end)
       |> expect(:last_fetch_time, fn _ -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
 
-      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/AXO471" -> :ok end)
+      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/my-project" -> :ok end)
       stub_status_refresh()
 
       pid = start_supervised!({RepoServer, repo_info(registry, task_sup, pubsub)})
@@ -660,7 +660,7 @@ defmodule RepoMan.RepoServerTest do
       |> expect(:local_branches, fn _ -> {:ok, []} end)
       |> expect(:last_fetch_time, fn _ -> {:ok, ~U[2026-03-13 14:30:00Z]} end)
 
-      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :pull_ff_only, fn "/fake/path/my-project" ->
         {:error, "fatal: Not possible to fast-forward, aborting."}
       end)
 
@@ -688,7 +688,7 @@ defmodule RepoMan.RepoServerTest do
 
       stub_clean_repo()
 
-      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/AXO471" ->
+      expect(RepoMan.Git.Mock, :fetch, fn "/fake/path/my-project" ->
         raise "boom"
       end)
 

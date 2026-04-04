@@ -321,7 +321,7 @@ rm -rf keel-kit/
 
 4.1. **Fix examples/repo-man/docker-compose.yml paths:**
 - Volume mount `./repo_man:/app` stays as-is (relative to docker-compose location)
-- Verify `REPOMAN_SHRED_PATH` and other env vars still work
+- Verify `REPOMAN_REPOS_PATH` and other env vars still work
 - Build context may need adjustment if Dockerfile is in same dir
 
 4.2. **Fix examples/repo-man/CLAUDE.md internal references:**

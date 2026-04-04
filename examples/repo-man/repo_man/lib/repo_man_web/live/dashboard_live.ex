@@ -332,7 +332,7 @@ defmodule RepoManWeb.DashboardLive do
 
   defp summary_line(assigns) do
     counts = Dashboard.summary_counts(assigns.repos)
-    repos_path = Application.get_env(:repo_man, :repos_path, "~/src/shred")
+    repos_path = Application.get_env(:repo_man, :repos_path, "~/src/repos")
     host_repos_path = Application.get_env(:repo_man, :host_repos_path, repos_path)
     assigns = assign(assigns, :counts, counts)
     assigns = assign(assigns, :repos_path, repos_path)

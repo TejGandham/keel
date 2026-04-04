@@ -9,7 +9,7 @@
 ## 1. Repository Identity
 
 **Name:** Keel (repo) / Repo Man (application)
-**Purpose:** Single-page localhost Phoenix LiveView dashboard for monitoring and syncing git repos under `~/src/shred/`. Pre-flight checklist for software architecture work — ensures the codebase is current before making design decisions.
+**Purpose:** Single-page localhost Phoenix LiveView dashboard for monitoring and syncing git repos under `~/src/repos/`. Pre-flight checklist for software architecture work — ensures the codebase is current before making design decisions.
 **User:** Single developer (Tej), localhost only. No auth.
 **Builder:** Claude (sole builder). Tej steers.
 **Process:** "Keel" — a structured spec-driven agent development process adapted from OpenAI's harness engineering article.
@@ -40,7 +40,7 @@ keel/                           # Repository root
 ├── ARCHITECTURE.md             # Process model, layers, module map
 ├── CLAUDE.md                   # ~80-line table of contents for Claude
 ├── Dockerfile                  # elixir:1.19-slim + git + gh CLI
-├── docker-compose.yml          # Volume mounts: ./repo_man → /app, ~/src/shred → /shred
+├── docker-compose.yml          # Volume mounts: ./repo_man → /app, ~/src/repos → /repos
 │
 ├── docs/
 │   ├── north-star.md           # Keel process vision (adapted from OpenAI article)
@@ -149,7 +149,7 @@ User clicks "Fetch" on a repo
 ```
 Docker Container (elixir:1.19-slim + git + gh)
   /app  ← ./repo_man (source mounted for live reload)
-  /shred ← ~/src/shred (repos mounted read-write)
+  /repos ← ~/src/repos (repos mounted read-write)
   mix phx.server → :4000
         │ port 4000
         ↓
@@ -163,9 +163,9 @@ Docker Container (elixir:1.19-slim + git + gh)
 ```
 
 Environment variables:
-- `REPOMAN_PATH=/shred` (container-side repos path)
-- `REPOMAN_HOST_PATH=$HOME/src/shred` (host-side, for UI links)
-- `REPOMAN_SHRED_PATH` (docker-compose override, defaults to `/mnt/agent-storage/vader/src`)
+- `REPOMAN_PATH=/repos` (container-side repos path)
+- `REPOMAN_HOST_PATH=$HOME/src/repos` (host-side, for UI links)
+- `REPOMAN_REPOS_PATH` (docker-compose override, defaults to `/mnt/agent-storage/vader/src`)
 
 ---
 
@@ -342,9 +342,9 @@ Enforced by:
 ### Environment Variables
 | Var | Default | Purpose |
 |-|-|-|
-| `REPOMAN_PATH` | `~/src/shred` | Container-side repos directory |
+| `REPOMAN_PATH` | `~/src/repos` | Container-side repos directory |
 | `REPOMAN_HOST_PATH` | Same as REPOMAN_PATH | Host-side repos path for UI terminal links |
-| `REPOMAN_SHRED_PATH` | `/mnt/agent-storage/vader/src` | Docker-compose volume mount source |
+| `REPOMAN_REPOS_PATH` | `/mnt/agent-storage/vader/src` | Docker-compose volume mount source |
 | `PORT` | 4000 | HTTP port |
 | `PHX_HOST` | localhost | Host for endpoint URL |
 | `GIT_TERMINAL_PROMPT` | 0 | Disable git interactive prompts |

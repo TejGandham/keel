@@ -64,15 +64,15 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 │  OR                                                      │
 │  ⚠ 2 repos behind origin — designs may be stale         │
 ├─────────────────────────────────────────────────────────┤
-│  ~/src/shred · 7 repos · 4 synced · 1 behind · ...     │  ← Summary line
+│  ~/src/repos · 7 repos · 4 synced · 1 behind · ...     │  ← Summary line
 ├─────────────────────────────────────────────────────────┤
 │                                                          │
 │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐                   │
-│  │AXO471│ │AXO473│ │AXO478│ │AXO484│  ← Clean: compact │
+│  │proj-a│ │proj-c│ │proj-d│ │proj-e│  ← Clean: compact │
 │  └──────┘ └──────┘ └──────┘ └──────┘                   │
 │                                                          │
 │  ┌────────────┐ ┌────────────┐ ┌──────────────┐        │
-│  │AXO472      │ │AXO491      │ │AXO492        │        │
+│  │proj-b      │ │proj-f      │ │proj-g        │        │
 │  │3 behind    │ │topic branch│ │7 dirty       │  ← Attention: bigger │
 │  │branches    │ │branch name │ │file list     │        │
 │  │[Fetch][Pull│ │[Fetch]     │ │[Fetch][Pull] │        │
@@ -94,7 +94,7 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 
 ```
 ┌─ gray border-left ────────────┐
-│  AXO471          (600 weight) │
+│  proj-a          (600 weight) │
 │  master · clean    (muted)    │
 │  ↓0 ↑0 · 2h ago     [↗]     │  ← Open Terminal link
 └───────────────────────────────┘
@@ -109,11 +109,11 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 
 ```
 ┌─ blue border-left ────────────┐
-│  AXO472  [3 behind]  (pill)  │
+│  proj-b  [3 behind]  (pill)  │
 │  master · ↓3 ↑0              │
 │  2 other branches · 2h ago   │  ← excludes current branch
 │  ─────────────────            │
-│  feat/SHRED-2926 · fix/...   │  ← branch names in monospace
+│  feat/FEAT-2926 · fix/...   │  ← branch names in monospace
 │  [Fetch] [Pull]              │  ← Pull highlighted blue
 └───────────────────────────────┘
 ```
@@ -122,8 +122,8 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 
 ```
 ┌─ amber border-left ───────────┐
-│  AXO491  [topic]    (pill)   │
-│  feat/SHRED-2926-email       │  ← branch name in amber monospace
+│  proj-f  [topic]    (pill)   │
+│  feat/FEAT-2926-email       │  ← branch name in amber monospace
 │  ↓0 ↑2 · clean              │
 │  1h ago                      │
 │  ─────────────────            │
@@ -136,7 +136,7 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 
 ```
 ┌─ orange border-left ──────────┐
-│  AXO492  [7 dirty]  (pill)   │
+│  proj-g  [7 dirty]  (pill)   │
 │  master · ↓0 ↑0              │
 │  3 branches · 5m ago         │
 │  ─────────────────            │
@@ -158,7 +158,7 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 
 ```
 ┌─ red border-left ─────────────┐
-│  AXO484  [diverged]  (pill)  │
+│  proj-e  [diverged]  (pill)  │
 │  master · ↓3 ↑2              │  ← both ahead AND behind
 │  30m ago                     │
 │  ─────────────────            │
@@ -172,7 +172,7 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 
 ```
 ┌─ red border-left ─────────────┐
-│  AXO484  [✗ error]  (pill)   │
+│  proj-e  [✗ error]  (pill)   │
 │  master · ↓0 ↑0              │
 │  30m ago                     │
 │  ─────────────────            │
@@ -186,7 +186,7 @@ The UI must make that answer instantly obvious — mint banner means go, anythin
 
 ```
 ┌─ gray border-left ────────────┐
-│  AXO472  [⟳ fetching…]      │
+│  proj-b  [⟳ fetching…]      │
 │  master · ↓3 ↑0              │
 │  2 branches · 2h ago         │
 │  [Fetch (disabled)] [Pull (disabled)] │  ← both disabled during op
@@ -228,12 +228,12 @@ The banner answers the headline question: **"Can I trust this codebase right now
 ### Summary Line
 
 ```
-~/src/shred · 7 repos · 4 synced · 1 behind · 1 dirty · 1 topic · 0 diverged · 0 errored
+~/src/repos · 7 repos · 4 synced · 1 behind · 1 dirty · 1 topic · 0 diverged · 0 errored
 ```
 
 Updates in real-time. During bulk ops, append progress without losing counts:
 ```
-~/src/shred · 7 repos · 4 synced · 1 behind · 1 dirty · 1 topic · Fetching 4/7…
+~/src/repos · 7 repos · 4 synced · 1 behind · 1 dirty · 1 topic · Fetching 4/7…
 ```
 
 ## 7. Per-Card Actions
@@ -325,7 +325,7 @@ Status colors use the same hue families, adjusted for contrast against each back
 
 All development runs inside Docker containers — no local Elixir/Erlang installation. The container must:
 - Volume-mount the project source for live code reload
-- Volume-mount `~/src/shred/` (or `REPOMAN_PATH`) so git commands inside the container can read the host's repos
+- Volume-mount `~/src/repos/` (or `REPOMAN_PATH`) so git commands inside the container can read the host's repos
 - Expose port 4000 to the host
 - Include git in the container image
 

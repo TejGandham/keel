@@ -5,7 +5,7 @@ Phoenix LiveView dashboard for monitoring and syncing git repos.
 
 ## Project Summary
 
-- **What:** Dashboard that shows git repo status across `~/src/shred/`
+- **What:** Dashboard that shows git repo status across `~/src/repos/`
 - **Stack:** Elixir, Phoenix 1.7+, LiveView, Tailwind CSS. No Ecto, no npm.
 - **Scale:** 31 features, all landed successfully through the KEEL pipeline
 - **Team:** 1 human (Tej, steering) + Claude (executing)

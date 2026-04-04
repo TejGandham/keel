@@ -8,8 +8,8 @@ defmodule RepoMan.RepoStatusTest do
 
   defp base_attrs do
     %{
-      name: "AXO471",
-      path: "/Users/tej/src/shred/AXO471",
+      name: "my-project",
+      path: "/Users/tej/src/repos/my-project",
       current_branch: "master",
       default_branch: "master",
       ahead: 0,
@@ -32,8 +32,8 @@ defmodule RepoMan.RepoStatusTest do
     test "creates a struct with all supplied fields" do
       status = new!()
 
-      assert status.name == "AXO471"
-      assert status.path == "/Users/tej/src/shred/AXO471"
+      assert status.name == "my-project"
+      assert status.path == "/Users/tej/src/repos/my-project"
       assert status.current_branch == "master"
       assert status.default_branch == "master"
       assert status.ahead == 0

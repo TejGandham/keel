@@ -8,11 +8,11 @@
 
 ## 1. What Is Repo Man
 
-A single-page localhost web dashboard for monitoring and syncing all git repositories under `~/src/shred/`. One glance tells you which repos are clean, stale, dirty, or on topic branches. One click fetches or pulls them.
+A single-page localhost web dashboard for monitoring and syncing all git repositories under `~/src/repos/`. One glance tells you which repos are clean, stale, dirty, or on topic branches. One click fetches or pulls them.
 
 ## 2. Problem Statement
 
-The `~/src/shred/` workspace contains 7+ independent git repositories (AXO471–AXO492). Software architecture and design decisions span these repos — a change in one repo's API affects the design of consumers in others. Most repos are rarely modified locally and drift behind `origin/master` silently. Without a single view of freshness, architectural decisions get made against stale code, producing designs that don't reflect reality. Syncing requires `cd`-ing into each repo manually, which is tedious enough that it gets skipped.
+The `~/src/repos/` workspace contains 7+ independent git repositories (project-a through project-g). Software architecture and design decisions span these repos — a change in one repo's API affects the design of consumers in others. Most repos are rarely modified locally and drift behind `origin/master` silently. Without a single view of freshness, architectural decisions get made against stale code, producing designs that don't reflect reality. Syncing requires `cd`-ing into each repo manually, which is tedious enough that it gets skipped.
 
 Repo Man is the pre-flight checklist: one glance confirms the codebase is current before starting design work. One click brings everything up to date.
 
@@ -24,8 +24,8 @@ Single developer (localhost only). No authentication, no multi-user support.
 
 ### 4.1 Repo Discovery
 
-- On startup, scan `~/src/shred/` for all immediate subdirectories containing a `.git` folder
-- Defaults to `~/src/shred/` (overridable via `REPOMAN_PATH` env var)
+- On startup, scan `~/src/repos/` for all immediate subdirectories containing a `.git` folder
+- Defaults to `~/src/repos/` (overridable via `REPOMAN_PATH` env var)
 - Re-scan on page load (picks up new repos automatically)
 
 ### 4.2 Per-Repo Status
@@ -34,7 +34,7 @@ Each repo displays the following information:
 
 | Field | Source | Notes |
 |-------|--------|-------|
-| **Repo name** | Directory name | e.g., `AXO471` |
+| **Repo name** | Directory name | e.g., `my-project` |
 | **Current branch** | `git branch --show-current` | |
 | **Default branch** | `git symbolic-ref refs/remotes/origin/HEAD` | Fallback chain: try symbolic-ref, then `master`, then `main` |
 | **On default branch?** | Derived | Boolean comparison |
@@ -106,17 +106,17 @@ Single page, no routing, no navigation.
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │  REPO MAN                                    [Fetch All] [Pull All] │
-│  ~/src/shred · 7 repos · Last scan: just now                    │
+│  ~/src/repos · 7 repos · Last scan: just now                    │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  ● AXO471   master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
-│  ● AXO472   master   ✓ clean    ↓3 ↑0           [Fetch] [Pull] │
-│  ● AXO473   master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
-│  ● AXO478   master   ✓ clean    ↓1 ↑0           [Fetch] [Pull] │
-│  ● AXO484   master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
-│  ● AXO491   master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
-│  ● AXO492   master   7 dirty    ↓0 ↑0           [Fetch] [   ] │
-│    └─ 3 topic branches: feat/SHRED-2926-email-service-...       │
+│  ● my-project   master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
+│  ● project-b master   ✓ clean    ↓3 ↑0           [Fetch] [Pull] │
+│  ● project-c master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
+│  ● project-d master   ✓ clean    ↓1 ↑0           [Fetch] [Pull] │
+│  ● project-e master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
+│  ● project-f master   ✓ clean    ↓0 ↑0           [Fetch] [Pull] │
+│  ● project-g master   7 dirty    ↓0 ↑0           [Fetch] [   ] │
+│    └─ 3 topic branches: feat/FEAT-2926-email-service-...       │
 │                                                                  │
 ├──────────────────────────────────────────────────────────────────┤
 │  6 synced · 1 dirty · 0 behind · 0 diverged                     │
@@ -147,7 +147,7 @@ Each repo card shows inline (when applicable):
 - **Topic branches** (if any): list of local branch names other than default. Max 5 shown, then "+N more".
 - **Pull disabled reason** (if applicable): human-readable explanation
   - "7 dirty files — commit or stash changes first"
-  - "On branch `feat/SHRED-2926` — switch to master first"
+  - "On branch `feat/FEAT-2926` — switch to master first"
   - "Diverged: 2 ahead, 3 behind — manual merge needed"
   - "Already up to date"
 
@@ -168,13 +168,13 @@ When "Fetch All" or "Pull All" is clicked:
 ```
 Phoenix Application
 ├── RepoMan.RepoSupervisor (DynamicSupervisor)
-│   ├── RepoMan.RepoServer (GenServer) — AXO471
-│   ├── RepoMan.RepoServer (GenServer) — AXO472
-│   ├── RepoMan.RepoServer (GenServer) — AXO473
-│   ├── RepoMan.RepoServer (GenServer) — AXO478
-│   ├── RepoMan.RepoServer (GenServer) — AXO484
-│   ├── RepoMan.RepoServer (GenServer) — AXO491
-│   └── RepoMan.RepoServer (GenServer) — AXO492
+│   ├── RepoMan.RepoServer (GenServer) — my-project
+│   ├── RepoMan.RepoServer (GenServer) — project-b
+│   ├── RepoMan.RepoServer (GenServer) — project-c
+│   ├── RepoMan.RepoServer (GenServer) — project-d
+│   ├── RepoMan.RepoServer (GenServer) — project-e
+│   ├── RepoMan.RepoServer (GenServer) — project-f
+│   └── RepoMan.RepoServer (GenServer) — project-g
 ├── RepoMan.TaskSupervisor (Task.Supervisor)
 │   └── (transient tasks for fetch/pull operations)
 └── RepoManWeb.Live.DashboardLive (LiveView)
@@ -187,8 +187,8 @@ Phoenix Application
 ### 5.2 Data Flow
 
 ```
-User clicks "Fetch" on AXO472
-  → LiveView sends event to AXO472's GenServer
+User clicks "Fetch" on project-b
+  → LiveView sends event to project-b's GenServer
   → GenServer sets state to :fetching, broadcasts update
   → GenServer spawns Task under TaskSupervisor
   → Task runs `git fetch --all --prune`
@@ -217,8 +217,8 @@ Implementation: `System.cmd("git", args, cd: repo_path, stderr_to_stdout: true)`
 ```elixir
 defmodule RepoMan.RepoStatus do
   defstruct [
-    :name,              # "AXO471"
-    :path,              # "/Users/tej/src/shred/AXO471"
+    :name,              # "my-project"
+    :path,              # "/Users/tej/src/repos/my-project"
     :current_branch,    # "master"
     :default_branch,    # "master"
     :on_default?,       # true
@@ -226,7 +226,7 @@ defmodule RepoMan.RepoStatus do
     :behind,            # 3
     :dirty_count,       # 0
     :dirty_files,       # [%{status: "M", path: "src/foo.py"}, ...]
-    :local_branches,    # ["feat/SHRED-2926-email-...", ...]
+    :local_branches,    # ["feat/FEAT-2926-email-...", ...]
     :last_fetch,        # ~U[2026-03-13 14:30:00Z] | nil
     :operation,         # :idle | :fetching | :pulling
     :last_error,        # nil | "fatal: not a git repository"
@@ -276,7 +276,7 @@ repo_man/
 ├── config/
 │   ├── config.exs
 │   ├── dev.exs
-│   └── runtime.exs                 # SHRED_PATH env var (default ~/src/shred)
+│   └── runtime.exs                 # REPOMAN_PATH env var (default ~/src/repos)
 ├── test/
 │   ├── repo_man/
 │   │   ├── git_test.exs
@@ -297,7 +297,7 @@ Minimal. One environment variable with a sensible default:
 ```elixir
 # config/runtime.exs
 config :repo_man,
-  repos_path: System.get_env("REPOMAN_PATH", Path.expand("~/src/shred"))
+  repos_path: System.get_env("REPOMAN_PATH", Path.expand("~/src/repos"))
 ```
 
 ## 9. What Is Explicitly NOT in MVP
@@ -322,7 +322,7 @@ config :repo_man,
 The MVP is done when:
 
 1. `mix phx.server` starts and opens a dashboard at `localhost:4000`
-2. All git repos under `~/src/shred/` appear with correct status
+2. All git repos under `~/src/repos/` appear with correct status
 3. "Fetch" updates a single repo and the UI reflects the new state in real-time
 4. "Fetch All" fetches all repos in parallel with per-repo progress
 5. "Pull" fast-forward merges an eligible repo and updates the UI

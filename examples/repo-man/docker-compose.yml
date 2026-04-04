@@ -5,11 +5,11 @@ services:
       - "4000:4000"
     volumes:
       - ./repo_man:/app
-      - ${REPOMAN_SHRED_PATH:-/mnt/agent-storage/vader/src}:/shred
+      - ${REPOMAN_REPOS_PATH:-/mnt/agent-storage/vader/src}:/repos
       - ./.git-credentials:/root/.git-credentials:ro
     environment:
-      - REPOMAN_PATH=/shred
-      - REPOMAN_HOST_PATH=${REPOMAN_SHRED_PATH:-/mnt/agent-storage/vader/src}
+      - REPOMAN_PATH=/repos
+      - REPOMAN_HOST_PATH=${REPOMAN_REPOS_PATH:-/mnt/agent-storage/vader/src}
       - PHX_HOST=localhost
       - GIT_TERMINAL_PROMPT=0
     stdin_open: true

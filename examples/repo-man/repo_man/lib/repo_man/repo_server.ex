@@ -20,7 +20,7 @@ defmodule RepoMan.RepoServer do
 
       # Start with a repo info map
       RepoServer.start_link(%{
-        name: "AXO471",
+        name: "my-project",
         path: "/path/to/repo",
         registry: RepoMan.RepoRegistry,
         task_supervisor: RepoMan.TaskSupervisor

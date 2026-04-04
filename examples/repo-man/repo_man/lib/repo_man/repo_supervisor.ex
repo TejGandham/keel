@@ -115,7 +115,7 @@ defmodule RepoMan.RepoSupervisor do
       The configured repos path does not exist or is not a directory.
       Set REPOMAN_PATH to a valid directory containing your git repositories.
 
-      Example: REPOMAN_PATH=~/src/shred mix phx.server
+      Example: REPOMAN_PATH=~/src/repos mix phx.server
       """
     end
 

@@ -1,7 +1,7 @@
 # Repo Man
 
 Single-page localhost Phoenix LiveView dashboard for monitoring and syncing
-git repos under `~/src/shred/`. Pre-flight checklist for software architecture
+git repos under `~/src/repos/`. Pre-flight checklist for software architecture
 work — ensures the codebase is current before making design decisions.
 
 ## Quick Facts
@@ -111,7 +111,7 @@ docker compose build                  # rebuild after Dockerfile changes
 docker compose run --rm app mix test  # run tests inside container
 ```
 
-Source and `~/src/shred/` are volume-mounted into the container.
+Source and `~/src/repos/` are volume-mounted into the container.
 The terminal-opener companion runs on the host (not in Docker) because
 it needs macOS `open` to launch Ghostty.
 

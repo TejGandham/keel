@@ -110,7 +110,7 @@ Mox.allow(RepoMan.Git.Mock, self(), pid)  # specific process
 - **Timeouts:** Network ops 60s, local ops 10s. On timeout, OS process killed.
 - **start_repos_on_boot:** Config flag (default true) skips auto-start in test
 - **Periodic polling:** RepoServer polls git status every N seconds (default 2s, configurable via `poll_interval` config). Broadcasts only on change. Skips during in-progress ops. LiveView controls the interval via `set_poll_interval/2`.
-- **Host path mapping:** `REPOMAN_HOST_PATH` env var provides the host-side repos path for UI links (container path `/shred` differs from host path `~/src/shred`)
+- **Host path mapping:** `REPOMAN_HOST_PATH` env var provides the host-side repos path for UI links (container path `/repos` differs from host path `~/src/repos`)
 
 ## Docker Architecture
 
@@ -120,7 +120,7 @@ Mox.allow(RepoMan.Git.Mock, self(), pid)  # specific process
 │  elixir:1.19-slim + git        │
 │                                 │
 │  /app  ← ./repo_man (mounted)  │
-│  /shred ← ~/src/shred (mounted)│
+│  /repos ← ~/src/repos (mounted)│
 │                                 │
 │  mix phx.server → :4000        │
 └────────────┬────────────────────┘
@@ -136,7 +136,7 @@ Mox.allow(RepoMan.Git.Mock, self(), pid)  # specific process
 ```
 
 - Source mounted for live code reload
-- `~/src/shred/` mounted read-write (fetch/pull modify .git/)
-- `REPOMAN_PATH=/shred` environment variable (container-side)
-- `REPOMAN_HOST_PATH=$HOME/src/shred` environment variable (host-side, for UI links)
+- `~/src/repos/` mounted read-write (fetch/pull modify .git/)
+- `REPOMAN_PATH=/repos` environment variable (container-side)
+- `REPOMAN_HOST_PATH=$HOME/src/repos` environment variable (host-side, for UI links)
 - `scripts/terminal-opener.py` runs on the host (not in Docker) — opens Ghostty tabs via AppleScript

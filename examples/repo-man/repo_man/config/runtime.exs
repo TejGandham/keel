@@ -20,13 +20,13 @@ if System.get_env("PHX_SERVER") do
   config :repo_man, RepoManWeb.Endpoint, server: true
 end
 
-config :repo_man, repos_path: System.get_env("REPOMAN_PATH", Path.expand("~/src/shred"))
+config :repo_man, repos_path: System.get_env("REPOMAN_PATH", Path.expand("~/src/repos"))
 
 # Host-side path for the repos directory. Used to render correct paths in
 # "Open Terminal" links when the app runs inside Docker (container path
 # differs from host path). Falls back to repos_path for non-Docker use.
 config :repo_man,
-  host_repos_path: System.get_env("REPOMAN_HOST_PATH", System.get_env("REPOMAN_PATH", Path.expand("~/src/shred")))
+  host_repos_path: System.get_env("REPOMAN_HOST_PATH", System.get_env("REPOMAN_PATH", Path.expand("~/src/repos")))
 
 config :repo_man, RepoManWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
