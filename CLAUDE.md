@@ -1,121 +1,61 @@
-# Repo Man
+# KEEL — Knowledge-Encoded Engineering Lifecycle
 
-Single-page localhost Phoenix LiveView dashboard for monitoring and syncing
-git repos under `~/src/shred/`. Pre-flight checklist for software architecture
-work — ensures the codebase is current before making design decisions.
+This repository IS the KEEL framework. It provides the process, agents, and
+templates for building software with AI coding agents.
 
-## Quick Facts
+## What This Repo Contains
 
-- **Stack:** Elixir, Phoenix 1.7+, LiveView, Tailwind CSS, minimal JS hooks. No Ecto, no npm.
-- **Development:** Docker container driven. No local Elixir/Erlang.
-- **User:** Single developer (Tej), localhost only.
-- **Claude's role:** Sole builder. Design, development, maintenance, documentation.
+- **Framework** (root): Process docs, agent definitions, skills, hooks
+- **Templates** (`template/`): Starter files for new KEEL projects
+- **Examples** (`examples/`): Domain invariant patterns + Repo Man case study
+- **Bootstrap** (`scripts/bootstrap.sh`): Initialize a new KEEL project
 
-## Keel (Soul)
+## Directory Map
 
-This repo follows the Keel process. Claude owns everything. Tej steers.
-Consult [north-star.md](docs/north-star.md) at every decision point.
-
-- **Docs drive code.** Never write code without reading the spec first.
-- **Repo is truth.** If it's not in the repo, it doesn't exist.
-- **Coding comes last.** Spec → test → code → verify. Always.
-- **Progressive disclosure.** CLAUDE.md → ARCHITECTURE.md → specs → backlog.
-- **Smallest testable units.** Each feature is independent and verifiable.
-- **Garbage collect.** After each feature: are docs still accurate? Fix lies immediately.
-
-## Safety Rules
-
-1. Never force-pull, never pull on dirty repos, never switch branches, never modify files.
-2. `--ff-only` always. Non-negotiable.
-3. Docker for everything. No local runtime dependencies.
-4. Update docs when you change behavior. Docs that lie are worse than no docs.
-
-## Workflow
-
-### Bootstrap pipeline (F01-F03)
 ```
-docker-builder → plan-lander          (F01)
-scaffolder → plan-lander              (F02)
-config-writer → plan-lander           (F03)
+.claude/agents/     13 agent definitions (pre-check, test-writer, etc.)
+.claude/skills/     3 skills (dev-up, keel-pipeline, safety-check)
+.claude/hooks/      2 hooks (safety-gate, doc-gate)
+docs/process/       Process guides (THE-KEEL-PROCESS, QUICK-START, etc.)
+docs/               Framework-level templates (north-star, specs, design docs)
+template/           Starter files copied by bootstrap.sh
+examples/           Domain invariant examples + Repo Man case study
+scripts/            Bootstrap and utilities
 ```
 
-### Backend pipeline (F04-F16)
-```
-pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → plan-lander
-```
-Designer skipped when pre-check says `Designer needed: NO`.
-Safety-auditor only for features touching fetch/pull/RepoServer.
+## Core Principles
 
-### Frontend pipeline (F17-F28)
-```
-pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → plan-lander
-```
+1. **Docs drive code.** Never write code without reading the spec first.
+2. **Repo is truth.** If it's not in the repo, it doesn't exist to the agent.
+3. **Coding comes last.** Spec → test → code → verify. Always.
+4. **Smallest testable units.** Each feature is independent and verifiable.
+5. **Garbage collect.** After each feature: are docs still accurate? Fix lies immediately.
 
-### Cross-cutting pipeline (F29-F31)
-```
-pre-check → test-writer → implementer → plan-lander
-```
+## Working on the Framework
 
-### Handoffs
-Each feature gets `docs/exec-plans/active/handoffs/F{id}.md`.
-Each agent's output is appended. Next agent reads the handoff file.
-Moved to `completed/handoffs/` when feature lands.
+When modifying KEEL itself (agents, process docs, templates):
 
-### After plan-lander reports LANDED
-**Bootstrap:** `git add` artifacts from bootstrap agent → commit
-**Standard:** `git add` files from test-writer + implementer → commit
-All variants: `feat(F{id}): {feature name}` → check off backlog → move handoff to completed
+- Read [docs/process/THE-KEEL-PROCESS.md](docs/process/THE-KEEL-PROCESS.md) for full context
+- Agent definitions are in `.claude/agents/` — each is a standalone markdown file
+- Templates in `template/` have `<!-- CUSTOMIZE -->` markers for project-specific sections
+- The Repo Man example (`examples/repo-man/`) serves as the reference implementation
+- Domain invariant examples (`examples/domain-invariants/`) show different safety patterns
 
-### Path Convention
-Phoenix project lives at `repo_man/` subdirectory (not repo root).
-Host: `~/src/repo-man/repo_man/lib/...` → Docker: `/app/lib/...`
-All agents write to host paths. Docker volume mount makes them visible in container.
-
-## Architecture
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for process model, data flow, and module map.
-
-## Specs
-
-- [Product spec](docs/product-specs/mvp-spec.md) — What to build
-- [UI design](docs/design-docs/ui-design.md) — How it looks
-- [Core beliefs](docs/design-docs/core-beliefs.md) — Principles + testing strategy
-
-## Plans
-
-- [Feature backlog](docs/exec-plans/active/feature-backlog.md) — 31 features, execute top-to-bottom
-- [Completed plans](docs/exec-plans/completed/) — Finished (reference only)
-- [Tech debt tracker](docs/exec-plans/tech-debt-tracker.md) — Known shortcuts
-
-## Status Colors
-
-| State | Color | Meaning |
-|-------|-------|---------|
-| Clean + up to date | Neutral (gray) | Nothing to do |
-| Behind origin | Blue | Can pull — stale code |
-| Topic branch | Amber | Not on default branch |
-| Dirty | Orange | Uncommitted changes |
-| Diverged / Error | Red | Manual intervention needed |
-| In progress | Gray | Operation running |
-| All current (banner) | Light mint | Ready for design work |
-
-**Priority:** Error > Diverged > Dirty > Topic > Behind > Clean.
-**Principle:** Absence of color = everything is fine.
-
-## Development
+## Working on the Repo Man Example
 
 ```bash
-python3 scripts/terminal-opener.py &  # host-side companion (opens Ghostty from UI)
+cd examples/repo-man
 docker compose up                     # starts dev server at localhost:4000
-docker compose build                  # rebuild after Dockerfile changes
-docker compose run --rm app mix test  # run tests inside container
+docker compose run --rm app mix test  # run tests
 ```
 
-Source and `~/src/shred/` are volume-mounted into the container.
-The terminal-opener companion runs on the host (not in Docker) because
-it needs macOS `open` to launch Ghostty.
+See [examples/repo-man/CLAUDE.md](examples/repo-man/CLAUDE.md) for Repo Man-specific instructions.
 
 ## References
 
-- [Brainstorm mockups](docs/references/brainstorm/) — HTML design comps
-- [North star](docs/north-star.md) — Keel process vision
+- [Process guide](docs/process/THE-KEEL-PROCESS.md) — Full KEEL process
+- [Quick start](docs/process/QUICK-START.md) — First afternoon with KEEL
+- [Glossary](docs/process/GLOSSARY.md) — KEEL terminology
+- [Anti-patterns](docs/process/ANTI-PATTERNS.md) — What to avoid
+- [OpenAI foundations](docs/process/OPENAI-FOUNDATIONS.md) — Where KEEL came from
+- [Repo Man case study](examples/repo-man/CASE-STUDY.md) — Lessons learned

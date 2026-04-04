@@ -62,6 +62,7 @@ echo "Replacing placeholders..."
 # Excludes .git, binary files, and this script itself
 find . -type f \
   -not -path './.git/*' \
+  -not -path './examples/*' \
   -not -path './scripts/bootstrap.sh' \
   -not -name '*.webp' \
   -not -name '*.png' \
@@ -81,6 +82,7 @@ echo "Done."
 echo "Cleaning instruction comments..."
 find . -type f -name '*.md' \
   -not -path './.git/*' \
+  -not -path './examples/*' \
   | while read -r file; do
     sedi '/<!-- DELETE AFTER FILLING/,/-->/d' "$file" 2>/dev/null || true
   done

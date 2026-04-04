@@ -10,12 +10,13 @@ KEEL — Knowledge-Encoded Engineering Lifecycle. From clone to first feature th
 
 ## The 10 Steps
 
-### 1. Clone keel-kit
+### 1. Clone KEEL
 ```bash
-git clone <keel-kit-repo> my-project
+git clone <keel-repo> my-project
 cd my-project
+./scripts/bootstrap.sh
 ```
-Or run `bash scripts/bootstrap.sh` for interactive setup.
+The bootstrap script will prompt for project name, stack, and description, then replace placeholders in all template files.
 
 ### 2. Write your North Star
 Open `docs/north-star.md`. Answer the guiding questions:

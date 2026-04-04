@@ -1,142 +1,67 @@
 # Architecture
 
+<!-- DELETE AFTER FILLING: Replace all sections with your project's architecture.
+     Keep the section structure — it's what agents expect. Remove instruction comments. -->
+
 ## Overview
 
-Phoenix LiveView app. One GenServer per discovered git repo holds status and
-serializes operations. A single LiveView page subscribes to PubSub for real-time
-updates. Git commands shell out via `System.cmd/3`. No database — all state
-derived from git.
+<!-- 1-3 sentences: what kind of app, key architectural pattern, data strategy -->
+[YOUR APP TYPE]. [KEY PATTERN]. [DATA STRATEGY].
 
-## Supervision Tree
+## Process / Component Model
 
+<!-- Show your supervision tree, service topology, or component hierarchy.
+     Use ASCII diagrams — agents parse these well. -->
 ```
-Phoenix Application
-├── RepoManWeb.Telemetry
-├── DNSCluster
-├── {Phoenix.PubSub, name: RepoMan.PubSub}
-├── {Registry, keys: :unique, name: RepoMan.RepoRegistry}
-├── {Task.Supervisor, name: RepoMan.TaskSupervisor}
-├── RepoMan.RepoSupervisor (DynamicSupervisor)
-│   ├── RepoMan.RepoServer (GenServer) — repo1
-│   ├── RepoMan.RepoServer (GenServer) — repo2
-│   └── ...
-├── RepoManWeb.Endpoint
-└── (post-boot) RepoMan.RepoSupervisor.start_repos()
+[YOUR PROCESS MODEL]
 ```
-
-RepoServers are started AFTER the supervision tree is up, gated by
-`start_repos_on_boot` config (default true, false in test).
 
 ## Data Flow
 
+<!-- Trace a typical user action through the system, showing which
+     modules/services handle each step. -->
 ```
-User clicks "Fetch" on a repo
-  → LiveView sends event to repo's GenServer
-  → GenServer sets state to :fetching, broadcasts update
-  → GenServer spawns Task under TaskSupervisor
-  → Task runs `git fetch --all --prune`
-  → Task completes, sends result back to GenServer
-  → GenServer runs status refresh commands
-  → GenServer updates state, broadcasts update
-  → LiveView receives broadcast, re-renders card
+User does [ACTION]
+  → [MODULE A] handles request
+  → [MODULE B] processes
+  → [MODULE C] persists/responds
+  → Result returned to user
 ```
 
 ## Module Map
 
+<!-- List every module with its file, responsibility, and dependencies.
+     This is what agents read to understand what calls what. -->
+
 | Module | File | Responsibility | Depends On |
 |--------|------|---------------|------------|
-| `RepoMan.Git.Behaviour` | `lib/repo_man/git/behaviour.ex` | 9-callback contract for git interface. | Nothing |
-| `RepoMan.Git` | `lib/repo_man/git.ex` | Shell-out implementation of Behaviour. | Nothing |
-| `RepoMan.RepoStatus` | `lib/repo_man/repo_status.ex` | Status struct with derived fields. | Nothing (pure data) |
-| `RepoMan.RepoDiscovery` | `lib/repo_man/repo_discovery.ex` | Scans filesystem for git repos. | @git_module |
-| `RepoMan.RepoServer` | `lib/repo_man/repo_server.ex` | GenServer per repo. Holds state, serializes ops, polls git status on a configurable interval. | @git_module, RepoStatus, PubSub, TaskSupervisor |
-| `RepoMan.Dashboard` | `lib/repo_man/dashboard.ex` | Pure functions: banner state, summary counts, time formatting. | RepoStatus (data only) |
-| `RepoMan.RepoSupervisor` | `lib/repo_man/repo_supervisor.ex` | DynamicSupervisor. Discovers + starts RepoServers. Dispatch helpers for name-based server lookup. | RepoServer, RepoDiscovery, Registry |
-| `RepoManWeb.RepoCard` | `lib/repo_man_web/components/repo_card.ex` | Function components for all 7 card types + shared button components. | Dashboard (format_time) |
-| `RepoManWeb.DashboardLive` | `lib/repo_man_web/live/dashboard_live.ex` | LiveView coordinator. Mounts, handles events, dispatches to card components. | PubSub, RepoSupervisor, Dashboard, RepoCard |
+| <!-- CUSTOMIZE --> | | | |
 
 ## Layer Dependencies
 
-Dependencies flow strictly downward:
+<!-- Show your architectural layers and dependency direction.
+     Dependencies must flow strictly in one direction. -->
 
 ```
-DashboardLive (UI)            ← F17-F28
-      ↓ subscribes via PubSub
-RepoSupervisor (Runtime)      ← F16
-      ↓ starts
-RepoServer (Service)          ← F12-F15
-      ↓ calls via @git_module
-Git + RepoStatus (Foundation) ← F04-F11
+[UI Layer]              ← Features F??-F??
+      ↓
+[Service Layer]         ← Features F??-F??
+      ↓
+[Foundation Layer]      ← Features F??-F??
 ```
 
-Cross-cutting: `Phoenix.PubSub`, `Task.Supervisor`, `Registry`
-
-## Git Module Injection
-
-The Git module is injected via application config for Mox testability:
-
-```elixir
-# In modules that call Git:
-@git_module Application.compile_env(:repo_man, :git_module, RepoMan.Git)
-
-# config/test.exs:
-config :repo_man, git_module: RepoMan.Git.Mock
-
-# config/dev.exs and config/config.exs:
-# (no config needed — defaults to RepoMan.Git)
-```
-
-All modules that call Git functions use `@git_module.function()` instead of
-`RepoMan.Git.function()`. This allows Mox to replace the real implementation.
-
-### Mox in Multi-Process Tests
-
-For GenServer/Task tests, use `Mox.set_mox_global` or `Mox.allow/3`:
-
-```elixir
-Mox.set_mox_global(context)  # in setup — allows all processes
-# or
-Mox.allow(RepoMan.Git.Mock, self(), pid)  # specific process
-```
+Cross-cutting: [LIST CROSS-CUTTING CONCERNS]
 
 ## Key Design Decisions
 
-- **One GenServer per repo:** Crash isolation + operation serialization
-- **Registry for named lookup:** `{:via, Registry, {RepoMan.RepoRegistry, name}}`
-- **System.cmd/3 for git:** Respects user's git config, SSH keys, credentials
-- **No database:** All truth comes from git. GenServer state is a cache.
-- **PubSub for real-time:** GenServers broadcast on topic "repos", LiveView subscribes
-- **Task.Supervisor for git commands:** Crash isolation for long-running ops
-- **Timeouts:** Network ops 60s, local ops 10s. On timeout, OS process killed.
-- **start_repos_on_boot:** Config flag (default true) skips auto-start in test
-- **Periodic polling:** RepoServer polls git status every N seconds (default 2s, configurable via `poll_interval` config). Broadcasts only on change. Skips during in-progress ops. LiveView controls the interval via `set_poll_interval/2`.
-- **Host path mapping:** `REPOMAN_HOST_PATH` env var provides the host-side repos path for UI links (container path `/shred` differs from host path `~/src/shred`)
+<!-- Document decisions that agents need to understand.
+     Each decision: what was chosen and WHY. -->
 
-## Docker Architecture
+- **[DECISION]:** [rationale]
 
+## Container Architecture
+
+<!-- If using Docker, show the container topology. -->
 ```
-┌─────────────────────────────────┐
-│  Docker Container               │
-│  elixir:1.19-slim + git        │
-│                                 │
-│  /app  ← ./repo_man (mounted)  │
-│  /shred ← ~/src/shred (mounted)│
-│                                 │
-│  mix phx.server → :4000        │
-└────────────┬────────────────────┘
-             │ port 4000
-             ↓
-        localhost:4000 (browser)
-             │ fetch() on ↗ click
-             ↓
-        localhost:4001 (terminal-opener.py, host-side)
-             │ open -a Ghostty.app via AppleScript
-             ↓
-        Ghostty (new tab at repo dir)
+[YOUR CONTAINER DIAGRAM]
 ```
-
-- Source mounted for live code reload
-- `~/src/shred/` mounted read-write (fetch/pull modify .git/)
-- `REPOMAN_PATH=/shred` environment variable (container-side)
-- `REPOMAN_HOST_PATH=$HOME/src/shred` environment variable (host-side, for UI links)
-- `scripts/terminal-opener.py` runs on the host (not in Docker) — opens Ghostty tabs via AppleScript
