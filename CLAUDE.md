@@ -14,7 +14,7 @@ is agent-agnostic; the reference implementation uses Claude Code.
 
 - **Framework** (root): Process docs, agent definitions, skills, hooks
 - **Templates** (`template/`): Starter files for new KEEL projects
-- **Examples** (`examples/`): Domain invariant patterns + Repo Man case study
+- **Examples** (`examples/`): Domain invariant patterns
 - **Installer** (`scripts/install.sh`): Install KEEL into any project directory
 - **Legacy Bootstrap** (`scripts/bootstrap.sh`): In-place placeholder replacement
 
@@ -27,7 +27,7 @@ is agent-agnostic; the reference implementation uses Claude Code.
 docs/process/       Process guides (THE-KEEL-PROCESS, QUICK-START, etc.)
 docs/               Framework-level templates (north-star, specs, design docs)
 template/           Starter files copied by bootstrap.sh
-examples/           Domain invariant examples + Repo Man case study
+examples/           Domain invariant examples
 scripts/            Bootstrap and utilities
 ```
 
@@ -46,18 +46,7 @@ When modifying KEEL itself (agents, process docs, templates):
 - Read [docs/process/THE-KEEL-PROCESS.md](docs/process/THE-KEEL-PROCESS.md) for full context
 - Agent definitions are in `.claude/agents/` — each is a standalone markdown file
 - Templates in `template/` have `<!-- CUSTOMIZE -->` markers for project-specific sections
-- The Repo Man example (`examples/repo-man/`) serves as the reference implementation
 - Domain invariant examples (`examples/domain-invariants/`) show different safety patterns
-
-## Working on the Repo Man Example
-
-```bash
-cd examples/repo-man
-docker compose up                     # starts dev server at localhost:4000
-docker compose run --rm app mix test  # run tests
-```
-
-See [examples/repo-man/CLAUDE.md](examples/repo-man/CLAUDE.md) for Repo Man-specific instructions.
 
 ## Vision
 

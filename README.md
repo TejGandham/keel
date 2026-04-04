@@ -78,9 +78,11 @@ rm -rf /tmp/keel
 
 Installs 14 agents, 3 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
 
+**First thing to do:** open `CLAUDE.md` and fill in the `<!-- CUSTOMIZE -->` sections — this is how KEEL learns about your project. Every agent reads CLAUDE.md first.
+
 ```
  After install:
- 1. CLAUDE.md            ← fill in <!-- CUSTOMIZE --> sections
+ 1. CLAUDE.md            ← FIRST — teach KEEL about your project
  2. docs/north-star.md   ← your project vision
  3. safety-auditor.md    ← your domain invariants
  4. Write a spec         ← docs/product-specs/
@@ -92,7 +94,7 @@ Installs 14 agents, 3 skills, 2 hooks, and doc structure into your project. Neve
 
 ## Case Study
 
-[`examples/repo-man/`](examples/repo-man/) — 31 features, ~3000 LOC Elixir, 250+ tests, all spec-driven. [Lessons learned →](examples/repo-man/CASE-STUDY.md)
+[Repo Man](https://github.com/anthropics/repo-man) — 31 features, ~3000 LOC Elixir, 250+ tests, all spec-driven. A complete Phoenix LiveView dashboard built entirely with KEEL.
 
 ## Docs
 
