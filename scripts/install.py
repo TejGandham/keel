@@ -4,7 +4,7 @@
 Usage (from your project root):
     python3 /path/to/keel/scripts/install.py
     OR
-    curl -fsSL https://raw.githubusercontent.com/anthropics/keel/main/scripts/install.py | python3
+    curl -fsSL https://raw.githubusercontent.com/TejGandham/keel/main/scripts/install.py | python3
 
 What it does:
     1. Copies .claude/agents/, .claude/skills/, .claude/hooks/ into your project
@@ -38,7 +38,7 @@ def resolve_keel_source() -> Path:
     tmp = Path(tempfile.mkdtemp())
     print("Downloading KEEL...")
     subprocess.run(
-        ["git", "clone", "--depth", "1", "--quiet", "https://github.com/anthropics/keel.git", str(tmp)],
+        ["git", "clone", "--depth", "1", "--quiet", "https://github.com/TejGandham/keel.git", str(tmp)],
         check=True,
     )
     print("Downloaded.")

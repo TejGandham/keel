@@ -10,7 +10,7 @@ The installer bundles `keel-uninstall.py` into your project:
 
 ```bash
 cd your-project
-.claude/keel-uninstall.py
+python3 .claude/keel-uninstall.py
 ```
 
 The script only removes known KEEL files by exact name. It prompts before

@@ -32,8 +32,8 @@ The framework catches you when ad-hoc prompting stops scaling.
 mkdir my-project && cd my-project && git init
 
 # Install KEEL into your project
-git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
-/tmp/keel/scripts/install.py
+git clone --depth 1 https://github.com/TejGandham/keel.git /tmp/keel
+python3 /tmp/keel/scripts/install.py
 rm -rf /tmp/keel
 ```
 The installer prompts for project name, stack, and description. It copies
