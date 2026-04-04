@@ -459,11 +459,11 @@ equivalent tiers.
 | **high** | Design decisions, gate verdicts, deep analysis | opus | Your platform's highest-tier model |
 | **standard** | Routing, pattern-following, verification | sonnet | Your platform's standard-tier model |
 
-**High reasoning agents:** arch-advisor, implementer, spec-reviewer, safety-auditor,
-backend-designer, frontend-designer, researcher (7 agents)
+**High reasoning agents:** pre-check, arch-advisor, implementer, spec-reviewer,
+safety-auditor, backend-designer, frontend-designer, researcher (8 agents)
 
-**Standard reasoning agents:** pre-check, test-writer, docker-builder,
-scaffolder, config-writer, landing-verifier, doc-gardener (7 agents)
+**Standard reasoning agents:** test-writer, docker-builder, scaffolder,
+config-writer, landing-verifier, doc-gardener (6 agents)
 
 ### The Four Pipeline Variants
 

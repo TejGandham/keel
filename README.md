@@ -51,9 +51,9 @@ graph TD
     style Esc fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
-> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and review the result. Everything in between is autonomous.
+> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and review the result. Everything in between is agents — you decide how much oversight to apply as trust builds.
 
-If the code doesn't match the spec, it goes back and gets fixed — automatically. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing.
+If the code doesn't match the spec, it goes back and gets fixed. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing. You start with full oversight and reduce it as the gates earn your trust.
 
 After each feature lands, a **garbage collection** pass updates docs, fixes drift, and encodes lessons learned back into the repo. The next feature starts with better specs, tighter constraints, and sharper invariants — because the repo got smarter from the last one.
 

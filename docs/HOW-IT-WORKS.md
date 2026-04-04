@@ -214,8 +214,8 @@ graph LR
 
 | Tier | Agents | Why |
 |-|-|-|
-| **High reasoning** | arch-advisor, implementer, spec-reviewer, safety-auditor, designers, researcher | Design decisions, gate verdicts, deep analysis |
-| **Standard reasoning** | pre-check, test-writer, landing-verifier, doc-gardener, scaffolder, config-writer, docker-builder | Classification, pattern-following, verification |
+| **High reasoning** | pre-check, arch-advisor, implementer, spec-reviewer, safety-auditor, designers, researcher | Routing decisions, design, gate verdicts, deep analysis |
+| **Standard reasoning** | test-writer, landing-verifier, doc-gardener, scaffolder, config-writer, docker-builder | Pattern-following, verification |
 
 See [THE-KEEL-PROCESS.md](process/THE-KEEL-PROCESS.md) for the full agent
 roster with inputs, outputs, and tool access.

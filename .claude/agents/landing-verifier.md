@@ -21,17 +21,19 @@ You handle ALL pipeline types. Check the handoff file to determine which variant
 - Verify the upstream agent's reported commands succeeded.
 
 ### Backend
-- Unit tests exist and pass.
+- Run the FULL project test suite — not just the feature's tests.
+  This catches cross-feature regressions (Feature 15 breaking Feature 8).
   <!-- CUSTOMIZE: e.g., docker compose run --rm app mix test, npm test, pytest -->
 - Spec-reviewer section in handoff shows CONFORMANT.
 - Safety-auditor section shows PASS (if applicable).
 
 ### Frontend
-- Unit tests exist and pass.
+- Run the FULL project test suite.
+  <!-- CUSTOMIZE: e.g., docker compose run --rm app npm test, pytest -->
 - Spec-reviewer section shows CONFORMANT.
 
 ### Cross-cutting
-- Unit tests exist and pass.
+- Run the FULL project test suite.
 
 ## Your Role
 
