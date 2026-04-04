@@ -28,6 +28,7 @@ designer_needed:       # YES | NO
 researcher_needed:     # YES | NO
 safety_auditor_needed: # YES | NO
 arch_advisor_needed:         # YES | NO
+implementer_needed:          # YES | NO
 
 # Gate verdicts (set by orchestrator after each gate agent)
 spec_review_verdict:   # CONFORMANT | DEVIATION
@@ -35,6 +36,11 @@ spec_review_attempt: 0
 safety_verdict:        # PASS | VIOLATION
 safety_attempt: 0
 arch_advisor_verdict:        # SOUND | UNSOUND (verify mode only)
+
+# Arch-advisor re-run counters (separate from initial gate passes)
+# Used when arch-advisor UNSOUND triggers a re-run of gates
+arch_retry_spec_review_attempt: 0
+arch_retry_safety_attempt: 0
 ---
 
 ## pre-check
