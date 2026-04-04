@@ -18,7 +18,12 @@ deleting and shows what will be kept. Or follow the manual steps below.
 
 ## What Gets Removed
 
-### KEEL agents (safe to delete — these are KEEL framework files)
+### KEEL agents
+
+**Warning:** If you customized any agent files (added domain invariants to
+`safety-auditor.md`, test commands to `test-writer.md`, etc.), those
+customizations live in these files. Back them up or extract your
+`<!-- CUSTOMIZE -->` sections before deleting.
 
 ```bash
 rm -f .claude/agents/pre-check.md

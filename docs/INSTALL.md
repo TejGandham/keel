@@ -106,6 +106,16 @@ docs/
 5. **`docs/product-specs/`** — Write your first spec
 6. **Run:** `/keel-pipeline my-feature docs/product-specs/my-spec.md`
 
+## Important: Your Customizations Live in Agent Files
+
+KEEL agents contain `<!-- CUSTOMIZE -->` sections where you add your
+project-specific rules (domain invariants in `safety-auditor.md`, test
+commands in `test-writer.md`, source layout in `pre-check.md`, etc.).
+
+**These customizations live in the same files as the framework prompts.**
+If you overwrite agents during an update, you will lose your customizations.
+Always back up before updating and diff before overwriting.
+
 ## Updating KEEL
 
 The installer is a one-time copy. To update agents or skills later:
