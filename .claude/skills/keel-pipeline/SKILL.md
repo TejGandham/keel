@@ -91,19 +91,14 @@ If pre-check set `Implementer needed: NO`, skip to Step 6 (spec-reviewer) or Ste
 Otherwise, dispatch `implementer` with the handoff file. It writes code to pass the tests. Never modifies tests. Append output to handoff file.
 
 ### Step 5: Code review
-Before dispatching spec-reviewer, do a code quality review:
-1. Get the git range: `BASE_SHA` (commit before test-writer started) and `HEAD_SHA` (current HEAD)
-2. Run `git diff --stat $BASE_SHA..$HEAD_SHA` to see what changed
-3. Run `git diff $BASE_SHA..$HEAD_SHA` to read the actual diff
-4. Review against these criteria:
-   - **Requirements:** Does implementation match the spec? Anything missing or extra?
-   - **Code quality:** Clean separation of concerns? DRY? Edge cases?
-   - **Testing:** Tests verify behavior (not just mocks)? Edge cases covered?
-   - **Architecture:** Sound design? Follows existing patterns?
-5. Categorize findings: **Critical** (must fix), **Important** (should fix), **Minor** (nice to have)
-6. If Critical or Important issues found, send findings back to
-   `implementer` with specific file:line references. Implementer fixes.
-   You do NOT fix code yourself — you orchestrate.
+Dispatch `code-reviewer` with the handoff file. It reviews code quality —
+DRY, patterns, edge cases, architecture fit. Its output starts with
+`**Verdict:** APPROVED` or `**Verdict:** CHANGES NEEDED`.
+
+If CHANGES NEEDED with CRITICAL or IMPORTANT findings: send findings
+back to `implementer`. Implementer fixes. Re-run code-reviewer.
+Max 1 code review loop — if still CHANGES NEEDED, proceed to
+spec-reviewer anyway (spec conformance is the harder gate).
 
 ### Step 6: Spec-reviewer (max 2 loops)
 Dispatch `spec-reviewer` with the handoff file. It verifies code conforms

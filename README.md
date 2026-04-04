@@ -76,7 +76,7 @@ git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
 rm -rf /tmp/keel
 ```
 
-Installs 14 agents, 3 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
+Installs 15 agents, 3 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
 
 **First thing to do:** teach KEEL about your project. Paste this prompt into your AI agent:
 

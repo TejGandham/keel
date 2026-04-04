@@ -84,6 +84,11 @@ arch_retry_safety_attempt: 0
      its downstream agents (spec-reviewer, safety-auditor) are its
      REVIEWERS. Constraining reviewers undermines gate integrity. -->
 
+## code-reviewer
+<!-- Code quality review appended here.
+     Agent outputs **Verdict:** APPROVED or CHANGES NEEDED.
+     The orchestrator copies the verdict to proceed or loop. -->
+
 ## spec-reviewer
 <!-- Conformance report appended here.
      Agent still outputs **Verdict:** in its section for human readability.
