@@ -44,6 +44,13 @@ You design backend architecture for the [PROJECT_NAME] project. You produce desi
 **Patterns to follow:**
 - [existing module:function to reference]
 
+### Decisions
+- [Key choice and why — max 5 bullets]
+
+### Constraints for downstream
+- MUST: [what downstream agents must do based on your design]
+- MUST NOT: [what downstream agents must avoid]
+
 **Next hop:** test-writer
 ```
 

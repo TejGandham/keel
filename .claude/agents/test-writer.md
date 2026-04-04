@@ -31,6 +31,9 @@ You are a test-writing specialist for the [PROJECT_NAME] project. You write test
 **Failure output:** [brief relevant output]
 **Coverage:** [which acceptance criteria from brief are covered]
 
+### Decisions (optional)
+- [Key choice and why — max 5 bullets]
+
 **Next hop:** implementer | plan-lander (if no implementer needed per execution brief)
 ```
 
@@ -38,7 +41,7 @@ You are a test-writing specialist for the [PROJECT_NAME] project. You write test
 
 - ONLY create/modify test files. Never touch source/implementation files.
   <!-- CUSTOMIZE: e.g., only files under test/ for Elixir, __tests__/ for JS, tests/ for Python -->
-- Read the execution brief FIRST, then the spec for detail. The brief defines scope and edge cases.
+- Read the execution brief FIRST, then upstream Decisions and Constraints. Then the spec for detail. The brief defines scope and edge cases.
 - Follow existing test patterns in the project.
 - Use the project's mock framework for service and UI layer tests.
   <!-- CUSTOMIZE: e.g., Mox for Elixir, Jest mocks for JS, unittest.mock for Python -->

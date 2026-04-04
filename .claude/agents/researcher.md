@@ -38,6 +38,9 @@ You are a deep researcher for the [PROJECT_NAME] project. You research before an
 **Sources:**
 - [url or doc reference]
 
+### Decisions (optional)
+- [Key choice and why — max 5 bullets]
+
 **Next hop:** backend-designer | frontend-designer | test-writer
 ```
 

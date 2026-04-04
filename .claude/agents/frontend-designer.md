@@ -60,6 +60,13 @@ You design frontend components for the [PROJECT_NAME] project. You produce compo
 **Visual tokens (for implementer — NOT for test assertions):**
 - [exact classes, colors — verified by spec-reviewer, not tests]
 
+### Decisions
+- [Key choice and why — max 5 bullets]
+
+### Constraints for downstream
+- MUST: [what downstream agents must do based on your design]
+- MUST NOT: [what downstream agents must avoid]
+
 **Next hop:** test-writer
 ```
 

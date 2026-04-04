@@ -25,21 +25,31 @@ You are a spec conformance reviewer for the [PROJECT_NAME] project. You compare 
 ```
 ## Spec Conformance: [Feature Name]
 
+**Verdict:** CONFORMANT | DEVIATION
+**Attempt:** [1|2 — which spec-review pass this is, read from handoff]
+
 **Spec:** [file:section]
 **Code:** [file(s) reviewed]
 **Tests:** [file reviewed]
-
-**Status:** CONFORMANT | DEVIATIONS FOUND
 
 **Deviations (if any):**
 - [CRITICAL|MAJOR|MINOR] [file:line] — spec says [X], code does [Y]
   Spec clause: [exact spec reference]
 
+**Notes (if CONFORMANT with minor items):**
+- [MINOR] [item] — not blocking, can fix later
+
 **Coverage gaps (if any):**
 - [spec requirement not tested]
 
-**Next hop:** safety-auditor | plan-lander | implementer (if critical deviations)
+**Next hop:** safety-auditor | plan-lander | implementer (if DEVIATION)
 ```
+
+## Verdict Rules
+
+- **DEVIATION** — only for CRITICAL or MAJOR findings. Burns a loop attempt.
+- **CONFORMANT** — no CRITICAL or MAJOR findings. MINOR-only items go in
+  the `**Notes:**` section and do NOT trigger a loop back to implementer.
 
 ## What to Check
 

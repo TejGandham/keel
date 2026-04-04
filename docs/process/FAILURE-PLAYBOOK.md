@@ -32,6 +32,7 @@ Pipeline stalls or produces bad output
   │    → NEVER skip. Fix the violation.
   │    → Send back to implementer with auditor's findings
   │    → Re-run safety-auditor after fix. No shortcuts.
+  │    → If 3+ loops: escalate to human. The invariant may need review.
   │
   ├─ pre-check routed wrong? (skipped designer when one was needed)
   │    → Insert the missing stage now

@@ -59,10 +59,19 @@ pre-check → test-writer → implementer → plan-lander
 If the feature is a bootstrap feature, dispatch the specific bootstrap agent (docker-builder, scaffolder, or config-writer). It produces its report in the handoff file. Skip directly to Step 8 (plan-lander). Bootstrap features do not use pre-check, designers, test-writer, or implementer.
 
 ### Step 1: Pre-check (standard pipeline only)
-Dispatch the `pre-check` agent with the feature spec path. It produces an execution brief in the handoff file. It tells you:
-- Whether designer is needed
-- Whether researcher is needed
-- Whether safety-auditor is needed (YES if feature touches domain-critical modules)
+Dispatch the `pre-check` agent with the feature spec path. It produces an
+execution brief in the handoff file. Read the brief for routing decisions:
+- **Intent** and **Complexity** — determines which optional agents run
+- **Designer needed** — YES/NO (trivial complexity → always NO)
+- **Researcher needed** — YES/NO (research intent → always YES)
+- **Safety-auditor needed** — YES/NO
+- **Oracle needed** — YES if complexity is architecture-tier
+
+### Step 1.7: Oracle consultation (if architecture-tier)
+If pre-check set `Oracle needed: YES` or `Complexity: architecture-tier`,
+dispatch `oracle` agent in CONSULT mode with the execution brief and spec.
+Oracle provides architecture-level guidance before design/implementation.
+Append output to `## oracle-consultation` in the handoff file.
 
 ### Step 1.5: Researcher (if needed)
 If pre-check set `Research needed: YES`, dispatch `researcher` with the specific questions from the execution brief. Append research brief to handoff file. Then continue to Step 2.
@@ -90,11 +99,42 @@ Before dispatching spec-reviewer, do a code quality review:
 5. Categorize findings: **Critical** (must fix), **Important** (should fix), **Minor** (nice to have)
 6. If Critical or Important issues found, fix them before proceeding.
 
-### Step 6: Spec-reviewer
-Dispatch `spec-reviewer` with the handoff file. It verifies code conforms to specs. If it finds deviations, go back to Step 4.
+### Step 6: Spec-reviewer (max 2 loops)
+Dispatch `spec-reviewer` with the handoff file. It verifies code conforms
+to specs. Its output starts with `**Verdict:** CONFORMANT` or
+`**Verdict:** DEVIATION`.
+
+Before dispatching, set `spec-review-attempt: N` in the handoff file
+(starting at 1).
+
+If DEVIATION:
+- **Attempt 1:** Send specific deviation findings back to implementer.
+  Implementer fixes. Re-run spec-reviewer (set attempt to 2).
+- **Attempt 2:** If still DEVIATION, STOP. Do not loop again.
+  Escalate to human: either decompose the feature or fix the spec.
+  See docs/process/FAILURE-PLAYBOOK.md.
 
 ### Step 7: Safety-auditor (if feature touches domain-critical modules)
-Dispatch `safety-auditor` with the handoff file. If violations found, go back to Step 4.
+Dispatch `safety-auditor` with the handoff file. Its output starts with
+`**Verdict:** PASS` or `**Verdict:** VIOLATION`.
+
+If VIOLATION: send findings to implementer. Fix. Re-run safety-auditor.
+Safety violations are never negotiable — loop until PASS.
+**Escalation ceiling:** If safety-auditor loops 3+ times, STOP.
+Escalate to human — the invariant rule itself may need review, or the
+spec and invariant are genuinely incompatible.
+
+### Step 7.5: Oracle verification (if pre-check classified architecture-tier)
+If pre-check set `Oracle needed: YES`, dispatch `oracle` in VERIFY mode
+for independent structural review before plan-lander. Oracle evaluates
+whether the implementation is architecturally sound — not just spec-conformant.
+
+If Oracle's verdict is UNSOUND:
+- Send findings to implementer with specific architecture issues
+- Implementer fixes, re-run spec-reviewer, then Oracle verification again
+- Max 1 Oracle verification retry. If still UNSOUND, escalate to human.
+
+Append output to `## oracle-verification` in the handoff file.
 
 ### Step 8: Plan-lander
 Dispatch `plan-lander` with the handoff file. It runs tests and verifies everything landed. If BLOCKED, fix blockers and re-run.
@@ -121,3 +161,10 @@ Only after plan-lander reports LANDED. Present the commit plan to the human for 
 - **Spec-reviewer and safety-auditor are gates.** If they find issues, loop back to implementer.
 - **You don't write code.** Agents write code. You orchestrate.
 - **Docs drive code.** If there's no spec, there's no pipeline. Write the spec first.
+- **Structured verdicts.** Spec-reviewer and safety-auditor output
+  `**Verdict:** CONFORMANT|DEVIATION` or `**Verdict:** PASS|VIOLATION`
+  as their first line. The pipeline branches on this.
+- **Max 2 spec-review loops.** After 2 DEVIATION verdicts, escalate.
+  Don't try harder — decompose or fix upstream.
+- **Downstream reads upstream.** Each agent reads upstream Decisions and
+  Constraints FIRST before starting its own work.
