@@ -1,53 +1,49 @@
 # Core Beliefs
 
-Non-negotiable principles that govern every decision in Repo Man.
+<!-- DELETE AFTER FILLING: Replace all sections with your project's principles.
+     Keep the structure — agents reference these sections by name.
+     Remove instruction comments when done. -->
 
-## Safety Above All
+Non-negotiable principles that govern every decision in [PROJECT_NAME].
 
-- Never force-pull, never rebase from UI, never switch branches.
-- `--ff-only` always. If it can't fast-forward, fail cleanly.
-- Never modify the working tree beyond fast-forward pulls.
-- Dirty repos are read-only. Period.
+## Domain Safety
 
-## Git Is Truth
+<!-- CUSTOMIZE: What are your domain's non-negotiable safety rules?
+     Examples:
+     - Git: Never force-pull, never switch branches, --ff-only always.
+     - API: Validate at boundaries, auth every endpoint, no raw SQL.
+     - Data: Idempotent transforms, schema validation, no silent data loss.
+     - Financial: Audit trail on mutations, no float currency, double-entry.
+     See examples/domain-invariants/ for detailed templates. -->
 
-- No database. No persistence. All state derived from git.
-- If git says it, we display it. If git doesn't say it, we don't guess.
-- GenServer state is a cache of git state, not a source of truth.
+- [YOUR SAFETY RULE 1]
+- [YOUR SAFETY RULE 2]
+- [YOUR SAFETY RULE 3]
 
-## Glanceable Over Detailed
+## Source of Truth
 
-- The dashboard answers one question: "Is my codebase current?"
-- 2-second rule: status must be scannable in under 2 seconds.
-- Color is information, not decoration.
-- Absence of color = everything is fine.
-- All details visible at a glance — no click-to-reveal. This is a cockpit.
+<!-- What is the authoritative data source? How do you handle state? -->
 
-## Docker Is The Runtime
+- [YOUR DATA PRINCIPLE]
 
-- No local Elixir/Erlang installation. Ever.
+## Design Philosophy
+
+<!-- What's the user experience philosophy? -->
+
+- [YOUR DESIGN PRINCIPLE]
+
+## Container / Runtime
+
+<!-- Non-negotiable runtime constraints -->
+
+- Docker for everything. No local runtime dependencies.
 - If it doesn't work in Docker, it doesn't work.
-- Container must have git and access to `~/src/shred/` via volume mount.
-
-## Brand Personality
-
-- Playful, sharp, confident.
-- Subtle wit in microcopy. Clear and unambiguous in data.
-- Think "the friend who's really good at git and has good taste."
-- Reference: Linear, Vercel dashboard. Anti-reference: Bootstrap admin panels.
-
-## Design Tokens
-
-- Dark-first via `data-theme` attribute with manual toggle, light as equal citizen.
-- System sans-serif for UI. Monospace only for git data.
-- Polished minimal. Earn every element — no decorative chrome.
 
 ## Claude Is The Builder
 
 - Claude is responsible for design, development, testing, documentation, maintenance.
-- Tej steers. Claude executes.
+- The human steers. Claude executes.
 - Every decision must be traceable to a document in this repo.
-- When in doubt, ask. When confident, explain in a commit message.
 - Repository is the system of record. If it's not here, it doesn't exist.
 
 ## Testing Strategy: Spec-Driven Testing
@@ -58,75 +54,67 @@ a corresponding test. When specs change, tests change first.
 ### Layer 0: Spec Consistency
 
 Docs must not contradict each other. Before writing tests, verify that
-product-specs, design-docs, exec-plans, and ARCHITECTURE.md agree. Spec
-drift in an agent-built project is as dangerous as a code bug.
+product-specs, design-docs, exec-plans, and ARCHITECTURE.md agree.
 
 ### Layer 1: Safety Invariants
 
-From core-beliefs + mvp-spec section 4.4. These are the first tests written,
-last tests deleted. **Must use real git** against temp directories — mocking
-safety means testing your mock.
+<!-- CUSTOMIZE: What safety tests MUST use real I/O? Never mock safety. -->
 
-- No git command uses `--force`
-- Pull always uses `--ff-only`
-- Pull rejected when dirty, diverged, not on default branch, or not behind
-- No command modifies working tree beyond ff-only pull
+From core-beliefs safety rules. These are the first tests written,
+last tests deleted. **Must use real I/O** — mocking safety means testing your mock.
 
-### Layer 2a: Git Integration (Slow)
+- [YOUR SAFETY TEST 1]
+- [YOUR SAFETY TEST 2]
 
-Real `System.cmd` calls against temp repos created by `GitBuilder`.
-Tagged `@tag :integration` so fast loops can skip them.
+### Layer 2a: Integration (Slow)
 
-- `git fetch --all --prune` produces expected state changes
-- Timeout enforcement (60s network, 10s local)
-- Parse failure resilience (rebase in progress, detached HEAD, locale quirks)
+<!-- CUSTOMIZE: What integration tests run real external calls? -->
+
+Real external calls against test fixtures/environments.
+Tagged as slow so fast loops can skip them.
+
+- [YOUR INTEGRATION TEST CATEGORY]
 
 ### Layer 2b: Pure Domain Logic (Fast)
 
-No I/O. Tests for `RepoStatus` derivations and pure functions.
+No I/O. Tests for derived fields, pure functions, business rules.
 
-- `pull_eligible?` derived correctly from on_default? + dirty_count + ahead + behind
-- Status priority ordering: error > diverged > dirty > topic > behind > clean
-- Use `StreamData` for property-based invariant testing where applicable
+- [YOUR PURE LOGIC TEST CATEGORY]
 
 ### Layer 3: Service / Process Behavior
 
-GenServer serialization, PubSub broadcasts, Task.Supervisor crash isolation.
-Uses `Mox` with `RepoMan.Git.Behaviour` — no real git in these tests.
+<!-- CUSTOMIZE: What gets mocked at the service layer? -->
 
-- GenServer serializes operations (spam fetch events → only one runs)
-- PubSub broadcasts on state changes
-- Task timeout triggers error state and broadcast
-- Concurrent Fetch All doesn't spawn duplicate tasks per repo
+Service behavior with mocked external dependencies.
+Uses your mock framework for deterministic, fast tests.
 
-### Layer 4: LiveView / Component Behavior
+- [YOUR SERVICE TEST CATEGORY]
 
-Uses `Phoenix.LiveViewTest` and `render_component/2`. Mox for git layer —
-fast and deterministic.
+### Layer 4: UI / Component Behavior
 
-- Clean card: neutral border, no buttons, no pill
-- Behind card: blue pill, enabled Pull button
-- Dirty card: orange pill, file list (max 8 + "+N more")
-- Banner states: all current (mint), behind (amber), error (red)
-- Banner holds previous state during in-progress ops
-- Fetch All shows progress, disables button
-- Open Terminal link present on every card
+<!-- CUSTOMIZE: What UI testing approach? -->
 
-### Layer 5: Acceptance + Docker Smoke
+UI behavior with mocked service layer. Fast and deterministic.
 
-Validates the full stack boots correctly inside Docker.
+- [YOUR UI TEST CATEGORY]
 
-- `docker compose build` succeeds
-- `docker compose run --rm app mix test` passes
-- `docker compose up` + `curl localhost:4000` returns 200
-- `REPOMAN_PATH` validated at `Application.start` — crash if inaccessible
-- Test suite uses `/tmp` for repos, never touches real `~/src/shred/`
+### Layer 5: Acceptance + Container Smoke
+
+Validates the full stack boots correctly inside the container.
+
+- Container builds successfully
+- Test suite passes inside container
+- App boots and responds to health check
+<!-- CUSTOMIZE: Add project-specific acceptance criteria -->
 
 ### Testing Infrastructure
 
-- **`RepoMan.Git.Behaviour`**: Define behaviour early. Real impl for Layers 1-2a.
-  Mox for Layers 3-4.
-- **`test/support/git_builder.ex`**: Shared helper to create temp repos in
-  specific states (`:clean`, `:dirty`, `:behind`, `:diverged`, `:topic_branch`).
-- **ExUnit tags**: `@tag :integration` for slow tests, `@tag :docker` for smoke.
-  Default `mix test` runs fast tests only. `mix test --include integration` for full suite.
+<!-- CUSTOMIZE: Define your test infrastructure early.
+     - Behaviour/interface for dependency injection
+     - Mock framework configuration
+     - Fixture/factory helpers
+     - Test tags for filtering -->
+
+- **[INTERFACE]**: Define interface early. Real impl for Layers 1-2a. Mocks for Layers 3-4.
+- **[FIXTURE HELPER]**: Shared helper to create test scenarios.
+- **[TEST TAGS]**: Tags for filtering slow vs fast tests.

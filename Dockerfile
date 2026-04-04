@@ -1,23 +1,30 @@
-FROM elixir:1.19-slim
+# CUSTOMIZE: Replace this with your stack's base image and dependencies.
+#
+# Examples:
+#   Elixir:  FROM elixir:1.19-slim
+#   Node:    FROM node:22-slim
+#   Python:  FROM python:3.13-slim
+#   Rust:    FROM rust:1.82-slim
 
-RUN apt-get update && \
-    apt-get install -y git inotify-tools curl && \
-    rm -rf /var/lib/apt/lists/* && \
-    git config --global --add safe.directory '*' && \
-    git config --global credential.helper store
+FROM ubuntu:24.04
 
-# Install GitHub CLI for git credential authentication
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
-    apt-get update && apt-get install -y gh && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN mix local.hex --force && \
-    mix local.rebar --force && \
-    mix archive.install hex phx_new --force
+# Install git (required for KEEL) + your stack's runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    # CUSTOMIZE: Add your stack's packages here
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-EXPOSE 4000
+# CUSTOMIZE: Copy dependency files and install
+# COPY package.json package-lock.json ./
+# RUN npm install
 
-CMD ["mix", "phx.server"]
+# CUSTOMIZE: Copy source
+COPY . .
+
+# CUSTOMIZE: Set your app's start command
+# CMD ["npm", "start"]
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["echo", "CUSTOMIZE: Set your start command in Dockerfile"]

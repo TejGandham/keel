@@ -1,4 +1,5 @@
-# Design Docs
+# Design Docs Index
 
-- [UI Design](ui-design.md) — Card anatomy, colors, typography, spacing, theme support
-- [Core Beliefs](core-beliefs.md) — Non-negotiable architectural principles
+- [Core Beliefs](core-beliefs.md) — Non-negotiable principles + testing strategy
+- [UI Design](ui-design.md) — Design tokens, components, responsive rules (required for frontend pipeline)
+<!-- CUSTOMIZE: Add additional design docs as they're created -->

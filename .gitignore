@@ -1,2 +1,11 @@
 .git-credentials
 .netrc
+.DS_Store
+.letta/
+
+# Elixir/Phoenix (for examples/repo-man/)
+_build/
+deps/
+*.ez
+*.beam
+erl_crash.dump
