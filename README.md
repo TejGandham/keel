@@ -23,7 +23,7 @@ You write a spec. KEEL figures out what's needed, writes tests first, writes cod
 
 ```mermaid
 graph TD
-    Spec["🧑 You write a feature spec"] --> PC["🤖 Pre-check reads it,<br/>decides what's needed"]
+    Spec["🧑 <b>YOU WRITE A FEATURE SPEC</b>"] --> PC["🤖 Pre-check reads it,<br/>decides what's needed"]
     PC --> TW["🤖 Tests written<br/>from the spec"]
     TW --> IMP["🤖 Code written<br/>to pass the tests"]
     IMP --> Gate{"🤖 Does the code<br/>match the spec?"}
@@ -33,9 +33,9 @@ graph TD
     Safe -->|No violations| Land["🤖 Feature landed.<br/>Docs updated."]
     Safe -->|Violation found| Fix2["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix2 --> Safe
-    Land --> PR["🧑 You review the result"]
+    Land --> PR["🧑 <b>YOU REVIEW THE RESULT</b>"]
 
-    Gate -.-|"after 2 retries"| Esc["🧑 Escalated to you"]
+    Gate -.-|"after 2 retries"| Esc["🧑 <b>ESCALATED TO YOU</b>"]
     Safe -.-|"after 3 retries"| Esc
 
     style Spec fill:#1976D2,stroke:#0D47A1,color:#fff
@@ -53,7 +53,9 @@ graph TD
 
 > 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and review the result. Everything in between is autonomous.
 
-If the code doesn't match the spec, it goes back and gets fixed — automatically. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing. Knowledge flows forward through handoff files — Feature 20 benefits from Features 1–19.
+If the code doesn't match the spec, it goes back and gets fixed — automatically. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing.
+
+After each feature lands, a **garbage collection** pass updates docs, fixes drift, and encodes lessons learned back into the repo. The next feature starts with better specs, tighter constraints, and sharper invariants — because the repo got smarter from the last one.
 
 **[How it works in detail →](docs/HOW-IT-WORKS.md)**
 

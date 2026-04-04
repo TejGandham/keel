@@ -6,28 +6,35 @@ at every step.
 
 ## The Pipeline
 
+A feature flows through the pipeline like this:
+
 ```mermaid
 graph TD
-    Spec[Feature Spec] --> PC[pre-check<br/>classify intent + complexity]
-    PC -->|research needed| R[researcher]
-    PC -->|oracle needed| OC[oracle<br/>CONSULT]
+    Spec["🧑 <b>YOU WRITE A FEATURE SPEC</b>"] --> PC["🤖 Pre-check classifies it<br/>intent · complexity · routing"]
+    PC -->|"research needed"| R["🤖 Researcher investigates<br/>unknowns before building"]
+    PC -->|"architecture-tier"| OC["🤖 Oracle provides<br/>architecture guidance"]
     R --> OC
-    OC --> D[designer?<br/>backend / frontend]
-    PC -->|standard| D
-    D --> TW[test-writer<br/>RED]
-    TW --> IMP[implementer<br/>GREEN]
-    IMP --> CR[code review]
-    CR --> SR{spec-reviewer}
-    SR -->|CONFORMANT| SA{safety-auditor?}
-    SR -->|DEVIATION| IMP
-    SA -->|PASS| OV{oracle verify?}
-    SA -->|VIOLATION| IMP
-    OV -->|SOUND| PL[plan-lander<br/>LANDED]
-    OV -->|UNSOUND| IMP
+    OC --> D["🤖 Designer defines<br/>interfaces + data structures"]
+    PC -->|"standard"| D
+    D --> TW["🤖 Test-writer writes tests<br/>from the spec (RED)"]
+    TW --> IMP["🤖 Implementer writes code<br/>to pass tests (GREEN)"]
+    IMP --> CR["🤖 Code review checks<br/>quality + patterns"]
+    CR --> SR{"🤖 Spec-reviewer:<br/>does code match spec?"}
+    SR -->|"CONFORMANT"| SA{"🤖 Safety-auditor:<br/>any invariant violations?"}
+    SR -->|"DEVIATION"| FIX1["🤖 Findings → implementer fixes"]
+    FIX1 --> SR
+    SA -->|"PASS"| OV{"🤖 Oracle verify:<br/>architecture sound?"}
+    SA -->|"VIOLATION"| FIX2["🤖 Findings → implementer fixes"]
+    FIX2 --> SA
+    OV -->|"SOUND"| PL["🤖 Plan-lander verifies<br/>everything landed"]
+    OV -->|"UNSOUND"| FIX3["🤖 Findings → implementer fixes"]
+    FIX3 --> SR
+    PL --> GC["🤖 Doc-gardener sweeps<br/>for stale docs"]
+    GC --> PR["🧑 <b>YOU REVIEW THE RESULT</b>"]
 
-    SR -.-|max 2 loops| ESC1[escalate to human]
-    SA -.-|max 3 loops| ESC2[escalate to human]
-    OV -.-|max 1 retry| ESC3[escalate to human]
+    SR -.-|"after 2 retries"| ESC["🧑 <b>ESCALATED TO YOU</b>"]
+    SA -.-|"after 3 retries"| ESC
+    OV -.-|"after 1 retry"| ESC
 
     style Spec fill:#1976D2,stroke:#0D47A1,color:#fff
     style PC fill:#303F9F,stroke:#1A237E,color:#fff
@@ -40,49 +47,150 @@ graph TD
     style SR fill:#7B1FA2,stroke:#4A148C,color:#fff
     style SA fill:#7B1FA2,stroke:#4A148C,color:#fff
     style OV fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style FIX1 fill:#F57F17,stroke:#E65100,color:#000
+    style FIX2 fill:#F57F17,stroke:#E65100,color:#000
+    style FIX3 fill:#F57F17,stroke:#E65100,color:#000
     style PL fill:#388E3C,stroke:#1B5E20,color:#fff
-    style ESC1 fill:#D32F2F,stroke:#B71C1C,color:#fff
-    style ESC2 fill:#D32F2F,stroke:#B71C1C,color:#fff
-    style ESC3 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style GC fill:#546E7A,stroke:#37474F,color:#fff
+    style PR fill:#1976D2,stroke:#0D47A1,color:#fff
+    style ESC fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
-**The pipeline self-corrects.** Spec-reviewer finds a deviation → routes
-back to implementer with findings. Safety-auditor finds a violation →
-implementer fixes. After bounded retries, it escalates to you instead of
-thrashing.
+> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and review the result. Everything in between is autonomous.
 
-**Knowledge compounds.** Each agent reads upstream Decisions and Constraints
-before starting. Feature 20 benefits from everything learned building
-features 1–19.
+The pipeline **self-corrects**: when a gate finds a problem, it sends
+specific findings back to the implementer. After bounded retries, it
+escalates to you instead of thrashing.
+
+## How Agents Pass Context
+
+Each agent reads a shared **handoff file** — an append-only document that
+accumulates context as the feature flows through the pipeline.
+
+```mermaid
+graph LR
+    PC3["🤖 pre-check<br/>writes <b>Constraints</b><br/>MUST use X · MUST NOT do Y"] --> DE3["🤖 designer<br/>reads constraints, writes<br/><b>Decisions</b> + <b>Constraints</b>"]
+    DE3 --> TW3["🤖 test-writer<br/>reads decisions,<br/>writes tests from spec"]
+    TW3 --> IM3["🤖 implementer<br/>reads everything above,<br/>writes <b>Decisions</b> only"]
+    IM3 --> SR3["🤖 spec-reviewer<br/>reads spec + implementation<br/>judges conformance"]
+
+    style PC3 fill:#303F9F,stroke:#1A237E,color:#fff
+    style DE3 fill:#00796B,stroke:#004D40,color:#fff
+    style TW3 fill:#00796B,stroke:#004D40,color:#fff
+    style IM3 fill:#F57F17,stroke:#E65100,color:#000
+    style SR3 fill:#7B1FA2,stroke:#4A148C,color:#fff
+```
+
+The implementer writes **Decisions only** — it cannot write Constraints
+because its downstream agents (spec-reviewer, safety-auditor) are its
+reviewers. Letting the implementee constrain its reviewers would undermine
+the gates.
+
+## How Gates Decide
+
+Each gate agent outputs a **verdict**. The pipeline branches on it.
+
+```mermaid
+graph LR
+    subgraph "spec-reviewer"
+        SR4["verdict"] -->|"CONFORMANT"| N1["✓ proceed"]
+        SR4 -->|"DEVIATION"| F4["⟲ fix · max 2"]
+        F4 --> E4["✗ escalate"]
+    end
+
+    subgraph "safety-auditor"
+        SA4["verdict"] -->|"PASS"| N2["✓ proceed"]
+        SA4 -->|"VIOLATION"| F5["⟲ fix · max 3"]
+        F5 --> E5["✗ escalate"]
+    end
+
+    subgraph "oracle verify"
+        OV4["verdict"] -->|"SOUND"| N3["✓ proceed"]
+        OV4 -->|"UNSOUND"| F6["⟲ fix · max 1"]
+        F6 --> E6["✗ escalate"]
+    end
+
+    style SR4 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style SA4 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style OV4 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style N1 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style N2 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style N3 fill:#388E3C,stroke:#1B5E20,color:#fff
+    style F4 fill:#F57F17,stroke:#E65100,color:#000
+    style F5 fill:#F57F17,stroke:#E65100,color:#000
+    style F6 fill:#F57F17,stroke:#E65100,color:#000
+    style E4 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style E5 fill:#D32F2F,stroke:#B71C1C,color:#fff
+    style E6 fill:#D32F2F,stroke:#B71C1C,color:#fff
+```
+
+MINOR-only deviations get `CONFORMANT` with notes — they don't burn loops.
+
+See [FAILURE-PLAYBOOK.md](process/FAILURE-PLAYBOOK.md) for the full decision
+tree when gates fail.
+
+## How Pre-check Routes the Pipeline
+
+Before anything runs, pre-check classifies the feature:
+
+```mermaid
+graph TD
+    FEAT["🤖 Pre-check reads the spec"] --> INT{"What kind of work?"}
+    INT -->|"refactoring"| C1["Behavior preservation focus"]
+    INT -->|"build / mid-sized"| C2["Guardrails + exact deliverables"]
+    INT -->|"architecture"| C3["Long-term impact analysis"]
+    INT -->|"research"| C4["Investigation with exit criteria"]
+
+    FEAT --> COMP{"How complex?"}
+    COMP -->|"trivial"| R1["Skip designer"]
+    COMP -->|"standard"| R2["Normal pipeline"]
+    COMP -->|"complex"| R3["All gates run"]
+    COMP -->|"architecture-tier"| R4["Oracle consult + verify"]
+
+    style FEAT fill:#303F9F,stroke:#1A237E,color:#fff
+    style INT fill:#303F9F,stroke:#1A237E,color:#fff
+    style COMP fill:#303F9F,stroke:#1A237E,color:#fff
+    style C1 fill:#546E7A,stroke:#37474F,color:#fff
+    style C2 fill:#00796B,stroke:#004D40,color:#fff
+    style C3 fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style C4 fill:#303F9F,stroke:#1A237E,color:#fff
+    style R1 fill:#546E7A,stroke:#37474F,color:#fff
+    style R2 fill:#00796B,stroke:#004D40,color:#fff
+    style R3 fill:#F57F17,stroke:#E65100,color:#000
+    style R4 fill:#D32F2F,stroke:#B71C1C,color:#fff
+```
+
+This prevents over-engineering trivial changes and ensures complex changes
+get the scrutiny they need.
 
 ## The 14 Agents
 
 ```mermaid
 graph LR
-    subgraph Routing
+    subgraph "🧭 Routing"
         PC2[pre-check<br/>classify + route]
         RS[researcher<br/>discover]
         OR[oracle<br/>consult + verify]
         DG[doc-gardener<br/>drift sweep]
     end
 
-    subgraph Building
+    subgraph "🔨 Building"
         DE[designer<br/>backend / frontend]
         TW2[test-writer<br/>RED]
         IM[implementer<br/>GREEN]
     end
 
-    subgraph Gates
+    subgraph "🛡️ Gates"
         SR2[spec-reviewer<br/>CONFORMANT?]
         SA2[safety-auditor<br/>PASS?]
         OV2[oracle verify<br/>SOUND?]
     end
 
-    subgraph Landing
+    subgraph "🏁 Landing"
         PL2[plan-lander<br/>LANDED?]
     end
 
-    subgraph Bootstrap
+    subgraph "⚙️ Bootstrap"
         DB[docker-builder]
         SC[scaffolder]
         CW[config-writer]
@@ -111,111 +219,6 @@ graph LR
 
 See [THE-KEEL-PROCESS.md](process/THE-KEEL-PROCESS.md) for the full agent
 roster with inputs, outputs, and tool access.
-
-## Self-Correcting Gates
-
-```mermaid
-graph LR
-    subgraph spec-reviewer
-        SR3[Verdict] -->|CONFORMANT| N1[next step]
-        SR3 -->|DEVIATION| F1[back to implementer]
-        F1 -->|max 2| E1[escalate]
-    end
-
-    subgraph safety-auditor
-        SA3[Verdict] -->|PASS| N2[next step]
-        SA3 -->|VIOLATION| F2[back to implementer]
-        F2 -->|max 3| E2[escalate]
-    end
-
-    subgraph oracle verify
-        OV3[Verdict] -->|SOUND| N3[next step]
-        OV3 -->|UNSOUND| F3[back to implementer]
-        F3 -->|max 1| E3[escalate]
-    end
-
-    style SR3 fill:#7B1FA2,stroke:#4A148C,color:#fff
-    style SA3 fill:#7B1FA2,stroke:#4A148C,color:#fff
-    style OV3 fill:#7B1FA2,stroke:#4A148C,color:#fff
-    style N1 fill:#388E3C,stroke:#1B5E20,color:#fff
-    style N2 fill:#388E3C,stroke:#1B5E20,color:#fff
-    style N3 fill:#388E3C,stroke:#1B5E20,color:#fff
-    style F1 fill:#F57F17,stroke:#E65100,color:#000
-    style F2 fill:#F57F17,stroke:#E65100,color:#000
-    style F3 fill:#F57F17,stroke:#E65100,color:#000
-    style E1 fill:#D32F2F,stroke:#B71C1C,color:#fff
-    style E2 fill:#D32F2F,stroke:#B71C1C,color:#fff
-    style E3 fill:#D32F2F,stroke:#B71C1C,color:#fff
-```
-
-MINOR-only deviations → CONFORMANT with notes (don't burn loops).
-
-Gate agents output structured `**Verdict:**` fields. The orchestrator copies
-verdicts to YAML frontmatter in the handoff file for reliable routing —
-no parsing agent prose.
-
-See [FAILURE-PLAYBOOK.md](process/FAILURE-PLAYBOOK.md) for the full decision
-tree when gates fail.
-
-## Wisdom Accumulation
-
-```mermaid
-graph LR
-    PC3["pre-check<br/><b>Constraints:</b><br/>MUST / MUST NOT"] --> DE3["designer<br/><b>Decisions:</b> chose X<br/><b>Constraints:</b> MUST / MUST NOT"]
-    DE3 --> IM3["implementer<br/><b>Decisions:</b> chose Y<br/><i>no constraints —<br/>can't bind own reviewers</i>"]
-
-    style PC3 fill:#303F9F,stroke:#1A237E,color:#fff
-    style DE3 fill:#00796B,stroke:#004D40,color:#fff
-    style IM3 fill:#F57F17,stroke:#E65100,color:#000
-```
-
-Decision-heavy agents (pre-check, designers, oracle) produce both Decisions
-and Constraints. The implementer produces Decisions only — it cannot
-constrain its own reviewers (spec-reviewer, safety-auditor).
-
-## Intent Classification
-
-Pre-check classifies every feature before routing:
-
-```mermaid
-graph LR
-    subgraph Intent
-        I1[refactoring]
-        I2[build]
-        I3[mid-sized]
-        I4[architecture]
-        I5[research]
-    end
-
-    subgraph Complexity
-        C1[trivial]
-        C2[standard]
-        C3[complex]
-        C4[architecture-tier]
-    end
-
-    C1 --> R1[skip designer]
-    C2 --> R2[normal pipeline]
-    C3 --> R3[all gates]
-    C4 --> R4[Oracle consult + verify]
-
-    style I1 fill:#303F9F,stroke:#1A237E,color:#fff
-    style I2 fill:#303F9F,stroke:#1A237E,color:#fff
-    style I3 fill:#303F9F,stroke:#1A237E,color:#fff
-    style I4 fill:#303F9F,stroke:#1A237E,color:#fff
-    style I5 fill:#303F9F,stroke:#1A237E,color:#fff
-    style C1 fill:#546E7A,stroke:#37474F,color:#fff
-    style C2 fill:#00796B,stroke:#004D40,color:#fff
-    style C3 fill:#F57F17,stroke:#E65100,color:#000
-    style C4 fill:#D32F2F,stroke:#B71C1C,color:#fff
-    style R1 fill:#546E7A,stroke:#37474F,color:#fff
-    style R2 fill:#00796B,stroke:#004D40,color:#fff
-    style R3 fill:#F57F17,stroke:#E65100,color:#000
-    style R4 fill:#D32F2F,stroke:#B71C1C,color:#fff
-```
-
-This prevents over-engineering trivial changes and ensures complex changes
-get the scrutiny they need.
 
 ## AI-Slop Prevention
 
