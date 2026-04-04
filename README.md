@@ -23,16 +23,20 @@ You write a spec. KEEL figures out what's needed, writes tests first, writes cod
 
 ```mermaid
 graph TD
-    Spec["You write a feature spec"] --> PC["Pre-check reads it,<br/>decides what's needed"]
-    PC --> TW["Tests written<br/>from the spec"]
-    TW --> IMP["Code written<br/>to pass the tests"]
-    IMP --> Gate{"Does the code<br/>match the spec?"}
-    Gate -->|Yes| Safe{"Does it violate<br/>safety rules?"}
-    Gate -->|No| Fix["Findings sent back.<br/>Implementer fixes."]
+    Spec["🧑 You write a feature spec"] --> PC["🤖 Pre-check reads it,<br/>decides what's needed"]
+    PC --> TW["🤖 Tests written<br/>from the spec"]
+    TW --> IMP["🤖 Code written<br/>to pass the tests"]
+    IMP --> Gate{"🤖 Does the code<br/>match the spec?"}
+    Gate -->|Yes| Safe{"🤖 Does it violate<br/>safety rules?"}
+    Gate -->|No| Fix["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix --> Gate
-    Safe -->|No violations| Land["Feature landed.<br/>Docs updated."]
-    Safe -->|Violation found| Fix2["Findings sent back.<br/>Implementer fixes."]
+    Safe -->|No violations| Land["🤖 Feature landed.<br/>Docs updated."]
+    Safe -->|Violation found| Fix2["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix2 --> Safe
+    Land --> PR["🧑 You review the result"]
+
+    Gate -.-|"after 2 retries"| Esc["🧑 Escalated to you"]
+    Safe -.-|"after 3 retries"| Esc
 
     style Spec fill:#1976D2,stroke:#0D47A1,color:#fff
     style PC fill:#303F9F,stroke:#1A237E,color:#fff
@@ -43,7 +47,11 @@ graph TD
     style Fix fill:#F57F17,stroke:#E65100,color:#000
     style Fix2 fill:#F57F17,stroke:#E65100,color:#000
     style Land fill:#388E3C,stroke:#1B5E20,color:#fff
+    style PR fill:#1976D2,stroke:#0D47A1,color:#fff
+    style Esc fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
+
+> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and review the result. Everything in between is autonomous.
 
 If the code doesn't match the spec, it goes back and gets fixed — automatically. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing. Knowledge flows forward through handoff files — Feature 20 benefits from Features 1–19.
 
