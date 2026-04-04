@@ -426,7 +426,7 @@ GOOD: "All data-access modules go through the repository interface"  (architectu
 
 ## 8. Agent Roles and Pipelines
 
-Fourteen specialized agents, each with bounded responsibility.
+Fifteen specialized agents, each with bounded responsibility.
 
 ### Agent Roster
 
@@ -441,6 +441,7 @@ Fourteen specialized agents, each with bounded responsibility.
 | **frontend-designer** | Component hierarchy | Spec, UI design doc | Component tree, event flow | Write backend code |
 | **test-writer** | Failing tests from spec | Spec, designer output | Test files (all RED) | Write implementation |
 | **implementer** | Code to pass tests | Failing tests, spec | Implementation (all GREEN) | Modify tests |
+| **code-reviewer** | Review code quality | Git diff, architecture | Verdict: APPROVED or CHANGES NEEDED | Modify code |
 | **spec-reviewer** | Verify spec match | Spec, implementation | Verdict: CONFORMANT or DEVIATION | Modify code |
 | **safety-auditor** | Verify invariants | Core-beliefs, implementation | Verdict: PASS or VIOLATION | Modify code |
 | **arch-advisor** | Architecture consultation + verification | Spec, handoff, ARCHITECTURE.md | Guidance (CONSULT) or Verdict: SOUND/UNSOUND (VERIFY) | Modify code |
@@ -459,8 +460,8 @@ equivalent tiers.
 | **high** | Design decisions, gate verdicts, deep analysis | opus | Your platform's highest-tier model |
 | **standard** | Routing, pattern-following, verification | sonnet | Your platform's standard-tier model |
 
-**High reasoning agents:** pre-check, arch-advisor, implementer, spec-reviewer,
-safety-auditor, backend-designer, frontend-designer, researcher (8 agents)
+**High reasoning agents:** pre-check, arch-advisor, implementer, code-reviewer,
+spec-reviewer, safety-auditor, backend-designer, frontend-designer, researcher (9 agents)
 
 **Standard reasoning agents:** test-writer, docker-builder, scaffolder,
 config-writer, landing-verifier, doc-gardener (6 agents)
@@ -478,7 +479,7 @@ config-writer  --> landing-verifier
 **Backend** (foundation and service features)
 
 ```
-pre-check --> researcher? --> arch-advisor? --> backend-designer? --> test-writer --> implementer --> spec-reviewer --> safety-auditor? --> arch-advisor-verify? --> landing-verifier
+pre-check --> researcher? --> arch-advisor? --> backend-designer? --> test-writer --> implementer --> code-reviewer --> spec-reviewer --> safety-auditor? --> arch-advisor-verify? --> landing-verifier
 ```
 
 `?` = conditionally included. Pre-check classifies intent and complexity,
@@ -490,7 +491,7 @@ landing).
 **Frontend** (UI features)
 
 ```
-pre-check --> researcher? --> arch-advisor? --> frontend-designer --> test-writer --> implementer --> spec-reviewer --> arch-advisor-verify? --> landing-verifier
+pre-check --> researcher? --> arch-advisor? --> frontend-designer --> test-writer --> implementer --> code-reviewer --> spec-reviewer --> arch-advisor-verify? --> landing-verifier
 ```
 
 Frontend-designer always included. No safety-auditor (UI does not execute

@@ -18,8 +18,9 @@ graph TD
     PC -->|"standard"| D
     D --> TW["🤖 Test-writer writes tests<br/>from the spec (RED)"]
     TW --> IMP["🤖 Implementer writes code<br/>to pass tests (GREEN)"]
-    IMP --> CR["🤖 Code review checks<br/>quality + patterns"]
-    CR --> SR{"🤖 Spec-reviewer:<br/>does code match spec?"}
+    IMP --> CR{"🤖 Code-reviewer:<br/>code quality ok?"}
+    CR -->|"APPROVED"| SR{"🤖 Spec-reviewer:<br/>does code match spec?"}
+    CR -->|"CHANGES NEEDED"| IMP
     SR -->|"CONFORMANT"| SA{"🤖 Safety-auditor:<br/>any invariant violations?"}
     SR -->|"DEVIATION"| FIX1["🤖 Findings → implementer fixes"]
     FIX1 --> SR
@@ -178,6 +179,7 @@ graph LR
         DE[designer<br/>backend / frontend]
         TW2[test-writer<br/>RED]
         IM[implementer<br/>GREEN]
+        CR2[code-reviewer<br/>APPROVED?]
     end
 
     subgraph "🛡️ Gates"
@@ -203,6 +205,7 @@ graph LR
     style DE fill:#00796B,stroke:#004D40,color:#fff
     style TW2 fill:#00796B,stroke:#004D40,color:#fff
     style IM fill:#00796B,stroke:#004D40,color:#fff
+    style CR2 fill:#00796B,stroke:#004D40,color:#fff
     style SR2 fill:#7B1FA2,stroke:#4A148C,color:#fff
     style SA2 fill:#7B1FA2,stroke:#4A148C,color:#fff
     style OV2 fill:#7B1FA2,stroke:#4A148C,color:#fff
@@ -214,7 +217,7 @@ graph LR
 
 | Tier | Agents | Why |
 |-|-|-|
-| **High reasoning** | pre-check, arch-advisor, implementer, spec-reviewer, safety-auditor, designers, researcher | Routing decisions, design, gate verdicts, deep analysis |
+| **High reasoning** | pre-check, arch-advisor, implementer, code-reviewer, spec-reviewer, safety-auditor, designers, researcher | Routing, design, quality review, gate verdicts, deep analysis |
 | **Standard reasoning** | test-writer, landing-verifier, doc-gardener, scaffolder, config-writer, docker-builder | Pattern-following, verification |
 
 See [THE-KEEL-PROCESS.md](process/THE-KEEL-PROCESS.md) for the full agent

@@ -26,7 +26,9 @@ graph TD
     Spec["🧑 <b>YOU WRITE A FEATURE SPEC</b>"] --> PC["🤖 Pre-check reads it,<br/>decides what's needed"]
     PC --> TW["🤖 Tests written<br/>from the spec"]
     TW --> IMP["🤖 Code written<br/>to pass the tests"]
-    IMP --> Gate{"🤖 Does the code<br/>match the spec?"}
+    IMP --> QA{"🤖 Is the code<br/>well-written?"}
+    QA -->|Yes| Gate{"🤖 Does the code<br/>match the spec?"}
+    QA -->|No| IMP
     Gate -->|Yes| Safe{"🤖 Does it violate<br/>safety rules?"}
     Gate -->|No| Fix["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix --> Gate
@@ -42,6 +44,7 @@ graph TD
     style PC fill:#303F9F,stroke:#1A237E,color:#fff
     style TW fill:#00796B,stroke:#004D40,color:#fff
     style IMP fill:#00796B,stroke:#004D40,color:#fff
+    style QA fill:#00796B,stroke:#004D40,color:#fff
     style Gate fill:#7B1FA2,stroke:#4A148C,color:#fff
     style Safe fill:#7B1FA2,stroke:#4A148C,color:#fff
     style Fix fill:#F57F17,stroke:#E65100,color:#000
