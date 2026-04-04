@@ -164,7 +164,7 @@ graph TD
 This prevents over-engineering trivial changes and ensures complex changes
 get the scrutiny they need.
 
-## The 14 Agents
+## The 15 Agents
 
 ```mermaid
 graph LR

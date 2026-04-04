@@ -19,9 +19,9 @@
   - F01: docker-builder → landing-verifier
   - F02: scaffolder → landing-verifier
   - F03: config-writer → landing-verifier
-- **Backend:** pre-check → researcher? → arch-advisor? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → arch-advisor-verify? → landing-verifier
-- **Frontend:** pre-check → researcher? → arch-advisor? → frontend-designer → test-writer → implementer → spec-reviewer → arch-advisor-verify? → landing-verifier
-- **Cross-cutting:** pre-check → test-writer → implementer → landing-verifier
+- **Backend:** pre-check → researcher? → arch-advisor? → backend-designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → arch-advisor-verify? → landing-verifier
+- **Frontend:** pre-check → researcher? → arch-advisor? → frontend-designer → test-writer → implementer → code-reviewer → spec-reviewer → arch-advisor-verify? → landing-verifier
+- **Cross-cutting:** pre-check → test-writer → implementer → code-reviewer → landing-verifier
 
 **Execution Brief** — The structured output of the pre-check agent. Contains: intent classification, complexity tier, spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, constraints for downstream (MUST/MUST NOT), and routing decisions (designer needed? researcher needed? arch-advisor needed?).
 
