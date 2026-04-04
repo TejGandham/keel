@@ -19,39 +19,33 @@ graph LR
 
 ## The Solution
 
-KEEL encodes everything into the repo and runs a self-correcting pipeline.
+You write a spec. KEEL figures out what's needed, writes tests first, writes code to pass them, then verifies everything before landing.
 
 ```mermaid
-graph LR
-    subgraph input [You write]
-        Spec[Product spec]
-        Inv[Domain invariants]
-        Arch[Architecture doc]
-    end
-    subgraph pipeline [KEEL does]
-        P1[14 agents execute pipeline]
-        P2[Tests before code]
-        P3[Code verified against spec]
-        P4[Safety invariants enforced]
-        P5[Self-corrects on failure]
-    end
-    Spec --> P1
-    Inv --> P4
-    Arch --> P3
-    P5 --> Out[Tested, spec-conformant,<br/>safe code]
+graph TD
+    Spec["You write a feature spec"] --> PC["Pre-check reads it,<br/>decides what's needed"]
+    PC --> TW["Tests written<br/>from the spec"]
+    TW --> IMP["Code written<br/>to pass the tests"]
+    IMP --> Gate{"Does the code<br/>match the spec?"}
+    Gate -->|Yes| Safe{"Does it violate<br/>safety rules?"}
+    Gate -->|No| Fix["Findings sent back.<br/>Implementer fixes."]
+    Fix --> Gate
+    Safe -->|No violations| Land["Feature landed.<br/>Docs updated."]
+    Safe -->|Violation found| Fix2["Findings sent back.<br/>Implementer fixes."]
+    Fix2 --> Safe
 
     style Spec fill:#1976D2,stroke:#0D47A1,color:#fff
-    style Inv fill:#1976D2,stroke:#0D47A1,color:#fff
-    style Arch fill:#1976D2,stroke:#0D47A1,color:#fff
-    style P1 fill:#00796B,stroke:#004D40,color:#fff
-    style P2 fill:#00796B,stroke:#004D40,color:#fff
-    style P3 fill:#00796B,stroke:#004D40,color:#fff
-    style P4 fill:#7B1FA2,stroke:#4A148C,color:#fff
-    style P5 fill:#7B1FA2,stroke:#4A148C,color:#fff
-    style Out fill:#388E3C,stroke:#1B5E20,color:#fff
+    style PC fill:#303F9F,stroke:#1A237E,color:#fff
+    style TW fill:#00796B,stroke:#004D40,color:#fff
+    style IMP fill:#00796B,stroke:#004D40,color:#fff
+    style Gate fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style Safe fill:#7B1FA2,stroke:#4A148C,color:#fff
+    style Fix fill:#F57F17,stroke:#E65100,color:#000
+    style Fix2 fill:#F57F17,stroke:#E65100,color:#000
+    style Land fill:#388E3C,stroke:#1B5E20,color:#fff
 ```
 
-Gates self-correct: deviation → fix → retry (bounded). Escalates to you instead of thrashing. Knowledge flows forward through handoff files — Feature 20 benefits from Features 1–19.
+If the code doesn't match the spec, it goes back and gets fixed — automatically. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing. Knowledge flows forward through handoff files — Feature 20 benefits from Features 1–19.
 
 **[How it works in detail →](docs/HOW-IT-WORKS.md)**
 
