@@ -8,20 +8,28 @@ KEEL is a spec-to-commit automation engine. You feed it a feature
 specification. It produces tested, spec-conformant, safe code — ready to
 commit. The human approves in batches, not at every step.
 
-```
- Today                              End State
- ┌────────────────────┐            ┌────────────────────┐
- │ Human kicks off     │            │ Human feeds feature │
- │ each pipeline stage │            │ spec to KEEL        │
- │ Reviews every output│            │                     │
- │ Commits manually    │            │ KEEL runs pipeline  │
- │                     │            │ Self-corrects       │
- │ Human: 60% of time  │            │ Garbage collects    │
- │ Agent: 40% of time  │            │ Opens PR            │
- └────────────────────┘            │                     │
-                                   │ Human: batch review  │
-                                   │ Agent: 95% of time   │
-                                   └────────────────────┘
+```mermaid
+graph LR
+    subgraph Today
+        T1[Human kicks off<br/>each pipeline stage]
+        T2[Reviews every output]
+        T3[Commits manually]
+        T4["Human: 60% · Agent: 40%"]
+    end
+
+    subgraph End State
+        E1[Human feeds<br/>feature spec]
+        E2[KEEL runs pipeline]
+        E3[Self-corrects]
+        E4[Garbage collects]
+        E5[Opens PR]
+        E6["Human: batch review · Agent: 95%"]
+    end
+
+    Today -->|evolve| End State
+
+    style T4 fill:#fff3cd,stroke:#ffc107
+    style E6 fill:#d4edda,stroke:#28a745
 ```
 
 ## The Principle

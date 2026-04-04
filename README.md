@@ -6,30 +6,39 @@
 
 AI agents forget between sessions. Feature 2 breaks Feature 1. A rules file works until ~10 features — then you need structure.
 
+```mermaid
+graph LR
+    S1["Session 1<br/><b>Build X</b><br/>Works!"] --> S2["Session 2<br/><b>Build Y</b><br/>Breaks X"]
+    S2 --> S3["Session 3<br/><b>Fix X</b><br/>Breaks Y"]
+    style S1 fill:#d4edda,stroke:#28a745
+    style S2 fill:#fff3cd,stroke:#ffc107
+    style S3 fill:#f8d7da,stroke:#dc3545
 ```
- Session 1          Session 2          Session 3
- ┌──────────┐      ┌──────────┐      ┌──────────┐
- │ "Build X"│      │ "Build Y"│      │ "Fix X"  │
- │ Works!   │      │ Breaks X │      │ Breaks Y │
- └──────────┘      └──────────┘      └──────────┘
-       Knowledge evaporates. Each feature is a fresh start.
-```
+
+> Knowledge evaporates. Each feature is a fresh start.
 
 ## The Solution
 
 KEEL encodes everything into the repo and runs a self-correcting pipeline.
 
-```
- You write:                     KEEL does:
- ┌─────────────────┐           ┌──────────────────────────────────┐
- │ Product spec     │──────────▶│ 14 agents execute the pipeline   │
- │ Domain invariants│──────────▶│ Tests before code                │
- │ Architecture doc │──────────▶│ Code verified against spec       │
- └─────────────────┘           │ Safety invariants enforced        │
-                               │ Self-corrects on failure          │
-                               └──────────────┬───────────────────┘
-                                              ▼
-                               Tested, spec-conformant, safe code.
+```mermaid
+graph LR
+    subgraph You write
+        Spec[Product spec]
+        Inv[Domain invariants]
+        Arch[Architecture doc]
+    end
+    subgraph KEEL does
+        P1[14 agents execute pipeline]
+        P2[Tests before code]
+        P3[Code verified against spec]
+        P4[Safety invariants enforced]
+        P5[Self-corrects on failure]
+    end
+    Spec --> P1
+    Inv --> P4
+    Arch --> P3
+    P5 --> Out[Tested, spec-conformant, safe code]
 ```
 
 Gates self-correct: deviation → fix → retry (bounded). Escalates to you instead of thrashing. Knowledge flows forward through handoff files — Feature 20 benefits from Features 1–19.
