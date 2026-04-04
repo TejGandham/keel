@@ -22,7 +22,7 @@ copies everything into place.
 | Agent | Reasoning | Purpose |
 |-|-|-|
 | `pre-check.md` | standard | Classify intent, evaluate readiness, route pipeline |
-| `oracle.md` | high | Architecture consultation and verification |
+| `arch-advisor.md` | high | Architecture consultation and verification |
 | `researcher.md` | high | Deep research before implementation |
 | `backend-designer.md` | high | Module interfaces and data structures |
 | `frontend-designer.md` | high | UI component design |
@@ -30,7 +30,7 @@ copies everything into place.
 | `implementer.md` | high | Write code to pass tests (never modifies tests) |
 | `spec-reviewer.md` | high | Verify code matches spec — gate agent |
 | `safety-auditor.md` | high | Verify domain invariants — gate agent |
-| `plan-lander.md` | standard | Verify feature landed completely |
+| `landing-verifier.md` | standard | Verify feature landed completely |
 | `doc-gardener.md` | standard | Detect and report doc drift |
 | `docker-builder.md` | standard | Build and verify Docker images |
 | `scaffolder.md` | standard | Create project skeleton |
@@ -124,8 +124,8 @@ The installer is a one-time copy. To update agents or skills later:
 git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
 
 # Update specific agents (review diff before overwriting)
-diff /tmp/keel/.claude/agents/oracle.md .claude/agents/oracle.md
-cp /tmp/keel/.claude/agents/oracle.md .claude/agents/oracle.md
+diff /tmp/keel/.claude/agents/arch-advisor.md .claude/agents/arch-advisor.md
+cp /tmp/keel/.claude/agents/arch-advisor.md .claude/agents/arch-advisor.md
 
 # Or update all agents (backup first if you customized prompts)
 cp -r .claude/agents .claude/agents.bak

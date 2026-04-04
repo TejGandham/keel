@@ -1,7 +1,7 @@
 # OMA Pattern Adoption — Implementation Plan
 
 **Date:** 2026-04-04
-**Source:** OMA (Oh My OpenAgent) agents: Metis, Oracle, Momus
+**Source:** OMA (Oh My OpenAgent) agents: Metis, Arch-advisor, Momus
 **Validated by:** 3-model roundtable (Claude, Codex, Gemini)
 **Reviewed by:** 3-model roundtable (Claude, Codex, Gemini) — 11 findings incorporated
 **Strategy:** Port battle-tested OMA prompts with minimal modification
@@ -153,13 +153,13 @@ This aligns safety-auditor output with the pipeline's verdict-branching logic.
      - Downstream agents READ upstream Decisions and Constraints FIRST.
 ```
 
-Also add **oracle sections** to the template (for Phase 3):
+Also add **arch-advisor sections** to the template (for Phase 3):
 ```
-## oracle-consultation
-<!-- Architecture guidance appended here by Oracle at Step 1.7 (if applicable) -->
+## arch-advisor-consultation
+<!-- Architecture guidance appended here by Arch-advisor at Step 1.7 (if applicable) -->
 
-## oracle-verification
-<!-- Independent structural review appended here by Oracle at Step 7.5 (if applicable) -->
+## arch-advisor-verification
+<!-- Independent structural review appended here by Arch-advisor at Step 7.5 (if applicable) -->
 ```
 
 ### 1D. Update Agent Prompts for Wisdom
@@ -188,7 +188,7 @@ Agents with **Decisions** (optional):
 from their output artifacts.
 
 Terminal agents (no Decisions/Constraints needed):
-`spec-reviewer.md`, `safety-auditor.md`, `plan-lander.md`
+`spec-reviewer.md`, `safety-auditor.md`, `landing-verifier.md`
 
 ---
 
@@ -209,14 +209,14 @@ Before analysis, classify the work intent. This determines your strategy.
 | Refactoring | "refactor", "restructure", "clean up" | Safety: behavior preservation, test coverage |
 | Build from Scratch | New feature, greenfield, "create new" | Discovery: explore patterns first |
 | Mid-sized Task | Scoped feature, specific deliverable | Guardrails: exact deliverables, exclusions |
-| Architecture | System design, "how should we structure" | Strategic: long-term impact, Oracle consultation |
+| Architecture | System design, "how should we structure" | Strategic: long-term impact, Arch-advisor consultation |
 | Research | Investigation needed, path unclear | Investigation: exit criteria, parallel probes |
 
 Classify complexity:
 - **Trivial** — single file, <10 lines, clear scope → skip designer
 - **Standard** — 1-3 files, bounded scope → normal pipeline
 - **Complex** — 3+ files, cross-module → full pipeline with all gates
-- **Architecture-tier** — structural change, new patterns → Oracle consultation
+- **Architecture-tier** — structural change, new patterns → Arch-advisor consultation
 ```
 
 **Add to Output Format**, after "Spec consistency":
@@ -227,7 +227,7 @@ Classify complexity:
 
 **Add to Output Format**, after "Safety auditor needed":
 ```
-**Oracle needed:** YES (architecture-tier complexity) | NO
+**Arch-advisor needed:** YES (architecture-tier complexity) | NO
 ```
 
 ### 2B. MUST/MUST NOT Directives
@@ -292,22 +292,22 @@ execution brief in the handoff file. Read the brief for routing decisions:
 - **Designer needed** — YES/NO
 - **Researcher needed** — YES/NO
 - **Safety-auditor needed** — YES/NO
-- **Oracle needed** — YES if complexity is architecture-tier
+- **Arch-advisor needed** — YES if complexity is architecture-tier
 ```
 
-**NOTE:** Oracle pipeline steps (1.7 and 7.5) are added in Phase 3C,
-after the Oracle agent exists. Phase 2 only adds the routing fields
-that will eventually gate Oracle dispatch.
+**NOTE:** Arch-advisor pipeline steps (1.7 and 7.5) are added in Phase 3C,
+after the Arch-advisor agent exists. Phase 2 only adds the routing fields
+that will eventually gate Arch-advisor dispatch.
 
 ---
 
-## Phase 3: Oracle Agent
+## Phase 3: Arch-advisor Agent
 
-### 3A. Create Oracle Agent Definition
+### 3A. Create Arch-advisor Agent Definition
 
-**File:** `.claude/agents/oracle.md` (NEW)
+**File:** `.claude/agents/arch-advisor.md` (NEW)
 
-Port directly from OMA `oracle.ts` lines 44-153 (the `ORACLE_DEFAULT_PROMPT`),
+Port directly from OMA `arch-advisor (originally oracle.ts)` lines 44-153 (the `ARCH_ADVISOR_DEFAULT_PROMPT`),
 adapted to KEEL's markdown agent format. Key sections to preserve verbatim:
 
 - **Decision framework** — pragmatic minimalism, bias toward simplicity,
@@ -330,42 +330,42 @@ Changes from OMA:
 
 ### 3B. Update Handoff Template
 
-Already handled in Phase 1C — `## oracle-consultation` and
-`## oracle-verification` sections exist.
+Already handled in Phase 1C — `## arch-advisor-consultation` and
+`## arch-advisor-verification` sections exist.
 
-### 3C. Add Oracle Pipeline Steps
+### 3C. Add Arch-advisor Pipeline Steps
 
 **File:** `.claude/skills/keel-pipeline/SKILL.md`
 
-Now that `oracle.md` exists, add the dispatch steps:
+Now that `arch-advisor.md` exists, add the dispatch steps:
 
-**Add new Step 1.7 (Oracle consultation):**
+**Add new Step 1.7 (Arch-advisor consultation):**
 ```
-### Step 1.7: Oracle consultation (if architecture-tier)
-If pre-check set `Oracle needed: YES` or `Complexity: architecture-tier`,
-dispatch `oracle` agent in CONSULT mode with the execution brief and spec.
-Oracle provides architecture-level guidance before design/implementation.
-Append output to `## oracle-consultation` in the handoff file.
+### Step 1.7: Arch-advisor consultation (if architecture-tier)
+If pre-check set `Arch-advisor needed: YES` or `Complexity: architecture-tier`,
+dispatch `arch-advisor` agent in CONSULT mode with the execution brief and spec.
+Arch-advisor provides architecture-level guidance before design/implementation.
+Append output to `## arch-advisor-consultation` in the handoff file.
 ```
 
-**Add new Step 7.5 (Oracle verification):**
+**Add new Step 7.5 (Arch-advisor verification):**
 ```
-### Step 7.5: Oracle verification (if pre-check classified architecture-tier)
-If pre-check set `Oracle needed: YES`, dispatch `oracle` in VERIFY mode
-for independent structural review before plan-lander. Oracle evaluates
+### Step 7.5: Arch-advisor verification (if pre-check classified architecture-tier)
+If pre-check set `Arch-advisor needed: YES`, dispatch `arch-advisor` in VERIFY mode
+for independent structural review before landing-verifier. Arch-advisor evaluates
 whether the implementation is architecturally sound — not just spec-conformant.
 
-If Oracle's verdict is UNSOUND:
+If Arch-advisor's verdict is UNSOUND:
 - Send findings to implementer with specific architecture issues
-- Implementer fixes, re-run spec-reviewer, then Oracle verification again
-- Max 1 Oracle verification retry. If still UNSOUND, escalate to human.
+- Implementer fixes, re-run spec-reviewer, then Arch-advisor verification again
+- Max 1 Arch-advisor verification retry. If still UNSOUND, escalate to human.
 
-Append output to `## oracle-verification` in the handoff file.
+Append output to `## arch-advisor-verification` in the handoff file.
 ```
 
-**NOTE:** Oracle invocation is gated purely by pre-check's classification.
+**NOTE:** Arch-advisor invocation is gated purely by pre-check's classification.
 The "3+ modules" heuristic is dropped — pre-check already evaluates
-complexity and sets `Oracle needed: YES/NO` based on full analysis.
+complexity and sets `Arch-advisor needed: YES/NO` based on full analysis.
 
 ---
 
@@ -385,7 +385,7 @@ complexity and sets `Oracle needed: YES/NO` based on full analysis.
 | 1D | `.claude/agents/researcher.md` | Edit (add optional Decisions) |
 | 2A-D | `.claude/agents/pre-check.md` | Edit (intent, complexity, slop, self-validation) |
 | 2E | `.claude/skills/keel-pipeline/SKILL.md` | Edit (Step 1 routing fields) |
-| 3A | `.claude/agents/oracle.md` | **NEW** (ported from OMA) |
+| 3A | `.claude/agents/arch-advisor.md` | **NEW** (ported from OMA) |
 | 3C | `.claude/skills/keel-pipeline/SKILL.md` | Edit (Steps 1.7, 7.5) |
 
 **Total: 12 file edits + 1 new file across 3 phases.**
@@ -398,7 +398,7 @@ Three commits, one per phase:
 
 1. `feat(pipeline): add structured rejection, wisdom accumulation, and verdict protocol`
 2. `feat(pre-check): add Metis patterns — intent classification, MUST/MUST NOT, anti-slop, self-validation`
-3. `feat(agents): add Oracle agent — architecture consultation and independent verification`
+3. `feat(agents): add Arch-advisor agent — architecture consultation and independent verification`
 
 After all phases: update `template/` copies to match.
 
@@ -410,7 +410,7 @@ After all phases: update `template/` copies to match.
 
 **Must-fix items (all 3 models agreed):**
 1. safety-auditor.md was missing from edit list → added as Phase 1B′
-2. Phase 2E dispatched Oracle before Phase 3 created it → moved to Phase 3C
+2. Phase 2E dispatched Arch-advisor before Phase 3 created it → moved to Phase 3C
 3. spec-reviewer had redundant Status/Verdict fields → explicit replacement
 4. spec-review-attempt writer unspecified → pipeline orchestrator owns it
 5. Safety-auditor infinite loop → capped at 3 attempts with escalation
@@ -418,8 +418,8 @@ After all phases: update `template/` copies to match.
 
 **Should-fix items incorporated:**
 - MINOR-only deviations → CONFORMANT with Notes (don't burn loop attempts)
-- Dropped "3+ modules" heuristic → Oracle gated by pre-check classification only
+- Dropped "3+ modules" heuristic → Arch-advisor gated by pre-check classification only
 - Wisdom sections optional for test-writer/researcher
-- Oracle failure at Step 7.5 → defined consequence (retry once, then escalate)
-- Split oracle handoff into consultation vs verification sections
+- Arch-advisor failure at Step 7.5 → defined consequence (retry once, then escalate)
+- Split arch-advisor handoff into consultation vs verification sections
 - Template update added as Phase 4 commit

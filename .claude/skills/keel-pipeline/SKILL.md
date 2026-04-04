@@ -1,6 +1,6 @@
 ---
 name: keel-pipeline
-description: "Orchestrate the KEEL pipeline for a feature. Dispatches agents in sequence: pre-check → test-writer → implementer → spec-reviewer → safety-auditor? → plan-lander."
+description: "Orchestrate the KEEL pipeline for a feature. Dispatches agents in sequence: pre-check → test-writer → implementer → spec-reviewer → safety-auditor? → landing-verifier."
 ---
 
 # KEEL Pipeline
@@ -30,25 +30,25 @@ Determine the variant based on what the feature touches:
 
 **Bootstrap** — Docker, scaffolding, config (typically F01-F03):
 ```
-docker-builder → plan-lander          (F01: container)
-scaffolder → plan-lander              (F02: app skeleton)
-config-writer → plan-lander           (F03: test infra)
+docker-builder → landing-verifier          (F01: container)
+scaffolder → landing-verifier              (F02: app skeleton)
+config-writer → landing-verifier           (F03: test infra)
 ```
-Bootstrap features are orchestrator-direct: dispatch the specific bootstrap agent, then plan-lander. No pre-check, no test-writer, no implementer. The bootstrap agent's report serves as the handoff context.
+Bootstrap features are orchestrator-direct: dispatch the specific bootstrap agent, then landing-verifier. No pre-check, no test-writer, no implementer. The bootstrap agent's report serves as the handoff context.
 
 **Backend** — changes to core business logic, services, data layer:
 ```
-pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → plan-lander
+pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → landing-verifier
 ```
 
 **Frontend** — changes to UI components, templates, styles, client-side logic:
 ```
-pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → plan-lander
+pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → landing-verifier
 ```
 
 **Cross-cutting** — test infrastructure, config, Docker, docs:
 ```
-pre-check → test-writer → implementer → plan-lander
+pre-check → test-writer → implementer → landing-verifier
 ```
 
 **Full-stack** — touches both backend and frontend: run backend pipeline, then frontend pipeline, sharing the same handoff file.
@@ -56,7 +56,7 @@ pre-check → test-writer → implementer → plan-lander
 ## Execution Steps
 
 ### Step 0: Bootstrap (F01-F03 only)
-If the feature is a bootstrap feature, dispatch the specific bootstrap agent (docker-builder, scaffolder, or config-writer). It produces its report in the handoff file. Skip directly to Step 8 (plan-lander). Bootstrap features do not use pre-check, designers, test-writer, or implementer.
+If the feature is a bootstrap feature, dispatch the specific bootstrap agent (docker-builder, scaffolder, or config-writer). It produces its report in the handoff file. Skip directly to Step 8 (landing-verifier). Bootstrap features do not use pre-check, designers, test-writer, or implementer.
 
 ### Step 1: Pre-check (standard pipeline only)
 Dispatch the `pre-check` agent with the feature spec path. It produces an
@@ -66,19 +66,19 @@ handoff YAML frontmatter with routing fields from the brief:
 - `designer_needed` — YES/NO (trivial complexity → always NO)
 - `researcher_needed` — YES/NO (research intent → always YES)
 - `safety_auditor_needed` — YES/NO
-- `oracle_needed` — YES if complexity is architecture-tier
+- `arch_advisor_needed` — YES if complexity is architecture-tier
 
 Read routing decisions from the YAML frontmatter for all subsequent steps.
 
 ### Step 1.5: Researcher (if needed)
 If pre-check set `Research needed: YES`, dispatch `researcher` with the specific questions from the execution brief. Append research brief to handoff file.
 
-### Step 1.7: Oracle consultation (if architecture-tier)
-If pre-check set `Oracle needed: YES` or `Complexity: architecture-tier`,
-dispatch `oracle` agent in CONSULT mode with the execution brief, spec,
-and any research brief. Oracle provides architecture-level guidance
+### Step 1.7: Arch-advisor consultation (if architecture-tier)
+If pre-check set `Arch-advisor needed: YES` or `Complexity: architecture-tier`,
+dispatch `arch-advisor` agent in CONSULT mode with the execution brief, spec,
+and any research brief. Arch-advisor provides architecture-level guidance
 before design/implementation.
-Append output to `## oracle-consultation` in the handoff file.
+Append output to `## arch-advisor-consultation` in the handoff file.
 
 ### Step 2: Designer (if needed)
 Dispatch `backend-designer` or `frontend-designer` based on pipeline variant. Append output to handoff file.
@@ -87,7 +87,7 @@ Dispatch `backend-designer` or `frontend-designer` based on pipeline variant. Ap
 Dispatch `test-writer` with the handoff file. It writes tests, never implementation. Append output to handoff file.
 
 ### Step 4: Implementer (if needed)
-If pre-check set `Implementer needed: NO`, skip to Step 6 (spec-reviewer) or Step 8 (plan-lander).
+If pre-check set `Implementer needed: NO`, skip to Step 6 (spec-reviewer) or Step 8 (landing-verifier).
 Otherwise, dispatch `implementer` with the handoff file. It writes code to pass the tests. Never modifies tests. Append output to handoff file.
 
 ### Step 5: Code review
@@ -134,26 +134,26 @@ If still VIOLATION after 3 attempts, STOP. Escalate to human — the
 invariant rule itself may need review, or the spec and invariant are
 genuinely incompatible.
 
-### Step 7.5: Oracle verification (if pre-check classified architecture-tier)
-If pre-check set `Oracle needed: YES`, dispatch `oracle` in VERIFY mode
-for independent structural review before plan-lander. Oracle evaluates
+### Step 7.5: Arch-advisor verification (if pre-check classified architecture-tier)
+If pre-check set `Arch-advisor needed: YES`, dispatch `arch-advisor` in VERIFY mode
+for independent structural review before landing-verifier. Arch-advisor evaluates
 whether the implementation is architecturally sound — not just spec-conformant.
 
-If Oracle's verdict is UNSOUND:
+If Arch-advisor's verdict is UNSOUND:
 - Send findings to implementer with specific architecture issues
 - Implementer fixes. Then re-run the full gate sequence:
-  spec-reviewer → safety-auditor (if required) → Oracle verification
-- Oracle-triggered gate passes use a SEPARATE counter from the
+  spec-reviewer → safety-auditor (if required) → Arch-advisor verification
+- Arch-advisor-triggered gate passes use a SEPARATE counter from the
   initial spec-review attempts (those counters do not interact)
-- Max 1 Oracle verification retry. If still UNSOUND, escalate to human.
+- Max 1 Arch-advisor verification retry. If still UNSOUND, escalate to human.
 
-Append output to `## oracle-verification` in the handoff file.
+Append output to `## arch-advisor-verification` in the handoff file.
 
-### Step 8: Plan-lander
-Dispatch `plan-lander` with the handoff file. It runs tests and verifies everything landed. If BLOCKED, fix blockers and re-run.
+### Step 8: Landing-verifier
+Dispatch `landing-verifier` with the handoff file. It runs tests and verifies everything landed. If BLOCKED, fix blockers and re-run.
 
 ### Step 9: Commit (on behalf of the human orchestrator)
-Only after plan-lander reports LANDED. Present the commit plan to the human for approval:
+Only after landing-verifier reports LANDED. Present the commit plan to the human for approval:
 1. Run `git status`, `git diff HEAD`, `git log --oneline -10` to understand what's being committed
 2. Stage only the test + implementation files (not unrelated changes)
 3. Write a commit message that summarizes the **why**, not the what. Follow the repo's convention: `feat(F{id}): {feature name}`

@@ -53,14 +53,14 @@ A feature goes in. KEEL:
 
 1. Classifies intent and complexity (pre-check)
 2. Researches unknowns if needed (researcher)
-3. Consults on architecture if complex (oracle)
+3. Consults on architecture if complex (arch-advisor)
 4. Designs interfaces (designer)
 5. Writes tests from the spec (test-writer)
 6. Writes code to pass the tests (implementer)
 7. Verifies code matches spec (spec-reviewer) — self-corrects on failure
 8. Verifies domain invariants (safety-auditor) — self-corrects on failure
-9. Verifies architecture soundness (oracle verify) — for complex features
-10. Verifies everything landed (plan-lander)
+9. Verifies architecture soundness (arch-advisor verify) — for complex features
+10. Verifies everything landed (landing-verifier)
 11. Garbage collects docs (doc-gardener)
 12. Opens a PR
 
@@ -107,7 +107,7 @@ tagged releases as the framework stabilizes.
 **Testbed:** The framework needs a real-world project to exercise the
 full pipeline end-to-end. Repo Man served this role during initial
 development but its scope is small. A larger testbed project — one that
-exercises architecture-tier Oracle consultations, multi-layer features,
+exercises architecture-tier Arch-advisor consultations, multi-layer features,
 and the full gate sequence — would strengthen confidence in the pipeline.
 This is an open question.
 
@@ -116,7 +116,7 @@ This is an open question.
 | Stage | What changes | Status |
 |-|-|-|
 | **1. Process framework** | Agents, pipeline, docs, handoff format | Done |
-| **2. Self-correcting pipeline** | Structured rejection, wisdom accumulation, intent classification, Oracle | Done |
+| **2. Self-correcting pipeline** | Structured rejection, wisdom accumulation, intent classification, Arch-advisor | Done |
 | **3. Install-anywhere** | install.sh, uninstall.sh, artifact inventory | Done |
 | **4. Full autonomy** | Feature → PR without human at each step, automatic GC | Next |
 | **5. Testbed project** | Real-world project that exercises the full pipeline | Open |

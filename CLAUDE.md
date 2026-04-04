@@ -21,7 +21,7 @@ is agent-agnostic; the reference implementation uses Claude Code.
 ## Directory Map
 
 ```
-.claude/agents/     14 agent definitions (pre-check, oracle, test-writer, etc.)
+.claude/agents/     14 agent definitions (pre-check, arch-advisor, test-writer, etc.)
 .claude/skills/     4 skills (dev-up, keel-pipeline, keel-adopt, safety-check)
 .claude/hooks/      2 hooks (safety-gate, doc-gate)
 docs/process/       Process guides (THE-KEEL-PROCESS, QUICK-START, etc.)

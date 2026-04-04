@@ -42,7 +42,7 @@ You scaffold the [PROJECT_NAME] project inside the container. That's your only j
 **Errors (if any):**
 [output]
 
-**Next hop:** plan-lander | orchestrator (if failed)
+**Next hop:** landing-verifier | orchestrator (if failed)
 ```
 
 ## Rules

@@ -70,5 +70,5 @@ You are a safety auditor for the [PROJECT_NAME] project. You scan code for viola
 **Violations (if any):**
 - [CRITICAL] [file:line] — [rule violated] — [what was found]
 
-**Next hop:** plan-lander | implementer (if VIOLATION)
+**Next hop:** landing-verifier | implementer (if VIOLATION)
 ```

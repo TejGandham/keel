@@ -8,7 +8,7 @@
        The pipeline orchestrator updates it after each agent step.
      - Agent sections below are append-only markdown. Each agent reads
        all upstream sections, then appends its own.
-     - Decision-heavy agents (pre-check, designers, oracle) populate
+     - Decision-heavy agents (pre-check, designers, arch-advisor) populate
        ### Decisions and ### Constraints for downstream.
      - Implementer populates ### Decisions only (no constraints — its
        downstream agents are its reviewers).
@@ -27,14 +27,14 @@ complexity:     # trivial | standard | complex | architecture-tier
 designer_needed:       # YES | NO
 researcher_needed:     # YES | NO
 safety_auditor_needed: # YES | NO
-oracle_needed:         # YES | NO
+arch_advisor_needed:         # YES | NO
 
 # Gate verdicts (set by orchestrator after each gate agent)
 spec_review_verdict:   # CONFORMANT | DEVIATION
 spec_review_attempt: 0
 safety_verdict:        # PASS | VIOLATION
 safety_attempt: 0
-oracle_verdict:        # SOUND | UNSOUND (verify mode only)
+arch_advisor_verdict:        # SOUND | UNSOUND (verify mode only)
 ---
 
 ## pre-check
@@ -49,11 +49,11 @@ oracle_verdict:        # SOUND | UNSOUND (verify mode only)
 ### Decisions (optional)
 <!-- Key choices made and why. Max 5 bullets. -->
 
-## oracle-consultation
-<!-- Architecture guidance appended here by Oracle at Step 1.7 (if applicable) -->
+## arch-advisor-consultation
+<!-- Architecture guidance appended here by Arch-advisor at Step 1.7 (if applicable) -->
 
 ### Constraints for downstream
-<!-- Oracle's MUST/MUST NOT directives for designers/implementers. -->
+<!-- Arch-advisor's MUST/MUST NOT directives for designers/implementers. -->
 
 ## backend-designer / frontend-designer
 <!-- Design brief appended here (if applicable) -->
@@ -88,10 +88,10 @@ oracle_verdict:        # SOUND | UNSOUND (verify mode only)
      Agent still outputs **Verdict:** in its section for human readability.
      The orchestrator copies the verdict to the YAML frontmatter. -->
 
-## oracle-verification
-<!-- Independent structural review appended here by Oracle at Step 7.5 (if applicable).
+## arch-advisor-verification
+<!-- Independent structural review appended here by Arch-advisor at Step 7.5 (if applicable).
      Agent still outputs **Verdict:** in its section for human readability.
      The orchestrator copies the verdict to the YAML frontmatter. -->
 
-## plan-lander
+## landing-verifier
 <!-- Landing report appended here -->

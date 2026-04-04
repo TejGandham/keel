@@ -39,7 +39,7 @@ You build and verify Docker images for the [PROJECT_NAME] project. That's your o
 **Errors (if any):**
 [build output]
 
-**Next hop:** plan-lander | orchestrator (if failed)
+**Next hop:** landing-verifier | orchestrator (if failed)
 ```
 
 ## Rules

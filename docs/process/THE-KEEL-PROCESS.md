@@ -199,9 +199,9 @@ From empty directory to first passing test.
 7. Define architecture layers     (ARCHITECTURE.md)
 8. Configure Docker/container     (Dockerfile + docker-compose.yml)
 9. Run bootstrap features:
-   F01: docker-builder -> plan-lander
-   F02: scaffolder -> plan-lander
-   F03: config-writer -> plan-lander
+   F01: docker-builder -> landing-verifier
+   F02: scaffolder -> landing-verifier
+   F03: config-writer -> landing-verifier
 10. Verify: tests pass in container
 ```
 
@@ -443,8 +443,8 @@ Fourteen specialized agents, each with bounded responsibility.
 | **implementer** | Code to pass tests | Failing tests, spec | Implementation (all GREEN) | Modify tests |
 | **spec-reviewer** | Verify spec match | Spec, implementation | Verdict: CONFORMANT or DEVIATION | Modify code |
 | **safety-auditor** | Verify invariants | Core-beliefs, implementation | Verdict: PASS or VIOLATION | Modify code |
-| **oracle** | Architecture consultation + verification | Spec, handoff, ARCHITECTURE.md | Guidance (CONSULT) or Verdict: SOUND/UNSOUND (VERIFY) | Modify code |
-| **plan-lander** | Verify completeness | All handoff entries | LANDED or BLOCKED | Write code or tests |
+| **arch-advisor** | Architecture consultation + verification | Spec, handoff, ARCHITECTURE.md | Guidance (CONSULT) or Verdict: SOUND/UNSOUND (VERIFY) | Modify code |
+| **landing-verifier** | Verify completeness | All handoff entries | LANDED or BLOCKED | Write code or tests |
 | **doc-gardener** | Fix doc drift | All docs, codebase | Updated docs, drift report | Write feature code |
 
 ### Reasoning Tiers
@@ -459,47 +459,47 @@ equivalent tiers.
 | **high** | Design decisions, gate verdicts, deep analysis | opus | Your platform's highest-tier model |
 | **standard** | Routing, pattern-following, verification | sonnet | Your platform's standard-tier model |
 
-**High reasoning agents:** oracle, implementer, spec-reviewer, safety-auditor,
+**High reasoning agents:** arch-advisor, implementer, spec-reviewer, safety-auditor,
 backend-designer, frontend-designer, researcher (7 agents)
 
 **Standard reasoning agents:** pre-check, test-writer, docker-builder,
-scaffolder, config-writer, plan-lander, doc-gardener (7 agents)
+scaffolder, config-writer, landing-verifier, doc-gardener (7 agents)
 
 ### The Four Pipeline Variants
 
 **Bootstrap** (project setup)
 
 ```
-docker-builder --> plan-lander
-scaffolder     --> plan-lander
-config-writer  --> plan-lander
+docker-builder --> landing-verifier
+scaffolder     --> landing-verifier
+config-writer  --> landing-verifier
 ```
 
 **Backend** (foundation and service features)
 
 ```
-pre-check --> researcher? --> oracle? --> backend-designer? --> test-writer --> implementer --> spec-reviewer --> safety-auditor? --> oracle-verify? --> plan-lander
+pre-check --> researcher? --> arch-advisor? --> backend-designer? --> test-writer --> implementer --> spec-reviewer --> safety-auditor? --> arch-advisor-verify? --> landing-verifier
 ```
 
 `?` = conditionally included. Pre-check classifies intent and complexity,
 then decides which optional agents run. Designer skipped for trivial features.
-Safety-auditor only for domain-critical modules. Oracle runs for
+Safety-auditor only for domain-critical modules. Arch-advisor runs for
 architecture-tier complexity (consultation before design, verification before
 landing).
 
 **Frontend** (UI features)
 
 ```
-pre-check --> researcher? --> oracle? --> frontend-designer --> test-writer --> implementer --> spec-reviewer --> oracle-verify? --> plan-lander
+pre-check --> researcher? --> arch-advisor? --> frontend-designer --> test-writer --> implementer --> spec-reviewer --> arch-advisor-verify? --> landing-verifier
 ```
 
 Frontend-designer always included. No safety-auditor (UI does not execute
-domain-critical operations directly). Oracle for architecture-tier only.
+domain-critical operations directly). Arch-advisor for architecture-tier only.
 
 **Cross-cutting** (test infrastructure, fixtures)
 
 ```
-pre-check --> test-writer --> implementer --> plan-lander
+pre-check --> test-writer --> implementer --> landing-verifier
 ```
 
 ### The Handoff Mechanism
@@ -520,7 +520,7 @@ Intent: build
 Complexity: standard
 Designer needed: NO
 Safety auditor needed: YES
-Oracle needed: NO
+Arch-advisor needed: NO
 
 ### Constraints for downstream
 - MUST: use Task.Supervisor for async operations (pattern in repo_server.ex)
@@ -544,7 +544,7 @@ spec-review-attempt: 1
 **Verdict:** PASS
 No --force, no --rebase. Task.Supervisor isolates crashes.
 
-## plan-lander
+## landing-verifier
 Status: LANDED
 ```
 
@@ -659,7 +659,7 @@ change.
 3. Read referenced spec sections.
 4. Create handoff file: `docs/exec-plans/active/handoffs/F{id}-{feature-name}.md`.
 5. Run pipeline stages sequentially, reviewing each output.
-6. Continue until plan-lander reports LANDED.
+6. Continue until landing-verifier reports LANDED.
 
 ### What the Human Does at Each Stage
 
@@ -667,36 +667,36 @@ change.
 |---|---|
 | Pre-check | Does intent/complexity classification make sense? Routing correct? |
 | Researcher | Are findings relevant? Missing context? |
-| Oracle (consult) | Does architecture guidance align with your vision? |
+| Arch-advisor (consult) | Does architecture guidance align with your vision? |
 | Designer | Does the design match your mental model? |
 | Test-writer | Do tests cover spec assertions? |
 | Implementer | Do tests pass? Is code reasonable? |
 | Spec-reviewer | CONFORMANT or DEVIATION — do you agree? |
 | Safety-auditor | PASS or VIOLATION — comfortable with the analysis? |
-| Oracle (verify) | SOUND or UNSOUND — architecture still solid after implementation? |
-| Plan-lander | Is the feature complete? |
+| Arch-advisor (verify) | SOUND or UNSOUND — architecture still solid after implementation? |
+| Landing-verifier | Is the feature complete? |
 
 At each stage: **proceed**, **redo** (with more context), **fix** (update
 spec), or **abort** (rare).
 
 ### Structured Verdicts and Loop Control
 
-Gate agents (spec-reviewer, safety-auditor, Oracle) output a structured
+Gate agents (spec-reviewer, safety-auditor, Arch-advisor) output a structured
 `**Verdict:**` as their first line. The pipeline branches on this:
 
 - **Spec-reviewer:** max 2 loops. DEVIATION sends findings to implementer.
   After 2 attempts, escalate to human — decompose the feature or fix the spec.
 - **Safety-auditor:** max 3 loops. VIOLATION is never negotiable — fix the code.
   After 3 attempts, escalate — the invariant rule itself may need review.
-- **Oracle (verify):** max 1 retry. UNSOUND sends architecture findings to
+- **Arch-advisor (verify):** max 1 retry. UNSOUND sends architecture findings to
   implementer, then reruns the full gate sequence (spec-reviewer → safety →
-  Oracle). If still UNSOUND, escalate.
+  Arch-advisor). If still UNSOUND, escalate.
 
 See `docs/process/FAILURE-PLAYBOOK.md` for the full decision tree.
 
 ### The Commit Ritual
 
-After plan-lander reports LANDED:
+After landing-verifier reports LANDED:
 
 ```
 1. Stage files by name (never git add -A)
@@ -745,7 +745,7 @@ Each entry: checkbox, date, source, enough context for a future agent.
 | **1. Full review** | Reviews every output | Single pipeline stages | Base pipeline |
 | **2. Agent-to-agent review** | Reviews final output only | Spec-reviewer + safety-auditor catch issues | Reliable gate agents over 5-10 features |
 | **3. Self-correcting pipeline** | Reviews escalations only | Pipeline diagnoses failures and reroutes | Structured rejection, wisdom accumulation, intent classification |
-| **4. Agent end-to-end** | Approves in batch | Drives features pre-check to landed | Mechanical enforcement + Oracle verification |
+| **4. Agent end-to-end** | Approves in batch | Drives features pre-check to landed | Mechanical enforcement + Arch-advisor verification |
 
 ### What Enables Each Transition
 
@@ -764,9 +764,9 @@ patterns:
 - **Intent classification:** Pre-check classifies work intent (refactoring,
   build, mid-sized, architecture, research) and complexity tier (trivial →
   architecture-tier). This drives routing: trivial features skip the designer,
-  architecture-tier features invoke Oracle.
+  architecture-tier features invoke Arch-advisor.
 
-**3 to 4:** The agent orchestrates its own pipeline. Oracle provides
+**3 to 4:** The agent orchestrates its own pipeline. Arch-advisor provides
 architecture-level verification for complex features. Reads backlog, identifies
 next feature, runs stages, reports results. Human reviews in batch.
 

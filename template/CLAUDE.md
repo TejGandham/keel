@@ -45,26 +45,26 @@ Consult [north-star.md](docs/north-star.md) at every decision point.
 
 ### Bootstrap pipeline
 ```
-docker-builder → plan-lander
-scaffolder → plan-lander
-config-writer → plan-lander
+docker-builder → landing-verifier
+scaffolder → landing-verifier
+config-writer → landing-verifier
 ```
 
 ### Backend pipeline
 ```
-pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → plan-lander
+pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → landing-verifier
 ```
 Designer skipped when pre-check says `Designer needed: NO`.
 Safety-auditor only for features touching domain-critical modules.
 
 ### Frontend pipeline
 ```
-pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → plan-lander
+pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → landing-verifier
 ```
 
 ### Cross-cutting pipeline
 ```
-pre-check → test-writer → implementer → plan-lander
+pre-check → test-writer → implementer → landing-verifier
 ```
 
 ### Handoffs
@@ -72,7 +72,7 @@ Each feature gets `docs/exec-plans/active/handoffs/F{id}-{feature-name}.md`.
 Each agent's output is appended. Next agent reads the handoff file.
 Moved to `completed/handoffs/` when feature lands.
 
-### After plan-lander reports LANDED
+### After landing-verifier reports LANDED
 **Bootstrap:** `git add` artifacts from bootstrap agent → commit
 **Standard:** `git add` files from test-writer + implementer → commit
 All variants: `feat(F{id}): {feature name}` → check off backlog → move handoff to completed

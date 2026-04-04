@@ -15,15 +15,15 @@
 **Handoff** — An append-only markdown file (`docs/exec-plans/active/handoffs/F{id}-{feature-name}.md`) that persists context between pipeline agents. Each agent reads upstream context and appends its output. Never rewritten — only appended to.
 
 **Pipeline Variant** — One of four execution paths a feature takes through the agent roster:
-- **Bootstrap:** Three separate features, each dispatching one agent then plan-lander:
-  - F01: docker-builder → plan-lander
-  - F02: scaffolder → plan-lander
-  - F03: config-writer → plan-lander
-- **Backend:** pre-check → researcher? → oracle? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → oracle-verify? → plan-lander
-- **Frontend:** pre-check → researcher? → oracle? → frontend-designer → test-writer → implementer → spec-reviewer → oracle-verify? → plan-lander
-- **Cross-cutting:** pre-check → test-writer → implementer → plan-lander
+- **Bootstrap:** Three separate features, each dispatching one agent then landing-verifier:
+  - F01: docker-builder → landing-verifier
+  - F02: scaffolder → landing-verifier
+  - F03: config-writer → landing-verifier
+- **Backend:** pre-check → researcher? → arch-advisor? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → arch-advisor-verify? → landing-verifier
+- **Frontend:** pre-check → researcher? → arch-advisor? → frontend-designer → test-writer → implementer → spec-reviewer → arch-advisor-verify? → landing-verifier
+- **Cross-cutting:** pre-check → test-writer → implementer → landing-verifier
 
-**Execution Brief** — The structured output of the pre-check agent. Contains: intent classification, complexity tier, spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, constraints for downstream (MUST/MUST NOT), and routing decisions (designer needed? researcher needed? oracle needed?).
+**Execution Brief** — The structured output of the pre-check agent. Contains: intent classification, complexity tier, spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, constraints for downstream (MUST/MUST NOT), and routing decisions (designer needed? researcher needed? arch-advisor needed?).
 
 **Orchestrator** — The human who steers the KEEL process: kicks off features, reviews agent output, commits landed code, updates the backlog, and archives handoffs. The orchestrator does not write code.
 
@@ -39,14 +39,14 @@
 
 **Lifecycle** — The "L" in KEEL. The full arc: north star → spec → backlog → pipeline → landed feature → garbage collection. Every feature goes through this complete cycle.
 
-**Oracle** — Read-only architecture consultant agent with two invocation modes: CONSULT (Step 1.7, before design) provides architecture guidance for complex features; VERIFY (Step 7.5, before landing) performs independent structural review. Gated by pre-check's complexity classification — only runs for architecture-tier features.
+**Arch-advisor** — Read-only architecture consultant agent with two invocation modes: CONSULT (Step 1.7, before design) provides architecture guidance for complex features; VERIFY (Step 7.5, before landing) performs independent structural review. Gated by pre-check's complexity classification — only runs for architecture-tier features.
 
-**Intent Classification** — Pre-check's mandatory first step. Categorizes work as refactoring, build, mid-sized, architecture, or research. Determines pipeline routing: which optional agents run, complexity tier, and whether Oracle is needed.
+**Intent Classification** — Pre-check's mandatory first step. Categorizes work as refactoring, build, mid-sized, architecture, or research. Determines pipeline routing: which optional agents run, complexity tier, and whether Arch-advisor is needed.
 
-**Complexity Tier** — Pre-check's assessment of feature scope: trivial (skip designer), standard (normal pipeline), complex (all gates), architecture-tier (Oracle consultation + verification). Drives pipeline routing decisions.
+**Complexity Tier** — Pre-check's assessment of feature scope: trivial (skip designer), standard (normal pipeline), complex (all gates), architecture-tier (Arch-advisor consultation + verification). Drives pipeline routing decisions.
 
 **Wisdom Accumulation** — Pattern where agents propagate context downstream through structured Decisions (choices made and why) and Constraints (MUST/MUST NOT for downstream agents) in the handoff file. Prevents agents from repeating upstream mistakes or violating upstream decisions.
 
 **Structured Rejection** — Pattern where gate agents (spec-reviewer, safety-auditor) output a machine-readable `**Verdict:**` field as their first line. The pipeline branches on this verdict. Max 2 spec-review loops, max 3 safety-auditor loops before escalating to human.
 
-**Pragmatic Minimalism** — Oracle's core decision framework: bias toward simplicity, leverage what exists, prioritize developer experience, one clear path, match depth to complexity. Ported from OMA (Oh My OpenAgent).
+**Pragmatic Minimalism** — Arch-advisor's core decision framework: bias toward simplicity, leverage what exists, prioritize developer experience, one clear path, match depth to complexity. Ported from OMA (Oh My OpenAgent).

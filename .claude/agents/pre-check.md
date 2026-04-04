@@ -16,14 +16,14 @@ Before analysis, classify the work intent. This determines your strategy.
 | Refactoring | "refactor", "restructure", "clean up" | Safety: behavior preservation, test coverage |
 | Build from Scratch | New feature, greenfield, "create new" | Discovery: explore patterns first |
 | Mid-sized Task | Scoped feature, specific deliverable | Guardrails: exact deliverables, exclusions |
-| Architecture | System design, "how should we structure" | Strategic: long-term impact, Oracle consultation |
+| Architecture | System design, "how should we structure" | Strategic: long-term impact, Arch-advisor consultation |
 | Research | Investigation needed, path unclear | Investigation: exit criteria, parallel probes |
 
 Classify complexity:
 - **Trivial** — single file, <10 lines, clear scope → skip designer
 - **Standard** — 1-3 files, bounded scope → normal pipeline
 - **Complex** — 3+ files, cross-module → full pipeline with all gates
-- **Architecture-tier** — structural change, new patterns → Oracle consultation
+- **Architecture-tier** — structural change, new patterns → Arch-advisor consultation
 
 ## Your Role
 
@@ -48,7 +48,7 @@ Classify complexity:
 **Designer needed:** YES (complex interface/state/component) | NO (trivial function)
 **Implementer needed:** YES | NO (test infrastructure — test-writer handles everything)
 **Safety auditor needed:** YES (touches domain-critical modules) | NO
-**Oracle needed:** YES (architecture-tier complexity) | NO
+**Arch-advisor needed:** YES (architecture-tier complexity) | NO
 
 **Intent:** refactoring | build | mid-sized | architecture | research
 **Complexity:** trivial | standard | complex | architecture-tier

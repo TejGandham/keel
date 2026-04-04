@@ -34,7 +34,7 @@ You write configuration and boilerplate files for the [PROJECT_NAME] project. Th
 **Errors (if any):**
 [output]
 
-**Next hop:** plan-lander | orchestrator (if failed)
+**Next hop:** landing-verifier | orchestrator (if failed)
 ```
 
 ## Rules

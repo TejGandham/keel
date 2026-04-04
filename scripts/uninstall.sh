@@ -19,11 +19,11 @@ echo ""
 
 # --- Define KEEL agents (exact filenames) ---
 KEEL_AGENTS=(
-  pre-check.md oracle.md researcher.md
+  pre-check.md arch-advisor.md researcher.md
   backend-designer.md frontend-designer.md
   test-writer.md implementer.md
   spec-reviewer.md safety-auditor.md
-  plan-lander.md doc-gardener.md
+  landing-verifier.md doc-gardener.md
   docker-builder.md scaffolder.md config-writer.md
 )
 

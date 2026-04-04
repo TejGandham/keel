@@ -12,7 +12,7 @@ A feature flows through the pipeline like this:
 graph TD
     Spec["🧑 <b>YOU WRITE A FEATURE SPEC</b>"] --> PC["🤖 Pre-check classifies it<br/>intent · complexity · routing"]
     PC -->|"research needed"| R["🤖 Researcher investigates<br/>unknowns before building"]
-    PC -->|"architecture-tier"| OC["🤖 Oracle provides<br/>architecture guidance"]
+    PC -->|"architecture-tier"| OC["🤖 Arch-advisor provides<br/>architecture guidance"]
     R --> OC
     OC --> D["🤖 Designer defines<br/>interfaces + data structures"]
     PC -->|"standard"| D
@@ -23,10 +23,10 @@ graph TD
     SR -->|"CONFORMANT"| SA{"🤖 Safety-auditor:<br/>any invariant violations?"}
     SR -->|"DEVIATION"| FIX1["🤖 Findings → implementer fixes"]
     FIX1 --> SR
-    SA -->|"PASS"| OV{"🤖 Oracle verify:<br/>architecture sound?"}
+    SA -->|"PASS"| OV{"🤖 Arch-advisor verify:<br/>architecture sound?"}
     SA -->|"VIOLATION"| FIX2["🤖 Findings → implementer fixes"]
     FIX2 --> SA
-    OV -->|"SOUND"| PL["🤖 Plan-lander verifies<br/>everything landed"]
+    OV -->|"SOUND"| PL["🤖 Landing-verifier verifies<br/>everything landed"]
     OV -->|"UNSOUND"| FIX3["🤖 Findings → implementer fixes"]
     FIX3 --> SR
     PL --> GC["🤖 Doc-gardener sweeps<br/>for stale docs"]
@@ -104,7 +104,7 @@ graph LR
         F5 --> E5["✗ escalate"]
     end
 
-    subgraph "oracle verify"
+    subgraph "arch-advisor verify"
         OV4["verdict"] -->|"SOUND"| N3["✓ proceed"]
         OV4 -->|"UNSOUND"| F6["⟲ fix · max 1"]
         F6 --> E6["✗ escalate"]
@@ -145,7 +145,7 @@ graph TD
     COMP -->|"trivial"| R1["Skip designer"]
     COMP -->|"standard"| R2["Normal pipeline"]
     COMP -->|"complex"| R3["All gates run"]
-    COMP -->|"architecture-tier"| R4["Oracle consult + verify"]
+    COMP -->|"architecture-tier"| R4["Arch-advisor consult + verify"]
 
     style FEAT fill:#303F9F,stroke:#1A237E,color:#fff
     style INT fill:#303F9F,stroke:#1A237E,color:#fff
@@ -170,7 +170,7 @@ graph LR
     subgraph "🧭 Routing"
         PC2[pre-check<br/>classify + route]
         RS[researcher<br/>discover]
-        OR[oracle<br/>consult + verify]
+        OR[arch-advisor<br/>consult + verify]
         DG[doc-gardener<br/>drift sweep]
     end
 
@@ -183,11 +183,11 @@ graph LR
     subgraph "🛡️ Gates"
         SR2[spec-reviewer<br/>CONFORMANT?]
         SA2[safety-auditor<br/>PASS?]
-        OV2[oracle verify<br/>SOUND?]
+        OV2[arch-advisor verify<br/>SOUND?]
     end
 
     subgraph "🏁 Landing"
-        PL2[plan-lander<br/>LANDED?]
+        PL2[landing-verifier<br/>LANDED?]
     end
 
     subgraph "⚙️ Bootstrap"
@@ -214,8 +214,8 @@ graph LR
 
 | Tier | Agents | Why |
 |-|-|-|
-| **High reasoning** | oracle, implementer, spec-reviewer, safety-auditor, designers, researcher | Design decisions, gate verdicts, deep analysis |
-| **Standard reasoning** | pre-check, test-writer, plan-lander, doc-gardener, scaffolder, config-writer, docker-builder | Classification, pattern-following, verification |
+| **High reasoning** | arch-advisor, implementer, spec-reviewer, safety-auditor, designers, researcher | Design decisions, gate verdicts, deep analysis |
+| **Standard reasoning** | pre-check, test-writer, landing-verifier, doc-gardener, scaffolder, config-writer, docker-builder | Classification, pattern-following, verification |
 
 See [THE-KEEL-PROCESS.md](process/THE-KEEL-PROCESS.md) for the full agent
 roster with inputs, outputs, and tool access.

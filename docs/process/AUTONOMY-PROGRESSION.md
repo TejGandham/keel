@@ -20,7 +20,7 @@ Every KEEL project starts here. The human:
 - Reads every test before implementer runs
 - Reviews every implementation
 - Reads every spec conformance report
-- Manually runs plan-lander verification
+- Manually runs landing-verifier verification
 
 This is intentional. You're calibrating: learning what the agents do well, where they struggle, and what capabilities are missing.
 
@@ -33,7 +33,7 @@ This is intentional. You're calibrating: learning what the agents do well, where
 ## Stage 2: Pipeline Trust
 
 Stop reviewing intermediate steps. Run the full pipeline and review the landed result:
-- Read the handoff file after plan-lander reports LANDED
+- Read the handoff file after landing-verifier reports LANDED
 - Review the git diff (what changed)
 - Run the app and verify behavior
 - Commit if satisfied

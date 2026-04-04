@@ -164,7 +164,7 @@ The pipeline will:
 2. **test-writer** — write tests from the spec (your existing test patterns)
 3. **implementer** — make the tests pass (following your existing code patterns)
 4. **spec-reviewer** — verify the implementation matches the spec
-5. **plan-lander** — verify everything lands clean
+5. **landing-verifier** — verify everything lands clean
 
 The agent already has context from CLAUDE.md and ARCHITECTURE.md. It will
 follow your existing patterns because it read your codebase in step 1.

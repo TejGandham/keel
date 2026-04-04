@@ -27,7 +27,7 @@ customizations live in these files. Back them up or extract your
 
 ```bash
 rm -f .claude/agents/pre-check.md
-rm -f .claude/agents/oracle.md
+rm -f .claude/agents/arch-advisor.md
 rm -f .claude/agents/researcher.md
 rm -f .claude/agents/backend-designer.md
 rm -f .claude/agents/frontend-designer.md
@@ -35,7 +35,7 @@ rm -f .claude/agents/test-writer.md
 rm -f .claude/agents/implementer.md
 rm -f .claude/agents/spec-reviewer.md
 rm -f .claude/agents/safety-auditor.md
-rm -f .claude/agents/plan-lander.md
+rm -f .claude/agents/landing-verifier.md
 rm -f .claude/agents/doc-gardener.md
 rm -f .claude/agents/docker-builder.md
 rm -f .claude/agents/scaffolder.md

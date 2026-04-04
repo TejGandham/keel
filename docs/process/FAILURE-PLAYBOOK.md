@@ -34,10 +34,10 @@ Pipeline stalls or produces bad output
   │    → Re-run safety-auditor after fix. No shortcuts.
   │    → If 3+ loops: escalate to human. The invariant may need review.
   │
-  ├─ Oracle verification returns UNSOUND?
+  ├─ Arch-advisor verification returns UNSOUND?
   │    → Send architecture findings to implementer
-  │    → Implementer fixes, re-run spec-reviewer + safety-auditor + Oracle
-  │    → Max 1 Oracle retry. If still UNSOUND → Escalate to human.
+  │    → Implementer fixes, re-run spec-reviewer + safety-auditor + Arch-advisor
+  │    → Max 1 Arch-advisor retry. If still UNSOUND → Escalate to human.
   │    → This is an architecture-level problem, not a code-level one.
   │
   ├─ pre-check routed wrong? (skipped designer when one was needed)
@@ -45,9 +45,9 @@ Pipeline stalls or produces bad output
   │    → Designer reads the handoff, produces design brief
   │    → Resume pipeline from test-writer
   │
-  ├─ plan-lander reports BLOCKED?
+  ├─ landing-verifier reports BLOCKED?
   │    → Read the BLOCKED reason — it tells you which upstream stage failed
-  │    → Fix that stage, re-run plan-lander
+  │    → Fix that stage, re-run landing-verifier
   │
   └─ Agent produces garbled or off-topic output?
        → Re-run the same agent (model hiccup, not a process failure)

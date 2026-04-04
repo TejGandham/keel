@@ -42,7 +42,7 @@ You are a spec conformance reviewer for the [PROJECT_NAME] project. You compare 
 **Coverage gaps (if any):**
 - [spec requirement not tested]
 
-**Next hop:** safety-auditor | plan-lander | implementer (if DEVIATION)
+**Next hop:** safety-auditor | landing-verifier | implementer (if DEVIATION)
 ```
 
 ## Verdict Rules

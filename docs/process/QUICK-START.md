@@ -87,7 +87,7 @@ stack-specific commands that need your input. At minimum, configure:
 - `.claude/agents/pre-check.md` — your compile/build command
 - `.claude/agents/test-writer.md` — your test framework, mock framework, test command
 - `.claude/agents/implementer.md` — your formatter, container command, domain invariants
-- `.claude/agents/plan-lander.md` — your test command for each pipeline variant
+- `.claude/agents/landing-verifier.md` — your test command for each pipeline variant
 - `.claude/agents/scaffolder.md` — your framework's scaffold command
 - `.claude/agents/docker-builder.md` — your stack's required tools
 - `.claude/agents/config-writer.md` — your compile/build command
@@ -111,16 +111,16 @@ Start with bootstrap features (Docker, scaffold, config).
 
 Bootstrap features (F01-F03) are orchestrator-direct — they use specialized agents, not the full pipeline:
 ```
-/keel-pipeline F01 docs/design-docs/core-beliefs.md   # docker-builder → plan-lander
-/keel-pipeline F02 docs/product-specs/your-spec.md     # scaffolder → plan-lander
-/keel-pipeline F03 docs/design-docs/core-beliefs.md   # config-writer → plan-lander
+/keel-pipeline F01 docs/design-docs/core-beliefs.md   # docker-builder → landing-verifier
+/keel-pipeline F02 docs/product-specs/your-spec.md     # scaffolder → landing-verifier
+/keel-pipeline F03 docs/design-docs/core-beliefs.md   # config-writer → landing-verifier
 ```
 
 After bootstrap, run your first real feature through the full pipeline:
 ```
 /keel-pipeline F04 docs/product-specs/your-spec.md
 ```
-The pipeline handles everything: pre-check → designer? → test-writer → implementer → spec-reviewer → plan-lander.
+The pipeline handles everything: pre-check → designer? → test-writer → implementer → spec-reviewer → landing-verifier.
 
 ## What Happens Next
 
