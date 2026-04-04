@@ -14,7 +14,7 @@ Full guide: `docs/process/BROWNFIELD.md`
 
 - Existing project, no KEEL structure yet
 - Want to start using KEEL's pipeline for new features
-- NOT for greenfield — use `bootstrap.sh` + QUICK-START.md instead
+- NOT for greenfield — use `bootstrap.py` + QUICK-START.md instead
 
 ## Phases
 
@@ -199,7 +199,7 @@ In the agent definition, replace the `<!-- CUSTOMIZE -->` sections with:
 - The grep patterns from Phase 4
 - The critical file paths for this project
 
-**5c. Configure `.claude/hooks/safety-gate.sh`**
+**5c. Configure `.claude/hooks/safety-gate.py`**
 
 Set the `CRITICAL_PATTERNS` variable to match the project's critical files:
 ```bash
@@ -210,7 +210,7 @@ CRITICAL_PATTERNS="*/auth/*|*/middleware/*|*/transactions/*"
 
 **STOP.** Tell the human:
 > "Safety enforcement is configured. Review core-beliefs.md, the
-> safety-auditor agent definition, and safety-gate.sh. These control
+> safety-auditor agent definition, and safety-gate.py. These control
 > what the auditor enforces on every future feature. When satisfied,
 > we're done with adoption."
 

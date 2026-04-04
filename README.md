@@ -72,7 +72,7 @@ Not for: one-off scripts, throwaway prototypes, <5 feature projects.
 ```bash
 cd my-project    # new or existing
 git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
-/tmp/keel/scripts/install.sh
+/tmp/keel/scripts/install.py
 rm -rf /tmp/keel
 ```
 

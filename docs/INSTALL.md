@@ -8,7 +8,7 @@ scaffolding (agents, skills, doc structure). Nothing is overwritten.
 ```bash
 cd your-project
 git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
-/tmp/keel/scripts/install.sh
+/tmp/keel/scripts/install.py
 rm -rf /tmp/keel
 ```
 
@@ -54,8 +54,8 @@ agent. At minimum, fill in `safety-auditor.md` with your domain invariants.
 
 | Hook | Purpose |
 |-|-|
-| `safety-gate.sh` | Pre-edit safety check on critical modules |
-| `doc-gate.sh` | Post-commit reminder to check for doc drift |
+| `safety-gate.py` | Pre-edit safety check on critical modules |
+| `doc-gate.py` | Post-commit reminder to check for doc drift |
 
 ### `docs/` — document structure
 

@@ -15,8 +15,8 @@ is agent-agnostic; the reference implementation uses Claude Code.
 - **Framework** (root): Process docs, agent definitions, skills, hooks
 - **Templates** (`template/`): Starter files for new KEEL projects
 - **Examples** (`examples/`): Domain invariant patterns
-- **Installer** (`scripts/install.sh`): Install KEEL into any project directory
-- **Legacy Bootstrap** (`scripts/bootstrap.sh`): In-place placeholder replacement
+- **Installer** (`scripts/install.py`): Install KEEL into any project directory
+- **Legacy Bootstrap** (`scripts/bootstrap.py`): In-place placeholder replacement
 
 ## Directory Map
 
@@ -26,7 +26,7 @@ is agent-agnostic; the reference implementation uses Claude Code.
 .claude/hooks/      2 hooks (safety-gate, doc-gate)
 docs/process/       Process guides (THE-KEEL-PROCESS, QUICK-START, etc.)
 docs/               Framework-level templates (north-star, specs, design docs)
-template/           Starter files copied by bootstrap.sh
+template/           Starter files copied by bootstrap.py
 examples/           Domain invariant examples
 scripts/            Bootstrap and utilities
 ```

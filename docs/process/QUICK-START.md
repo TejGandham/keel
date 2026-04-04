@@ -33,7 +33,7 @@ mkdir my-project && cd my-project && git init
 
 # Install KEEL into your project
 git clone --depth 1 https://github.com/anthropics/keel.git /tmp/keel
-/tmp/keel/scripts/install.sh
+/tmp/keel/scripts/install.py
 rm -rf /tmp/keel
 ```
 The installer prompts for project name, stack, and description. It copies
@@ -79,7 +79,7 @@ Fill in `ARCHITECTURE.md`:
 Look at `examples/domain-invariants/` for inspiration.
 Write your invariants in `docs/design-docs/core-beliefs.md`.
 Configure `.claude/agents/safety-auditor.md` with your rules.
-Configure `.claude/hooks/safety-gate.sh` with your critical file patterns.
+Configure `.claude/hooks/safety-gate.py` with your critical file patterns.
 
 ### 8. Configure Agents, Hooks, and Commands
 Several agent definitions contain `<!-- CUSTOMIZE -->` comments marking
@@ -93,8 +93,8 @@ stack-specific commands that need your input. At minimum, configure:
 - `.claude/agents/config-writer.md` — your compile/build command
 
 Also configure hooks:
-- `.claude/hooks/safety-gate.sh` — set the file patterns that trigger safety reminders
-- `.claude/hooks/doc-gate.sh` — adjust the doc reference if needed
+- `.claude/hooks/safety-gate.py` — set the file patterns that trigger safety reminders
+- `.claude/hooks/doc-gate.py` — adjust the doc reference if needed
 
 Hooks are already wired in `.claude/settings.json`.
 

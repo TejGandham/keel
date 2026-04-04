@@ -6,11 +6,11 @@ created yourself are untouched.
 
 ## Quick Uninstall
 
-The installer bundles `keel-uninstall.sh` into your project:
+The installer bundles `keel-uninstall.py` into your project:
 
 ```bash
 cd your-project
-.claude/keel-uninstall.sh
+.claude/keel-uninstall.py
 ```
 
 The script only removes known KEEL files by exact name. It prompts before
@@ -63,8 +63,8 @@ rmdir .claude/skills 2>/dev/null
 ### KEEL hooks (safe to delete)
 
 ```bash
-rm -f .claude/hooks/safety-gate.sh
-rm -f .claude/hooks/doc-gate.sh
+rm -f .claude/hooks/safety-gate.py
+rm -f .claude/hooks/doc-gate.py
 ```
 
 If `.claude/hooks/` is now empty, remove it:
@@ -142,7 +142,7 @@ rm -rf docs/process
 ```bash
 rm -f .claude/agents/safety-auditor.md
 rm -rf .claude/skills/safety-check
-rm -f .claude/hooks/safety-gate.sh
+rm -f .claude/hooks/safety-gate.py
 ```
 
 **Keep docs, remove agents:**

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/safety-gate.sh\""
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/safety-gate.py\""
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/doc-gate.sh\""
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/doc-gate.py\""
           }
         ]
       }

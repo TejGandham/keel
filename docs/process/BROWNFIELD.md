@@ -112,7 +112,7 @@ Edit `.claude/agents/safety-auditor.md`:
 - Add grep patterns that detect violations
 - Add your critical file paths
 
-Edit `.claude/hooks/safety-gate.sh`:
+Edit `.claude/hooks/safety-gate.py`:
 - Set the file patterns that trigger safety reminders before edits
 
 This is your mechanical enforcement layer. It catches violations that

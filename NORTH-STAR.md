@@ -117,7 +117,7 @@ This is an open question.
 |-|-|-|
 | **1. Process framework** | Agents, pipeline, docs, handoff format | Done |
 | **2. Self-correcting pipeline** | Structured rejection, wisdom accumulation, intent classification, Arch-advisor | Done |
-| **3. Install-anywhere** | install.sh, uninstall.sh, artifact inventory | Done |
+| **3. Install-anywhere** | install.py, uninstall.py, artifact inventory | Done |
 | **4. Full autonomy** | Feature → PR without human at each step, automatic GC | Next |
 | **5. Testbed project** | Real-world project that exercises the full pipeline | Open |
 
