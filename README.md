@@ -95,7 +95,8 @@ Each stage reads the handoff file, does its work, appends its output. The orches
 | Document | Purpose |
 |-|-|
 | [THE-KEEL-PROCESS.md](docs/process/THE-KEEL-PROCESS.md) | Comprehensive guide (everything) |
-| [QUICK-START.md](docs/process/QUICK-START.md) | First afternoon with KEEL |
+| [QUICK-START.md](docs/process/QUICK-START.md) | First afternoon with KEEL (greenfield) |
+| [BROWNFIELD.md](docs/process/BROWNFIELD.md) | Adopting KEEL in an existing codebase |
 | [GLOSSARY.md](docs/process/GLOSSARY.md) | KEEL terminology |
 | [FAILURE-PLAYBOOK.md](docs/process/FAILURE-PLAYBOOK.md) | What to do when the pipeline stalls |
 | [ANTI-PATTERNS.md](docs/process/ANTI-PATTERNS.md) | 10 patterns that break the process |

@@ -61,7 +61,8 @@ See [examples/repo-man/CLAUDE.md](examples/repo-man/CLAUDE.md) for Repo Man-spec
 ## References
 
 - [Process guide](docs/process/THE-KEEL-PROCESS.md) — Full KEEL process
-- [Quick start](docs/process/QUICK-START.md) — First afternoon with KEEL
+- [Quick start](docs/process/QUICK-START.md) — First afternoon with KEEL (greenfield)
+- [Brownfield](docs/process/BROWNFIELD.md) — Adopting KEEL in an existing codebase
 - [Glossary](docs/process/GLOSSARY.md) — KEEL terminology
 - [Failure playbook](docs/process/FAILURE-PLAYBOOK.md) — Pipeline stall decision tree
 - [Anti-patterns](docs/process/ANTI-PATTERNS.md) — What to avoid
