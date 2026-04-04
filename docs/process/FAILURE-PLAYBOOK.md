@@ -71,9 +71,9 @@ Pipeline stalls or produces bad output
    file gets a `BLOCKED: test-issue` entry and routes back to test-writer.
    This is the one sanctioned backward path in the pipeline.
 
-6. **Decompose before you thrash.** If a feature touches 3+ layers or
-   requires 4+ agents to produce output, it's probably too large for a
-   single pipeline run. Split it.
+6. **Decompose before you thrash.** If a feature touches 3+ layers and
+   the implementer can't satisfy tests after 2 attempts, the feature may
+   be too large. Split it into smaller independently testable units.
 
 ## Escalation
 
