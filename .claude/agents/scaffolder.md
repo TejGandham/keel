@@ -26,7 +26,7 @@ config-writer's job.
    - Python: docker compose run --rm app django-admin startproject myapp .
    - Rust: docker compose run --rm app cargo init -->
 3. Verify tests pass with default scaffold tests
-7. Verify the app boots at the expected port
+4. Verify the app boots at the expected port
 
 ## Output Format
 

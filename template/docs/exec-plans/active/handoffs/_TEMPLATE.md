@@ -35,6 +35,8 @@ spec_review_verdict:   # CONFORMANT | DEVIATION
 spec_review_attempt: 0
 safety_verdict:        # PASS | VIOLATION
 safety_attempt: 0
+code_review_verdict:         # APPROVED | CHANGES NEEDED
+code_review_attempt: 0
 arch_advisor_verdict:        # SOUND | UNSOUND (verify mode only)
 
 # Arch-advisor re-run counters (separate from initial gate passes)

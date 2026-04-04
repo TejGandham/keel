@@ -45,17 +45,17 @@ Bootstrap features are orchestrator-direct: dispatch the specific bootstrap agen
 
 **Backend** — changes to core business logic, services, data layer:
 ```
-pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → landing-verifier
+pre-check → researcher? → backend-designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier
 ```
 
 **Frontend** — changes to UI components, templates, styles, client-side logic:
 ```
-pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → landing-verifier
+pre-check → researcher? → frontend-designer → test-writer → implementer → code-reviewer → spec-reviewer → landing-verifier
 ```
 
 **Cross-cutting** — test infrastructure, config, Docker, docs:
 ```
-pre-check → test-writer → implementer → landing-verifier
+pre-check → test-writer → implementer → code-reviewer → landing-verifier
 ```
 
 **Full-stack** — touches both backend and frontend: run backend pipeline, then frontend pipeline, sharing the same handoff file.
@@ -99,8 +99,11 @@ Otherwise, dispatch `implementer` with the handoff file. It writes code to pass 
 
 ### Step 5: Code review
 Dispatch `code-reviewer` with the handoff file. It reviews code quality —
-DRY, patterns, edge cases, architecture fit. Its output starts with
+DRY, patterns, edge cases, architecture fit. Its output includes
 `**Verdict:** APPROVED` or `**Verdict:** CHANGES NEEDED`.
+
+After code-reviewer completes, increment `code_review_attempt` and copy
+the verdict to `code_review_verdict` in the YAML frontmatter.
 
 If CHANGES NEEDED with CRITICAL or MAJOR findings: send findings
 back to `implementer`. Implementer fixes. Re-run code-reviewer.

@@ -24,16 +24,19 @@ You handle ALL pipeline types. Check the handoff file to determine which variant
 - Run the FULL project test suite — not just the feature's tests.
   This catches cross-feature regressions (Feature 15 breaking Feature 8).
   <!-- CUSTOMIZE: e.g., docker compose run --rm app mix test, npm test, pytest -->
+- Code-reviewer section in handoff shows APPROVED.
 - Spec-reviewer section in handoff shows CONFORMANT.
 - Safety-auditor section shows PASS (if applicable).
 
 ### Frontend
 - Run the FULL project test suite.
   <!-- CUSTOMIZE: e.g., docker compose run --rm app npm test, pytest -->
+- Code-reviewer section shows APPROVED.
 - Spec-reviewer section shows CONFORMANT.
 
 ### Cross-cutting
 - Run the FULL project test suite.
+- Code-reviewer section shows APPROVED (if applicable).
 
 ## Your Role
 

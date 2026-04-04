@@ -52,7 +52,7 @@ Classify complexity:
 **Research needed:** YES [specific questions] | NO
 **Designer needed:** YES (complex interface/state/component) | NO (trivial function)
 **Implementer needed:** YES | NO (test infrastructure — test-writer handles everything)
-**Safety auditor needed:** YES (touches domain-critical modules) | NO
+**Safety auditor needed:** YES (touches domain-critical modules, auth, credentials, or security-sensitive code) | NO
 **Arch-advisor needed:** YES (architecture-tier complexity) | NO
 
 **Intent:** refactoring | build | mid-sized | architecture | research
@@ -80,6 +80,8 @@ Classify complexity:
 
 **Risks:**
 - [risk]
+
+**Verify command:** <!-- CUSTOMIZE: the exact command to run ALL tests, e.g., docker compose run --rm app pytest, npm test -->
 
 **Path convention:** <!-- CUSTOMIZE: describe your project's source layout, e.g., 'src/' for Node, 'lib/' for Elixir, project root for Python -->
 
