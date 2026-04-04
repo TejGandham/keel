@@ -78,18 +78,29 @@ rm -rf /tmp/keel
 
 Installs 14 agents, 3 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
 
-**First thing to do:** open `CLAUDE.md` and fill in the `<!-- CUSTOMIZE -->` sections — this is how KEEL learns about your project. Every agent reads CLAUDE.md first.
+**First thing to do:** teach KEEL about your project. Paste this prompt into your AI agent:
+
+```
+Read CLAUDE.md, then fill in every <!-- CUSTOMIZE --> section using what
+you learn from the codebase. Read the source files, test files, and any
+existing docs. For each CUSTOMIZE marker: replace the placeholder with
+project-specific content. Don't leave any CUSTOMIZE markers unfilled.
+Then do the same for .claude/agents/safety-auditor.md — read the domain
+invariant examples in examples/domain-invariants/ and write rules that
+match this project's domain.
+```
+
+This is how KEEL learns about your project. Every agent reads CLAUDE.md first.
 
 ```
  After install:
- 1. CLAUDE.md            ← FIRST — teach KEEL about your project
+ 1. Teach KEEL            ← paste the prompt above
  2. docs/north-star.md   ← your project vision
- 3. safety-auditor.md    ← your domain invariants
- 4. Write a spec         ← docs/product-specs/
- 5. /keel-pipeline       ← run it
+ 3. Write a spec         ← docs/product-specs/
+ 4. /keel-pipeline       ← run it
 ```
 
-**Existing codebase?** Run `/keel-adopt` after install.
+**Existing codebase?** Run `/keel-adopt` after install — it does step 1 automatically.
 **Full manifest:** [INSTALL.md](docs/INSTALL.md) | **Remove:** [UNINSTALL.md](docs/UNINSTALL.md)
 
 ## Case Study
