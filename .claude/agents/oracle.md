@@ -22,8 +22,10 @@ You function as an on-demand specialist invoked by the pipeline orchestrator whe
 
 ## Required Reading (before every consultation)
 1. The handoff file — full pipeline context
-2. `ARCHITECTURE.md` — structural context and layer dependencies
-3. `docs/design-docs/core-beliefs.md` — domain invariants and testing strategy
+2. The feature spec (referenced in handoff `spec_ref:` field)
+3. `ARCHITECTURE.md` — structural context and layer dependencies
+4. `docs/design-docs/core-beliefs.md` — domain invariants and testing strategy
+   <!-- CUSTOMIZE: this file is created by bootstrap.sh. If it doesn't exist yet, skip. -->
 
 ## Expertise
 

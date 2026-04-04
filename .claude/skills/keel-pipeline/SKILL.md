@@ -63,18 +63,19 @@ Dispatch the `pre-check` agent with the feature spec path. It produces an
 execution brief in the handoff file. Read the brief for routing decisions:
 - **Intent** and **Complexity** — determines which optional agents run
 - **Designer needed** — YES/NO (trivial complexity → always NO)
-- **Researcher needed** — YES/NO (research intent → always YES)
-- **Safety-auditor needed** — YES/NO
+- **Research needed** — YES/NO (research intent → always YES)
+- **Safety auditor needed** — YES/NO
 - **Oracle needed** — YES if complexity is architecture-tier
+
+### Step 1.5: Researcher (if needed)
+If pre-check set `Research needed: YES`, dispatch `researcher` with the specific questions from the execution brief. Append research brief to handoff file.
 
 ### Step 1.7: Oracle consultation (if architecture-tier)
 If pre-check set `Oracle needed: YES` or `Complexity: architecture-tier`,
-dispatch `oracle` agent in CONSULT mode with the execution brief and spec.
-Oracle provides architecture-level guidance before design/implementation.
+dispatch `oracle` agent in CONSULT mode with the execution brief, spec,
+and any research brief. Oracle provides architecture-level guidance
+before design/implementation.
 Append output to `## oracle-consultation` in the handoff file.
-
-### Step 1.5: Researcher (if needed)
-If pre-check set `Research needed: YES`, dispatch `researcher` with the specific questions from the execution brief. Append research brief to handoff file. Then continue to Step 2.
 
 ### Step 2: Designer (if needed)
 Dispatch `backend-designer` or `frontend-designer` based on pipeline variant. Append output to handoff file.
@@ -119,10 +120,10 @@ Dispatch `safety-auditor` with the handoff file. Its output starts with
 `**Verdict:** PASS` or `**Verdict:** VIOLATION`.
 
 If VIOLATION: send findings to implementer. Fix. Re-run safety-auditor.
-Safety violations are never negotiable — loop until PASS.
-**Escalation ceiling:** If safety-auditor loops 3+ times, STOP.
-Escalate to human — the invariant rule itself may need review, or the
-spec and invariant are genuinely incompatible.
+Safety violations are never negotiable — max 3 attempts.
+If still VIOLATION after 3 attempts, STOP. Escalate to human — the
+invariant rule itself may need review, or the spec and invariant are
+genuinely incompatible.
 
 ### Step 7.5: Oracle verification (if pre-check classified architecture-tier)
 If pre-check set `Oracle needed: YES`, dispatch `oracle` in VERIFY mode
@@ -131,7 +132,10 @@ whether the implementation is architecturally sound — not just spec-conformant
 
 If Oracle's verdict is UNSOUND:
 - Send findings to implementer with specific architecture issues
-- Implementer fixes, re-run spec-reviewer, then Oracle verification again
+- Implementer fixes. Then re-run the full gate sequence:
+  spec-reviewer → safety-auditor (if required) → Oracle verification
+- Oracle-triggered gate passes use a SEPARATE counter from the
+  initial spec-review attempts (those counters do not interact)
 - Max 1 Oracle verification retry. If still UNSOUND, escalate to human.
 
 Append output to `## oracle-verification` in the handoff file.

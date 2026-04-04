@@ -34,6 +34,12 @@ Pipeline stalls or produces bad output
   │    → Re-run safety-auditor after fix. No shortcuts.
   │    → If 3+ loops: escalate to human. The invariant may need review.
   │
+  ├─ Oracle verification returns UNSOUND?
+  │    → Send architecture findings to implementer
+  │    → Implementer fixes, re-run spec-reviewer + safety-auditor + Oracle
+  │    → Max 1 Oracle retry. If still UNSOUND → Escalate to human.
+  │    → This is an architecture-level problem, not a code-level one.
+  │
   ├─ pre-check routed wrong? (skipped designer when one was needed)
   │    → Insert the missing stage now
   │    → Designer reads the handoff, produces design brief

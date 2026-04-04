@@ -6,8 +6,11 @@
      RULES:
      - Append-only. Never rewrite previous sections.
      - Each agent reads all upstream sections, then appends its own.
-     - Each agent populates ### Decisions (what was chosen and why) and
-       ### Constraints for downstream (MUST/MUST NOT for next agent).
+     - Decision-heavy agents (pre-check, designers, oracle) populate
+       ### Decisions and ### Constraints for downstream.
+     - Implementer populates ### Decisions only (no constraints — its
+       downstream agents are its reviewers).
+     - Test-writer and researcher populate ### Decisions optionally.
      - Downstream agents READ upstream Decisions and Constraints FIRST.
      - Move to docs/exec-plans/completed/handoffs/ when feature lands. -->
 
@@ -29,6 +32,9 @@ spec_ref: <!-- e.g., mvp-spec:4.2 -->
 
 ## oracle-consultation
 <!-- Architecture guidance appended here by Oracle at Step 1.7 (if applicable) -->
+
+### Constraints for downstream
+<!-- Oracle's MUST/MUST NOT directives for designers/implementers. -->
 
 ## backend-designer / frontend-designer
 <!-- Design brief appended here (if applicable) -->
