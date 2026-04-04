@@ -1,135 +1,214 @@
 # KEEL
 
-**Knowledge-Encoded Engineering Lifecycle** — a framework for building software with AI agents.
+**Knowledge-Encoded Engineering Lifecycle** — spec in, stable tested code out.
 
-KEEL turns your repository into a complete operating environment for AI coding agents. Instead of giving agents vague instructions, you give them a structured knowledge base: specs that define what to build, invariants that define what's forbidden, and pipelines that enforce the build sequence.
+## The Problem
 
-Adapted from [OpenAI's Harness Engineering](docs/references/harness-engineering-article/) approach, where "single Codex runs work on tasks for upwards of six hours while humans sleep."
+AI agents are powerful code generators but terrible project partners. Give them a prompt and they'll produce code — but it drifts from specs, ignores safety rules, forgets decisions from yesterday, and produces untested slop at scale.
 
-## Who KEEL Is For
+```
+ Session 1          Session 2          Session 3
+ ┌──────────┐      ┌──────────┐      ┌──────────┐
+ │ "Build X"│      │ "Build Y"│      │ "Fix X"  │
+ │          │      │          │      │          │
+ │ Works!   │      │ Breaks X │      │ Breaks Y │
+ └──────────┘      └──────────┘      └──────────┘
+       Knowledge evaporates between sessions.
+       Each feature is a fresh start.
+```
 
-KEEL is for projects that grow — where today's 3 features become next month's 30, and you need institutional knowledge to compound rather than evaporate between sessions.
+A single rules file (`.cursorrules`, `AGENTS.md`) works until ~10 features. After that, you need specs, architecture docs, testing doctrine, and pipeline discipline. Ad-hoc prompting stops scaling.
 
-- **Solo developers or small teams (1-3)** using an AI coding agent as primary implementer
-- **Projects that will grow organically**, sometimes exponentially in scope
-- **Projects where correctness matters** — domain invariants, safety rules, spec conformance
-- **Any AI agent platform** — the process is agent-agnostic; the reference implementation uses Claude Code
+## The Solution
 
-A single rules file (AGENTS.md, .cursorrules) works for simple projects. KEEL is what you reach for when you outgrow that — when you need specs, architecture docs, a testing doctrine, and pipeline discipline because ad-hoc prompting stops scaling.
+KEEL encodes everything into the repo — specs, invariants, architecture, testing strategy — and runs a self-correcting pipeline that gates quality at every step.
 
-## What KEEL Covers (and What It Doesn't)
+```
+                          KEEL Pipeline
+ ┌─────────┐                                           ┌─────────┐
+ │         │    classify    research?   design?         │         │
+ │  Spec   │──▶ pre-check ──▶ researcher ──▶ oracle? ──▶│         │
+ │         │    │ intent   │             │  consult  │  │         │
+ └─────────┘    │ complexity│             │           │  │         │
+                ▼           ▼             ▼           │  │         │
+             ┌──────────────────────────────────────┐ │  │ Landed  │
+             │  designer? ──▶ test-writer ──▶ implementer │  │ Feature │
+             └──────────────────────────────────────┘ │  │         │
+                                    │                 │  │         │
+                ┌───────────────────▼─────────────┐   │  │         │
+                │  spec-reviewer ──▶ safety-auditor?│──▶│         │
+                │  CONFORMANT?       PASS?         │   │         │
+                │  ↻ max 2          ↻ max 3        │   │         │
+                └──────────────────────────────────┘   │         │
+                                    │                  │         │
+                         oracle-verify? ──────────────▶│         │
+                         SOUND?                        └─────────┘
+                         ↻ max 1
+```
 
-KEEL covers the **build phase**: from product vision to landed feature. Its boundary is the git commit.
+**The pipeline self-corrects.** Spec-reviewer finds a deviation → routes back to implementer with findings. Safety-auditor finds a violation → implementer fixes. After bounded retries, it escalates to you instead of thrashing.
 
-| Covered | Not covered (yet) |
-|-|-|
-| Product specs and design docs | CI/CD pipelines |
-| Architecture and module design | Deployment and infrastructure |
-| Feature decomposition and backlog | Monitoring and observability |
-| Spec → test → code → verify pipeline | Incident response |
-| Domain invariants and safety enforcement | Team scaling beyond 3 people |
-| Documentation accuracy (garbage collection) | Multi-repo coordination |
-
-KEEL doesn't try to replace your CI/CD, deployment, or operations tooling. It ensures the code that enters those systems is spec-conformant, tested, and safe.
+**Knowledge compounds.** Each agent reads upstream Decisions and Constraints before starting. Feature 20 benefits from everything learned building features 1–19.
 
 ## How It Works
 
-**Humans steer. Agents execute. The repo is the system of record.**
+```
+ You write:                     KEEL does:
+ ┌─────────────────┐           ┌──────────────────────────────────┐
+ │ Product spec     │──────────▶│ 14 agents execute the pipeline   │
+ │ Domain invariants│──────────▶│ Tests written before code        │
+ │ Architecture doc │──────────▶│ Code verified against spec       │
+ └─────────────────┘           │ Safety invariants enforced        │
+                               │ Docs updated, drift detected     │
+                               └──────────────┬───────────────────┘
+                                              │
+                                              ▼
+                               ┌──────────────────────────────────┐
+                               │ Tested, spec-conformant,         │
+                               │ safe code — ready to commit      │
+                               └──────────────────────────────────┘
+```
 
-KEEL encodes everything an agent needs into the repository itself:
+### The 14 Agents
 
-1. **Specs define what to build** — product specs, design docs, architecture
-2. **Invariants define what's forbidden** — domain safety rules, mechanically enforced
-3. **A feature backlog decomposes work** — smallest independently testable units
-4. **A pipeline enforces the sequence** — spec → test → code → verify → land
-5. **Agents execute each pipeline stage** — 14 specialized roles from pre-check to plan-lander
+```
+ ROUTING                 BUILDING               GATES                 LANDING
+ ┌──────────┐           ┌──────────┐           ┌──────────────┐      ┌───────────┐
+ │pre-check │           │test-     │           │spec-reviewer │      │plan-lander│
+ │  classify│           │  writer  │           │  CONFORMANT? │      │  LANDED?  │
+ │  route   │           │  RED     │           │  or DEVIATION│      │           │
+ ├──────────┤           ├──────────┤           ├──────────────┤      └───────────┘
+ │researcher│           │implement-│           │safety-auditor│
+ │  discover│           │  er      │           │  PASS?       │
+ ├──────────┤           │  GREEN   │           │  or VIOLATION│
+ │oracle    │           └──────────┘           ├──────────────┤
+ │  consult │                                  │oracle        │
+ │  verify  │           ┌──────────┐           │  SOUND?      │
+ ├──────────┤           │designer  │           │  or UNSOUND  │
+ │doc-      │           │  backend │           └──────────────┘
+ │ gardener │           │  frontend│
+ └──────────┘           └──────────┘
+                        ┌──────────┐
+  BOOTSTRAP             │scaffolder│
+  ┌──────────┐          │config-   │
+  │docker-   │          │  writer  │
+  │  builder │          └──────────┘
+  └──────────┘
+```
 
-## Getting Started
+| Tier | Agents | Why |
+|-|-|-|
+| **High reasoning** | oracle, implementer, spec-reviewer, safety-auditor, designers, researcher | Design decisions, gate verdicts, deep analysis |
+| **Standard reasoning** | pre-check, test-writer, plan-lander, doc-gardener, scaffolder, config-writer, docker-builder | Classification, pattern-following, verification |
 
-### Install KEEL into your project
+### Self-Correcting Gates
 
-KEEL installs into your existing project — your code stays yours, KEEL
-adds the scaffolding (agents, skills, doc structure).
+```
+  spec-reviewer            safety-auditor           oracle (verify)
+  ┌────────────────┐       ┌────────────────┐       ┌────────────────┐
+  │ CONFORMANT ──▶ next    │ PASS ──────▶ next      │ SOUND ─────▶ next
+  │ DEVIATION  ──▶ fix     │ VIOLATION ─▶ fix       │ UNSOUND ───▶ fix
+  │ max 2 loops            │ max 3 loops             │ max 1 retry
+  │ then: escalate         │ then: escalate          │ then: escalate
+  └────────────────┘       └────────────────┘       └────────────────┘
+
+  MINOR-only deviations → CONFORMANT with notes (don't burn loops)
+```
+
+### Wisdom Accumulation
+
+```
+  pre-check                 designer                  implementer
+  ┌──────────────┐         ┌──────────────┐          ┌──────────────┐
+  │ Constraints: │────────▶│ Decisions:   │─────────▶│ Decisions:   │
+  │ MUST: ...    │         │ chose X      │          │ chose Y      │
+  │ MUST NOT: ...│         │ Constraints: │          │ (no constraints
+  └──────────────┘         │ MUST: ...    │          │  — can't bind │
+                           └──────────────┘          │  own reviewers)│
+                                                     └──────────────┘
+  Each agent reads upstream context before starting.
+  Knowledge flows forward. Mistakes don't repeat.
+```
+
+## Install
 
 ```bash
-# New project
-mkdir my-project && cd my-project && git init
-
-# OR existing project
-cd my-project
-
-# Install KEEL
+cd my-project    # new or existing
 git clone --depth 1 https://github.com/<owner>/keel.git /tmp/keel
 /tmp/keel/scripts/install.sh
 rm -rf /tmp/keel
 ```
 
-The installer adds `.claude/agents/`, `.claude/skills/`, `docs/` structure,
-and template files. It never overwrites existing files.
+Installs into your project. Never overwrites existing files. Your code stays yours.
 
-### After install
+**What gets installed:** 14 agents, 3 skills, 2 hooks, doc structure, templates.
+Full manifest: [INSTALL.md](docs/INSTALL.md)
 
-1. **Customize CLAUDE.md** — fill in `<!-- CUSTOMIZE -->` sections
-2. **Write docs/north-star.md** — your project vision
-3. **Define invariants** in `.claude/agents/safety-auditor.md`
-4. **Write your first spec** in `docs/product-specs/`
-5. **Run the pipeline:** `/keel-pipeline my-feature docs/product-specs/my-spec.md`
+**Existing codebase?** Run `/keel-adopt` after install — it scans your repo and
+drafts CLAUDE.md, ARCHITECTURE.md, and invariants from what exists.
 
-### Existing codebase?
+**Want to remove it?** [UNINSTALL.md](docs/UNINSTALL.md) — only deletes KEEL
+artifacts, never your code.
 
-If you already have code, use the `/keel-adopt` skill after install — it
-scans your repo and drafts CLAUDE.md, ARCHITECTURE.md, and domain
-invariants from what exists. See [BROWNFIELD.md](docs/process/BROWNFIELD.md).
-
-### Full walkthrough
-
-See [docs/process/QUICK-START.md](docs/process/QUICK-START.md) for the
-detailed first-afternoon guide.
-
-## Framework Components
-
-| Component | Location | Purpose |
-|-|-|-|
-| **14 Agent Definitions** | `.claude/agents/` | Specialized roles: pre-check, oracle, test-writer, implementer, safety-auditor, etc. |
-| **3 Skills** | `.claude/skills/` | dev-up (start env), keel-pipeline (orchestrate), safety-check (audit) |
-| **2 Hooks** | `.claude/hooks/` | safety-gate (pre-edit), doc-gate (post-commit) |
-| **Process Docs** | `docs/process/` | THE-KEEL-PROCESS, QUICK-START, GLOSSARY, ANTI-PATTERNS, etc. |
-| **Templates** | `template/` | Starter files for new projects (CLAUDE.md, ARCHITECTURE.md, specs, etc.) |
-| **Domain Invariant Examples** | `examples/domain-invariants/` | Git ops, REST API, financial, data pipeline |
-| **Repo Man Case Study** | `examples/repo-man/` | Complete working app built with KEEL (Phoenix LiveView, 31 features) |
-
-## Key Concepts
-
-- **Knowledge Boundary** — agents can only see what's in the repo. Encode everything.
-- **Progressive Disclosure** — CLAUDE.md is the entry point (~80 lines). It points to deeper docs.
-- **Spec-Driven Testing** — tests enforce spec conformance. Specs change → tests change first.
-- **Domain Invariants** — non-negotiable rules mechanically enforced by the safety-auditor agent.
-- **Garbage Collection** — docs that lie are worse than no docs. Sweep after every feature.
-
-## The Pipeline
+### After Install
 
 ```
-pre-check → researcher? → oracle? → designer? → test-writer → implementer → spec-reviewer → safety-auditor? → oracle-verify? → plan-lander
+ 1. CLAUDE.md              ← fill in <!-- CUSTOMIZE --> sections
+ 2. docs/north-star.md     ← your project vision
+ 3. safety-auditor.md      ← your domain invariants
+ 4. docs/product-specs/    ← write your first spec
+ 5. /keel-pipeline          ← run it
 ```
 
-Each stage reads the handoff file, does its work, appends its output. The orchestrator dispatches each stage and reviews gates. Oracle runs for architecture-tier features (consultation before design, verification before landing).
+## Who KEEL Is For
 
-## Case Study: Repo Man
+```
+ KEEL is overkill          KEEL scales              KEEL shines
+ ┌─────────────┐          ┌──────────────┐         ┌───────────────┐
+ │ < 5 features│          │ 10-30 features│         │ 30+ features  │
+ │ one-off      │          │ growing scope │         │ safety-critical│
+ │ throwaway    │          │ solo + agent  │         │ institutional  │
+ │ prototype    │          │ correctness   │         │ knowledge      │
+ └─────────────┘          │ matters       │         │ compounds      │
+                          └──────────────┘         └───────────────┘
+```
 
-[`examples/repo-man/`](examples/repo-man/) is a complete Phoenix LiveView dashboard built entirely with KEEL. 31 features, ~3000 lines of Elixir, 250+ tests, all driven by specs and executed through the pipeline. See [the case study](examples/repo-man/CASE-STUDY.md) for lessons learned.
+- **Solo developers or small teams (1-3)** with an AI agent as primary implementer
+- **Projects that grow** — today's 3 features become next month's 30
+- **Any AI agent platform** — process is agent-agnostic, reference implementation uses Claude Code
 
-## Documentation
+## Scope
 
-| Document | Purpose |
+```
+ KEEL covers                              KEEL does not cover
+ ┌────────────────────────────────┐       ┌──────────────────────────┐
+ │ Product specs and design docs  │       │ CI/CD pipelines          │
+ │ Architecture and module design │       │ Deployment               │
+ │ Feature decomposition          │       │ Monitoring               │
+ │ spec → test → code → verify    │       │ Incident response        │
+ │ Domain invariant enforcement   │       │ Team scaling beyond 3    │
+ │ Doc accuracy (garbage collect) │       │ Multi-repo coordination  │
+ └────────────────────────────────┘       └──────────────────────────┘
+ Boundary: the git commit.
+ KEEL ensures code entering CI/CD is spec-conformant, tested, and safe.
+```
+
+## Case Study
+
+[`examples/repo-man/`](examples/repo-man/) — Phoenix LiveView dashboard, 31 features, ~3000 lines of Elixir, 250+ tests, all spec-driven. [Case study](examples/repo-man/CASE-STUDY.md).
+
+## Deep Dive
+
+| What | Doc |
 |-|-|
-| [INSTALL.md](docs/INSTALL.md) | What gets installed, full artifact inventory |
-| [UNINSTALL.md](docs/UNINSTALL.md) | Clean removal of all KEEL artifacts |
-| [THE-KEEL-PROCESS.md](docs/process/THE-KEEL-PROCESS.md) | Comprehensive guide (everything) |
-| [QUICK-START.md](docs/process/QUICK-START.md) | First afternoon with KEEL (greenfield) |
-| [BROWNFIELD.md](docs/process/BROWNFIELD.md) | Adopting KEEL in an existing codebase |
-| [GLOSSARY.md](docs/process/GLOSSARY.md) | KEEL terminology |
-| [FAILURE-PLAYBOOK.md](docs/process/FAILURE-PLAYBOOK.md) | What to do when the pipeline stalls |
-| [ANTI-PATTERNS.md](docs/process/ANTI-PATTERNS.md) | 10 patterns that break the process |
+| Full artifact inventory | [INSTALL.md](docs/INSTALL.md) |
+| Clean removal | [UNINSTALL.md](docs/UNINSTALL.md) |
+| Comprehensive process guide | [THE-KEEL-PROCESS.md](docs/process/THE-KEEL-PROCESS.md) |
+| First afternoon walkthrough | [QUICK-START.md](docs/process/QUICK-START.md) |
+| Existing codebase adoption | [BROWNFIELD.md](docs/process/BROWNFIELD.md) |
+| Terminology | [GLOSSARY.md](docs/process/GLOSSARY.md) |
+| Pipeline failure decision tree | [FAILURE-PLAYBOOK.md](docs/process/FAILURE-PLAYBOOK.md) |
+| What NOT to do | [ANTI-PATTERNS.md](docs/process/ANTI-PATTERNS.md) |
 
 ## License
 
