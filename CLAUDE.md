@@ -3,6 +3,13 @@
 This repository IS the KEEL framework. It provides the process, agents, and
 templates for building software with AI coding agents.
 
+**Scope:** KEEL covers the build phase — from product vision to landed feature.
+Its boundary is the git commit. It does not cover CI/CD, deployment, or operations.
+
+**For:** Projects that grow organically. Solo developers or small teams (1-3)
+using an AI agent as primary implementer. Any agent platform — the process
+is agent-agnostic; the reference implementation uses Claude Code.
+
 ## What This Repo Contains
 
 - **Framework** (root): Process docs, agent definitions, skills, hooks
@@ -56,6 +63,7 @@ See [examples/repo-man/CLAUDE.md](examples/repo-man/CLAUDE.md) for Repo Man-spec
 - [Process guide](docs/process/THE-KEEL-PROCESS.md) — Full KEEL process
 - [Quick start](docs/process/QUICK-START.md) — First afternoon with KEEL
 - [Glossary](docs/process/GLOSSARY.md) — KEEL terminology
+- [Failure playbook](docs/process/FAILURE-PLAYBOOK.md) — Pipeline stall decision tree
 - [Anti-patterns](docs/process/ANTI-PATTERNS.md) — What to avoid
 - [OpenAI foundations](docs/process/OPENAI-FOUNDATIONS.md) — Where KEEL came from
 - [Repo Man case study](examples/repo-man/CASE-STUDY.md) — Lessons learned

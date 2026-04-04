@@ -2,13 +2,13 @@
 
 **KEEL -- Knowledge-Encoded Engineering Lifecycle**
 
-A structured process for Claude-driven software development where humans steer
+A structured process for agent-driven software development where humans steer
 and agents execute through specialized pipelines.
 
 Adapted from OpenAI's "Harness Engineering" article (February 2026, Ryan
 Lopopolo), where a team shipped a product with zero manually-written code
-using Codex agents. KEEL adapts those principles for Claude Code with
-concrete, repeatable mechanics.
+using Codex agents. KEEL adapts those principles into concrete, repeatable
+mechanics for any AI coding agent.
 
 ---
 
@@ -30,8 +30,7 @@ enforcement. Agents have defined roles, bounded responsibilities, and explicit
 inputs and outputs. Quality is enforced by structure, not by hoping the model
 gets it right.
 
-**Lifecycle.** KEEL covers the full arc from vision to shipped feature to
-ongoing maintenance:
+**Lifecycle.** KEEL covers the build arc from vision to landed feature:
 
 ```
 north star --> spec --> backlog --> pipeline --> landed feature --> garbage collection
@@ -39,6 +38,11 @@ north star --> spec --> backlog --> pipeline --> landed feature --> garbage coll
 
 Every phase produces versioned artifacts. Every artifact feeds the next phase.
 The repo accumulates institutional knowledge that compounds over time.
+
+**Scope boundary:** KEEL's coverage ends at the git commit. It ensures the code
+entering your CI/CD pipeline is spec-conformant, tested, and safe. It does not
+cover deployment, infrastructure, monitoring, or incident response — those are
+downstream concerns that take over where KEEL leaves off.
 
 ### Where KEEL Came From
 
@@ -78,18 +82,27 @@ visible: encode it as a versioned markdown artifact in the repo.
 
 This is the foundational principle. Everything else in KEEL follows from it.
 
+### Who KEEL Is For
+
+- Solo developers or small teams (1-3 people) using an AI agent as primary implementer
+- Projects that grow organically — where today's 3 features become next month's 30
+- Long-lived projects where institutional knowledge must compound, not evaporate
+- Projects where safety invariants must be mechanically enforced
+- Any AI agent platform — the process is agent-agnostic
+
 ### When KEEL Is Right
 
-- Multi-feature projects (10+ features across multiple system layers)
-- Agent-driven development (Claude writes the code, human steers)
-- Long-lived projects where institutional knowledge matters
-- Projects where safety invariants must be mechanically enforced
+- Multi-feature projects that will grow in scope over time
+- Agent-driven development (agent writes the code, human steers)
+- Projects where a single rules file (AGENTS.md, .cursorrules) has stopped scaling
+- Projects where correctness, spec conformance, and safety matter
 
 ### When KEEL Is Overkill
 
 - One-off scripts or quick fixes (just write the code)
 - Tight human feedback loops where you are pair-programming with the agent
 - Throwaway prototypes you will discard next week
+- Projects with fewer than 5 planned features
 
 ### The Human-Steers / Agent-Executes Contract
 

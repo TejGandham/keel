@@ -4,9 +4,25 @@ KEEL — Knowledge-Encoded Engineering Lifecycle. From clone to first feature th
 
 ## Prerequisites
 
-- Claude Code installed and configured
-- Docker installed
+- An AI coding agent (Claude Code, Codex, Cursor, etc.)
+- Docker installed (or your stack's runtime)
 - A product idea (even rough is fine)
+
+## How KEEL Grows With Your Project
+
+You don't need everything on day one. KEEL is designed to match the weight
+of your project at each stage:
+
+| Stage | What you add | What it unlocks |
+|-|-|-|
+| **Day 1** | CLAUDE.md + core-beliefs.md | Agent has project context and safety rules |
+| **Day 2** | Product spec + ARCHITECTURE.md | Agent can reason about what to build and where it fits |
+| **Week 1** | Feature backlog + first handoff files | Structured pipeline execution begins |
+| **Week 2+** | Safety-auditor config + domain invariants | Mechanical enforcement of non-negotiable rules |
+| **Month 2+** | Full pipeline + garbage collection | Institutional knowledge compounds across features |
+
+Start with whatever you need now. Add the rest as complexity demands it.
+The framework catches you when ad-hoc prompting stops scaling.
 
 ## The 10 Steps
 
@@ -107,5 +123,7 @@ After bootstrap lands, the pipeline becomes your daily workflow:
 3. Review the handoff file for context
 4. Commit landed features
 5. Run doc-gardener periodically
+
+When the pipeline stalls, see [FAILURE-PLAYBOOK.md](FAILURE-PLAYBOOK.md) for the decision tree.
 
 See [THE-KEEL-PROCESS.md](THE-KEEL-PROCESS.md) for the comprehensive guide.

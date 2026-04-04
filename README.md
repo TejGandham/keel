@@ -6,6 +6,32 @@ KEEL turns your repository into a complete operating environment for AI coding a
 
 Adapted from [OpenAI's Harness Engineering](docs/references/harness-engineering-article/) approach, where "single Codex runs work on tasks for upwards of six hours while humans sleep."
 
+## Who KEEL Is For
+
+KEEL is for projects that grow — where today's 3 features become next month's 30, and you need institutional knowledge to compound rather than evaporate between sessions.
+
+- **Solo developers or small teams (1-3)** using an AI coding agent as primary implementer
+- **Projects that will grow organically**, sometimes exponentially in scope
+- **Projects where correctness matters** — domain invariants, safety rules, spec conformance
+- **Any AI agent platform** — the process is agent-agnostic; the reference implementation uses Claude Code
+
+A single rules file (AGENTS.md, .cursorrules) works for simple projects. KEEL is what you reach for when you outgrow that — when you need specs, architecture docs, a testing doctrine, and pipeline discipline because ad-hoc prompting stops scaling.
+
+## What KEEL Covers (and What It Doesn't)
+
+KEEL covers the **build phase**: from product vision to landed feature. Its boundary is the git commit.
+
+| Covered | Not covered (yet) |
+|-|-|
+| Product specs and design docs | CI/CD pipelines |
+| Architecture and module design | Deployment and infrastructure |
+| Feature decomposition and backlog | Monitoring and observability |
+| Spec → test → code → verify pipeline | Incident response |
+| Domain invariants and safety enforcement | Team scaling beyond 3 people |
+| Documentation accuracy (garbage collection) | Multi-repo coordination |
+
+KEEL doesn't try to replace your CI/CD, deployment, or operations tooling. It ensures the code that enters those systems is spec-conformant, tested, and safe.
+
 ## How It Works
 
 **Humans steer. Agents execute. The repo is the system of record.**
@@ -71,6 +97,7 @@ Each stage reads the handoff file, does its work, appends its output. The orches
 | [THE-KEEL-PROCESS.md](docs/process/THE-KEEL-PROCESS.md) | Comprehensive guide (everything) |
 | [QUICK-START.md](docs/process/QUICK-START.md) | First afternoon with KEEL |
 | [GLOSSARY.md](docs/process/GLOSSARY.md) | KEEL terminology |
+| [FAILURE-PLAYBOOK.md](docs/process/FAILURE-PLAYBOOK.md) | What to do when the pipeline stalls |
 | [ANTI-PATTERNS.md](docs/process/ANTI-PATTERNS.md) | 10 patterns that break the process |
 | [AUTONOMY-PROGRESSION.md](docs/process/AUTONOMY-PROGRESSION.md) | From full oversight to agent autonomy |
 | [OPENAI-FOUNDATIONS.md](docs/process/OPENAI-FOUNDATIONS.md) | OpenAI's harness engineering adaptation |
