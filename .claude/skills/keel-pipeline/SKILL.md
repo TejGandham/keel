@@ -98,7 +98,9 @@ Before dispatching spec-reviewer, do a code quality review:
    - **Testing:** Tests verify behavior (not just mocks)? Edge cases covered?
    - **Architecture:** Sound design? Follows existing patterns?
 5. Categorize findings: **Critical** (must fix), **Important** (should fix), **Minor** (nice to have)
-6. If Critical or Important issues found, fix them before proceeding.
+6. If Critical or Important issues found, send findings back to
+   `implementer` with specific file:line references. Implementer fixes.
+   You do NOT fix code yourself — you orchestrate.
 
 ### Step 6: Spec-reviewer (max 2 loops)
 Dispatch `spec-reviewer` with the handoff file. It verifies code conforms
