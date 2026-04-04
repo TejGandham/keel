@@ -23,6 +23,13 @@ If no spec path given, ask for one. If no spec exists yet, tell the user to writ
 1. Read `CLAUDE.md` to determine the correct pipeline variant
 2. Read the feature spec
 3. Create the handoff file at `docs/exec-plans/active/handoffs/F{id}-{feature-name}.md`
+   by copying from `_TEMPLATE.md`. Then immediately seed the YAML frontmatter:
+   - `status: IN-PROGRESS`
+   - `pipeline:` — set to `bootstrap`, `backend`, `frontend`, or `cross-cutting`
+   - `spec_ref:` — set to the spec file path and section (e.g., `mvp-spec:4.2`)
+   
+   These fields MUST be set before dispatching any agent. Downstream agents
+   read them for context and routing.
 
 ## Pipeline Variants
 
@@ -95,7 +102,7 @@ Dispatch `code-reviewer` with the handoff file. It reviews code quality —
 DRY, patterns, edge cases, architecture fit. Its output starts with
 `**Verdict:** APPROVED` or `**Verdict:** CHANGES NEEDED`.
 
-If CHANGES NEEDED with CRITICAL or IMPORTANT findings: send findings
+If CHANGES NEEDED with CRITICAL or MAJOR findings: send findings
 back to `implementer`. Implementer fixes. Re-run code-reviewer.
 Max 1 code review loop — if still CHANGES NEEDED, proceed to
 spec-reviewer anyway (spec conformance is the harder gate).

@@ -90,6 +90,13 @@ Apply pragmatic minimalism in all recommendations:
 - [only if genuinely important and NOT in scope]
 ```
 
+## Gate Contract (VERIFY mode only)
+
+- **Max retries:** 1. The orchestrator tracks attempts in the handoff frontmatter (`arch_advisor_verdict`).
+- **On UNSOUND:** orchestrator sends findings to implementer, then re-runs the full gate sequence (spec-reviewer → safety-auditor → arch-advisor verify). These re-runs use separate counters from the initial gate passes.
+- **After 1 retry:** if still UNSOUND, the pipeline escalates to the human — this is an architecture-level problem, not a code-level one.
+- **Your job:** report accurately. The orchestrator handles routing and escalation.
+
 ## Verbosity Constraints (strictly enforced)
 
 - **Bottom line**: 2-3 sentences maximum. No preamble.
