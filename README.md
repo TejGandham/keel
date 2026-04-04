@@ -44,19 +44,47 @@ KEEL encodes everything an agent needs into the repository itself:
 4. **A pipeline enforces the sequence** — spec → test → code → verify → land
 5. **Agents execute each pipeline stage** — 14 specialized roles from pre-check to plan-lander
 
-## Quick Start
+## Getting Started
+
+### Install KEEL into your project
+
+KEEL installs into your existing project — your code stays yours, KEEL
+adds the scaffolding (agents, skills, doc structure).
 
 ```bash
-# Clone and bootstrap a new project
-git clone <this-repo> my-project
-cd my-project
-./scripts/bootstrap.sh
+# New project
+mkdir my-project && cd my-project && git init
 
-# Fill in your project docs (the script tells you what to do next)
-# Then run your first feature through the pipeline
+# OR existing project
+cd my-project
+
+# Install KEEL
+git clone --depth 1 https://github.com/<owner>/keel.git /tmp/keel
+/tmp/keel/scripts/install.sh
+rm -rf /tmp/keel
 ```
 
-See [docs/process/QUICK-START.md](docs/process/QUICK-START.md) for the full walkthrough.
+The installer adds `.claude/agents/`, `.claude/skills/`, `docs/` structure,
+and template files. It never overwrites existing files.
+
+### After install
+
+1. **Customize CLAUDE.md** — fill in `<!-- CUSTOMIZE -->` sections
+2. **Write docs/north-star.md** — your project vision
+3. **Define invariants** in `.claude/agents/safety-auditor.md`
+4. **Write your first spec** in `docs/product-specs/`
+5. **Run the pipeline:** `/keel-pipeline my-feature docs/product-specs/my-spec.md`
+
+### Existing codebase?
+
+If you already have code, use the `/keel-adopt` skill after install — it
+scans your repo and drafts CLAUDE.md, ARCHITECTURE.md, and domain
+invariants from what exists. See [BROWNFIELD.md](docs/process/BROWNFIELD.md).
+
+### Full walkthrough
+
+See [docs/process/QUICK-START.md](docs/process/QUICK-START.md) for the
+detailed first-afternoon guide.
 
 ## Framework Components
 

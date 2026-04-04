@@ -26,13 +26,19 @@ The framework catches you when ad-hoc prompting stops scaling.
 
 ## The 10 Steps
 
-### 1. Clone KEEL
+### 1. Install KEEL
 ```bash
-git clone <keel-repo> my-project
-cd my-project
-./scripts/bootstrap.sh
+# New project
+mkdir my-project && cd my-project && git init
+
+# Install KEEL into your project
+git clone --depth 1 https://github.com/<owner>/keel.git /tmp/keel
+/tmp/keel/scripts/install.sh
+rm -rf /tmp/keel
 ```
-The bootstrap script will prompt for project name, stack, and description, then replace placeholders in all template files.
+The installer prompts for project name, stack, and description. It copies
+agents, skills, doc structure, and template files into your project. It
+never overwrites existing files — safe for existing projects too.
 
 ### 2. Write your North Star
 Open `docs/north-star.md`. Answer the guiding questions:
@@ -46,8 +52,9 @@ Open `docs/north-star.md`. Answer the guiding questions:
 This is where you encode taste before it becomes linters.
 
 ### 3. Fill in CLAUDE.md
-Replace all `[PROJECT_NAME]`, `[STACK]`, `[DESCRIPTION]` placeholders.
-Keep it under 100 lines. It's a table of contents, not an encyclopedia.
+The installer already replaced `[PROJECT_NAME]`, `[STACK]`, `[DESCRIPTION]`.
+Now fill in the `<!-- CUSTOMIZE -->` sections: safety rules, test commands,
+source layout. Keep it under 100 lines — table of contents, not encyclopedia.
 
 ### 4. Write your Product Spec
 Copy `docs/product-specs/_TEMPLATE.md` to your spec file.

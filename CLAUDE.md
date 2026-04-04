@@ -15,7 +15,8 @@ is agent-agnostic; the reference implementation uses Claude Code.
 - **Framework** (root): Process docs, agent definitions, skills, hooks
 - **Templates** (`template/`): Starter files for new KEEL projects
 - **Examples** (`examples/`): Domain invariant patterns + Repo Man case study
-- **Bootstrap** (`scripts/bootstrap.sh`): Initialize a new KEEL project
+- **Installer** (`scripts/install.sh`): Install KEEL into any project directory
+- **Legacy Bootstrap** (`scripts/bootstrap.sh`): In-place placeholder replacement
 
 ## Directory Map
 
