@@ -60,12 +60,15 @@ If the feature is a bootstrap feature, dispatch the specific bootstrap agent (do
 
 ### Step 1: Pre-check (standard pipeline only)
 Dispatch the `pre-check` agent with the feature spec path. It produces an
-execution brief in the handoff file. Read the brief for routing decisions:
-- **Intent** and **Complexity** — determines which optional agents run
-- **Designer needed** — YES/NO (trivial complexity → always NO)
-- **Research needed** — YES/NO (research intent → always YES)
-- **Safety auditor needed** — YES/NO
-- **Oracle needed** — YES if complexity is architecture-tier
+execution brief in the handoff file. After pre-check completes, update the
+handoff YAML frontmatter with routing fields from the brief:
+- `intent`, `complexity` — determines which optional agents run
+- `designer_needed` — YES/NO (trivial complexity → always NO)
+- `researcher_needed` — YES/NO (research intent → always YES)
+- `safety_auditor_needed` — YES/NO
+- `oracle_needed` — YES if complexity is architecture-tier
+
+Read routing decisions from the YAML frontmatter for all subsequent steps.
 
 ### Step 1.5: Researcher (if needed)
 If pre-check set `Research needed: YES`, dispatch `researcher` with the specific questions from the execution brief. Append research brief to handoff file.
@@ -104,11 +107,12 @@ Before dispatching spec-reviewer, do a code quality review:
 
 ### Step 6: Spec-reviewer (max 2 loops)
 Dispatch `spec-reviewer` with the handoff file. It verifies code conforms
-to specs. Its output starts with `**Verdict:** CONFORMANT` or
+to specs. Its output includes `**Verdict:** CONFORMANT` or
 `**Verdict:** DEVIATION`.
 
-Before dispatching, set `spec-review-attempt: N` in the handoff file
-(starting at 1).
+Before dispatching, increment `spec_review_attempt` in the YAML frontmatter
+(starting at 1). After spec-reviewer completes, copy the verdict to
+`spec_review_verdict` in the YAML frontmatter.
 
 If DEVIATION:
 - **Attempt 1:** Send specific deviation findings back to implementer.
@@ -118,8 +122,11 @@ If DEVIATION:
   See docs/process/FAILURE-PLAYBOOK.md.
 
 ### Step 7: Safety-auditor (if feature touches domain-critical modules)
-Dispatch `safety-auditor` with the handoff file. Its output starts with
+Dispatch `safety-auditor` with the handoff file. Its output includes
 `**Verdict:** PASS` or `**Verdict:** VIOLATION`.
+
+After safety-auditor completes, increment `safety_attempt` and copy the
+verdict to `safety_verdict` in the YAML frontmatter.
 
 If VIOLATION: send findings to implementer. Fix. Re-run safety-auditor.
 Safety violations are never negotiable — max 3 attempts.
@@ -167,9 +174,9 @@ Only after plan-lander reports LANDED. Present the commit plan to the human for 
 - **Spec-reviewer and safety-auditor are gates.** If they find issues, loop back to implementer.
 - **You don't write code.** Agents write code. You orchestrate.
 - **Docs drive code.** If there's no spec, there's no pipeline. Write the spec first.
-- **Structured verdicts.** Spec-reviewer and safety-auditor output
-  `**Verdict:** CONFORMANT|DEVIATION` or `**Verdict:** PASS|VIOLATION`
-  as their first line. The pipeline branches on this.
+- **Structured verdicts.** Gate agents output `**Verdict:**` in their
+  sections. The orchestrator copies verdicts and attempt counts to the
+  YAML frontmatter. Branch on frontmatter, not on parsing agent prose.
 - **Max 2 spec-review loops.** After 2 DEVIATION verdicts, escalate.
   Don't try harder — decompose or fix upstream.
 - **Downstream reads upstream.** Each agent reads upstream Decisions and

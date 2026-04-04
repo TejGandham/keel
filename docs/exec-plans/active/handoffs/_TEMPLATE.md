@@ -4,8 +4,10 @@
      docs/exec-plans/active/handoffs/F{id}-{feature-name}.md
 
      RULES:
-     - Append-only. Never rewrite previous sections.
-     - Each agent reads all upstream sections, then appends its own.
+     - The YAML frontmatter block below is the machine-readable state.
+       The pipeline orchestrator updates it after each agent step.
+     - Agent sections below are append-only markdown. Each agent reads
+       all upstream sections, then appends its own.
      - Decision-heavy agents (pre-check, designers, oracle) populate
        ### Decisions and ### Constraints for downstream.
      - Implementer populates ### Decisions only (no constraints — its
@@ -14,9 +16,26 @@
      - Downstream agents READ upstream Decisions and Constraints FIRST.
      - Move to docs/exec-plans/completed/handoffs/ when feature lands. -->
 
+---
 status: IN-PROGRESS
-pipeline: <!-- bootstrap | backend | frontend | cross-cutting -->
-spec_ref: <!-- e.g., mvp-spec:4.2 -->
+pipeline:       # bootstrap | backend | frontend | cross-cutting
+spec_ref:       # e.g., mvp-spec:4.2
+
+# Pre-check routing (set by pre-check, read by orchestrator)
+intent:         # refactoring | build | mid-sized | architecture | research
+complexity:     # trivial | standard | complex | architecture-tier
+designer_needed:       # YES | NO
+researcher_needed:     # YES | NO
+safety_auditor_needed: # YES | NO
+oracle_needed:         # YES | NO
+
+# Gate verdicts (set by orchestrator after each gate agent)
+spec_review_verdict:   # CONFORMANT | DEVIATION
+spec_review_attempt: 0
+safety_verdict:        # PASS | VIOLATION
+safety_attempt: 0
+oracle_verdict:        # SOUND | UNSOUND (verify mode only)
+---
 
 ## pre-check
 <!-- Execution brief appended here by pre-check agent -->
@@ -60,14 +79,19 @@ spec_ref: <!-- e.g., mvp-spec:4.2 -->
      REVIEWERS. Constraining reviewers undermines gate integrity. -->
 
 ## spec-reviewer
-<!-- Conformance report appended here -->
-spec-review-attempt: <!-- 1 or 2, set by pipeline orchestrator -->
+<!-- Conformance report appended here.
+     Agent still outputs **Verdict:** in its section for human readability.
+     The orchestrator copies the verdict to the YAML frontmatter. -->
 
 ## safety-auditor
-<!-- Audit report appended here (if applicable) -->
+<!-- Audit report appended here (if applicable).
+     Agent still outputs **Verdict:** in its section for human readability.
+     The orchestrator copies the verdict to the YAML frontmatter. -->
 
 ## oracle-verification
-<!-- Independent structural review appended here by Oracle at Step 7.5 (if applicable) -->
+<!-- Independent structural review appended here by Oracle at Step 7.5 (if applicable).
+     Agent still outputs **Verdict:** in its section for human readability.
+     The orchestrator copies the verdict to the YAML frontmatter. -->
 
 ## plan-lander
 <!-- Landing report appended here -->
