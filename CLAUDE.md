@@ -59,6 +59,10 @@ docker compose run --rm app mix test  # run tests
 
 See [examples/repo-man/CLAUDE.md](examples/repo-man/CLAUDE.md) for Repo Man-specific instructions.
 
+## Vision
+
+- [NORTH-STAR.md](NORTH-STAR.md) — Where KEEL is heading (spec-to-commit automation engine)
+
 ## References
 
 - [Process guide](docs/process/THE-KEEL-PROCESS.md) — Full KEEL process

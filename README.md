@@ -75,6 +75,7 @@ Installs 14 agents, 3 skills, 2 hooks, and doc structure into your project. Neve
 
 | Doc | What you'll learn |
 |-|-|
+| **[NORTH-STAR.md](NORTH-STAR.md)** | Vision, autonomy ceiling, growth stages |
 | **[HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md)** | Pipeline, agents, gates, wisdom accumulation |
 | [INSTALL.md](docs/INSTALL.md) | Full artifact inventory |
 | [UNINSTALL.md](docs/UNINSTALL.md) | Clean removal |
