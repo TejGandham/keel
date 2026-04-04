@@ -10,14 +10,14 @@ commit. The human approves in batches, not at every step.
 
 ```mermaid
 graph LR
-    subgraph Today
+    subgraph today [Today]
         T1[Human kicks off<br/>each pipeline stage]
         T2[Reviews every output]
         T3[Commits manually]
         T4["Human: 60% · Agent: 40%"]
     end
 
-    subgraph End State
+    subgraph endstate [End State]
         E1[Human feeds<br/>feature spec]
         E2[KEEL runs pipeline]
         E3[Self-corrects]
@@ -26,7 +26,7 @@ graph LR
         E6["Human: batch review · Agent: 95%"]
     end
 
-    Today -->|evolve| End State
+    today -->|evolve| endstate
 
     style T1 fill:#F57F17,stroke:#E65100,color:#000
     style T2 fill:#F57F17,stroke:#E65100,color:#000
