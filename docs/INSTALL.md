@@ -21,7 +21,7 @@ copies everything into place.
 
 | Agent | Reasoning | Purpose |
 |-|-|-|
-| `pre-check.md` | standard | Classify intent, evaluate readiness, route pipeline |
+| `pre-check.md` | high | Classify intent, evaluate readiness, route pipeline |
 | `arch-advisor.md` | high | Architecture consultation and verification |
 | `researcher.md` | high | Deep research before implementation |
 | `backend-designer.md` | high | Module interfaces and data structures |
