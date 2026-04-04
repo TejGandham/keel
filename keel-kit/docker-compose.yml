@@ -1,0 +1,18 @@
+# CUSTOMIZE: Adjust ports, volumes, and environment for your stack.
+
+services:
+  app:
+    build: .
+    # CUSTOMIZE: Map your app's port
+    ports:
+      - "4000:4000"  # CUSTOMIZE: e.g., 3000:3000 for Node, 8000:8000 for Python
+    volumes:
+      - .:/app
+      # CUSTOMIZE: Add any additional volume mounts your project needs
+    environment:
+      # CUSTOMIZE: Add your environment variables
+      - PORT=4000
+    # CUSTOMIZE: Set your dev server command
+    # command: npm run dev
+    # command: python manage.py runserver 0.0.0.0:8000
+    # command: mix phx.server

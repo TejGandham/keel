@@ -1,0 +1,96 @@
+<h2>Row Information Density</h2>
+<p class="subtitle">How much info should each collapsed repo row show at a glance?</p>
+
+<div class="cards">
+  <div class="card" data-choice="dense" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#fafafa;padding:16px;font-family:-apple-system,sans-serif;font-size:13px;border-radius:6px;border:1px solid #e5e5e5;">
+        <div style="background:#fff;padding:10px 14px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="color:#22c55e;font-size:10px;">●</span>
+            <span style="font-weight:600;font-size:13px;">AXO472</span>
+            <span style="color:#a3a3a3;font-size:11px;">master</span>
+            <span style="color:#22c55e;font-size:11px;">✓ clean</span>
+            <span style="color:#3b82f6;font-size:11px;">↓3</span>
+            <span style="color:#a3a3a3;font-size:11px;">↑0</span>
+            <span style="color:#a3a3a3;font-size:11px;">· 2 branches</span>
+            <span style="color:#a3a3a3;font-size:11px;">· fetched 2h ago</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <span style="background:#fff;border:1px solid #d4d4d4;padding:2px 10px;border-radius:4px;font-size:11px;color:#525252;">Fetch</span>
+            <span style="background:#fff;border:1px solid #d4d4d4;padding:2px 10px;border-radius:4px;font-size:11px;color:#525252;">Pull</span>
+          </div>
+        </div>
+        <div style="background:#fff;padding:10px 14px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="color:#f97316;font-size:10px;">●</span>
+            <span style="font-weight:600;font-size:13px;">AXO492</span>
+            <span style="color:#a3a3a3;font-size:11px;">master</span>
+            <span style="color:#f97316;font-size:11px;">7 dirty</span>
+            <span style="color:#a3a3a3;font-size:11px;">↓0</span>
+            <span style="color:#a3a3a3;font-size:11px;">↑0</span>
+            <span style="color:#a3a3a3;font-size:11px;">· 3 branches</span>
+            <span style="color:#a3a3a3;font-size:11px;">· fetched 5m ago</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <span style="background:#fff;border:1px solid #d4d4d4;padding:2px 10px;border-radius:4px;font-size:11px;color:#525252;">Fetch</span>
+            <span style="background:#fff;border:1px solid #e5e5e5;padding:2px 10px;border-radius:4px;font-size:11px;color:#d4d4d4;">Pull</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Dense — Everything Inline</h3>
+      <p>All fields on one line: status dot, name, branch, clean/dirty, ahead/behind, branch count, last fetch. Matches the spec's ASCII layout closely. Good for 7 repos — no scrolling.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="two-line" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#fafafa;padding:16px;font-family:-apple-system,sans-serif;font-size:13px;border-radius:6px;border:1px solid #e5e5e5;">
+        <div style="background:#fff;padding:12px 14px;border-bottom:1px solid #f0f0f0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="color:#22c55e;font-size:10px;">●</span>
+              <span style="font-weight:600;font-size:14px;">AXO472</span>
+              <span style="background:#f0fdf4;color:#16a34a;padding:1px 8px;border-radius:10px;font-size:11px;">clean</span>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <span style="background:#fff;border:1px solid #d4d4d4;padding:3px 12px;border-radius:4px;font-size:11px;color:#525252;">Fetch</span>
+              <span style="background:#fff;border:1px solid #d4d4d4;padding:3px 12px;border-radius:4px;font-size:11px;color:#525252;">Pull</span>
+            </div>
+          </div>
+          <div style="margin-top:4px;margin-left:20px;display:flex;gap:16px;font-size:11px;color:#a3a3a3;">
+            <span>master</span>
+            <span style="color:#3b82f6;">↓3 behind</span>
+            <span>2 branches</span>
+            <span>fetched 2h ago</span>
+          </div>
+        </div>
+        <div style="background:#fff;padding:12px 14px;border-bottom:1px solid #f0f0f0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="color:#f97316;font-size:10px;">●</span>
+              <span style="font-weight:600;font-size:14px;">AXO492</span>
+              <span style="background:#fff7ed;color:#ea580c;padding:1px 8px;border-radius:10px;font-size:11px;">7 dirty</span>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <span style="background:#fff;border:1px solid #d4d4d4;padding:3px 12px;border-radius:4px;font-size:11px;color:#525252;">Fetch</span>
+              <span style="background:#fff;border:1px solid #e5e5e5;padding:3px 12px;border-radius:4px;font-size:11px;color:#d4d4d4;">Pull</span>
+            </div>
+          </div>
+          <div style="margin-top:4px;margin-left:20px;display:flex;gap:16px;font-size:11px;color:#a3a3a3;">
+            <span>master</span>
+            <span>↓0 ↑0</span>
+            <span>3 branches</span>
+            <span>fetched 5m ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Two-Line — Name + Badge Top, Details Below</h3>
+      <p>Top line: repo name + status badge + action buttons. Bottom line: branch, ahead/behind, branch count, last fetch. Easier to scan — name pops, details are secondary.</p>
+    </div>
+  </div>
+</div>
