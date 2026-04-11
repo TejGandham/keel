@@ -62,7 +62,7 @@ You handle ALL pipeline types. Check the handoff file to determine which variant
 **Blockers (if any):**
 - [what's preventing landing]
 
-**Next hop:** orchestrator (to commit and update backlog)
+**Next hop:** orchestrator (runs Step 9 post-LANDED procedure automatically)
 ```
 
 ## Rules
@@ -70,4 +70,4 @@ You handle ALL pipeline types. Check the handoff file to determine which variant
 - Run real commands to verify — don't trust claims.
 - Read upstream agent outputs from the handoff file — don't redo their analysis.
 - If anything is off, report BLOCKED with specific blockers.
-- You do NOT commit, update backlog, or modify any files. That's the orchestrator's job.
+- You do NOT commit, archive handoffs, or modify any files. That's the orchestrator's job via Step 9 (the post-LANDED procedure).

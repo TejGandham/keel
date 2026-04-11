@@ -127,9 +127,9 @@ The pipeline handles everything: pre-check → designer? → test-writer → imp
 After bootstrap lands, the pipeline becomes your daily workflow:
 1. Pick next feature from backlog
 2. Run `/keel-pipeline F{id} spec-path`
-3. Review the handoff file for context
-4. Commit landed features
-5. Run doc-gardener periodically
+3. Watch the pipeline — it runs end-to-end, self-corrects at gates, and stops in-session only on escalation
+4. Review the resulting PR on GitHub (Step 9 runs doc-gardener, archives the handoff, commits, pushes, and opens the PR automatically)
+5. Merge the PR when satisfied
 
 When the pipeline stalls, see [FAILURE-PLAYBOOK.md](FAILURE-PLAYBOOK.md) for the decision tree.
 

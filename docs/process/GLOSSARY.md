@@ -25,7 +25,7 @@
 
 **Execution Brief** — The structured output of the pre-check agent. Contains: intent classification, complexity tier, spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, constraints for downstream (MUST/MUST NOT), and routing decisions (designer needed? researcher needed? arch-advisor needed?).
 
-**Orchestrator** — The human who steers the KEEL process: kicks off features, reviews agent output, commits landed code, updates the backlog, and archives handoffs. The orchestrator does not write code.
+**Orchestrator** — The human who steers the KEEL process: kicks off features, reviews agent output, and runs the Step 9 post-LANDED procedure (doc-gardener, archive, commit, push, PR). In Stage 4 Phase 1 and later, Step 9 runs automatically without per-step approval; the human's review moves to the PR on GitHub. The orchestrator does not write code.
 
 **Invariant** — A non-negotiable rule specific to the project's domain, enforced mechanically. Examples: "never force-pull" (git), "validate all input at boundaries" (API), "all transforms must be idempotent" (data pipeline).
 

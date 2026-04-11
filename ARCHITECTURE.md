@@ -100,7 +100,14 @@ User writes spec in docs/product-specs/
   → safety-auditor?          invariant gate, if touching critical code
                              (self-correct ≤3)
   → landing-verifier         final gate — feature landed cleanly
-  → handoff moved to docs/exec-plans/completed/handoffs/
+  → Step 9 post-LANDED procedure (runs automatically after LANDED):
+    → doc-gardener           repo-wide drift sweep; orchestrator applies fixes
+    → handoff archived       active/handoffs/ → completed/handoffs/
+    → tech-debt-tracker      log shortcuts, check off resolved items
+    → git add -A, commit     commit subject from spec H1 + verdict table body
+    → git push -u origin     to keel/F{id}-{slug} feature branch
+    → gh pr create --fill    ready-for-review PR (falls back to manual instructions
+                             if gh is missing or not authed)
 ```
 
 Each agent reads and appends to the same handoff file in
