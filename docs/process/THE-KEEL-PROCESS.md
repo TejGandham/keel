@@ -500,7 +500,7 @@ domain-critical operations directly). Arch-advisor for architecture-tier only.
 **Cross-cutting** (test infrastructure, fixtures)
 
 ```
-pre-check --> test-writer --> implementer --> landing-verifier
+pre-check --> test-writer --> implementer --> code-reviewer --> landing-verifier
 ```
 
 ### The Handoff Mechanism

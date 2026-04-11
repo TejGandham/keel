@@ -79,7 +79,7 @@ python3 /tmp/keel/scripts/install.py
 rm -rf /tmp/keel
 ```
 
-Installs 15 agents, 4 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
+Installs 15 agents, 3 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
 
 **First thing to do:** teach KEEL about your project. Paste this prompt into your AI agent:
 

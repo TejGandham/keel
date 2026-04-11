@@ -1,6 +1,6 @@
 ---
 name: keel-pipeline
-description: "Orchestrate the KEEL pipeline for a feature. Dispatches agents in sequence: pre-check → test-writer → implementer → spec-reviewer → safety-auditor? → landing-verifier."
+description: "Orchestrate the KEEL pipeline for a feature. Dispatches agents in sequence: pre-check → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier."
 ---
 
 # KEEL Pipeline

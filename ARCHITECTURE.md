@@ -157,9 +157,9 @@ the install bundle.
 - **One feature, one handoff file.** Every agent in a pipeline run
   reads and appends to the same markdown file. Handoff is the
   serialization format between agents.
-- **Bounded self-correction.** Gate agents (spec-reviewer,
-  safety-auditor, arch-advisor) self-correct up to a fixed count before
-  escalating to the human. Never unbounded retry loops.
+- **Bounded self-correction.** Gate agents self-correct up to a fixed
+  count before escalating: spec-reviewer ≤2, safety-auditor ≤3,
+  arch-advisor ≤1, code-reviewer ≤1. Never unbounded retry loops.
 - **Accuracy over speed.** The pipeline can grow more agents and more
   gates without apology. See `NORTH-STAR.md` §The Principle.
 

@@ -120,7 +120,7 @@ After bootstrap, run your first real feature through the full pipeline:
 ```
 /keel-pipeline F04 docs/product-specs/your-spec.md
 ```
-The pipeline handles everything: pre-check → designer? → test-writer → implementer → spec-reviewer → landing-verifier.
+The pipeline handles everything: pre-check → designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier.
 
 ## What Happens Next
 

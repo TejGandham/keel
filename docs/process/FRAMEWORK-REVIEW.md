@@ -161,7 +161,7 @@ Level 0: Just add CLAUDE.md                          (5 min)
 Level 1: Add core-beliefs + domain invariants        (30 min)
 Level 2: Add spec-driven testing doctrine            (1 hour)
 Level 3: Add feature backlog + handoff files         (2 hours)
-Level 4: Full pipeline with all 13 agents            (half day)
+Level 4: Full pipeline with all 15 agents            (half day)
 ```
 
 ### Tier 3: Do Later (medium impact, high effort)
