@@ -146,9 +146,9 @@ the install bundle.
   any agent platform that reads markdown — and avoids a package-manager
   dependency for users.
 - **Stdlib-only Python 3.10+.** The installer must run on a clean
-  machine before any project deps exist. Adding a dependency would
-  create a bootstrap problem. Shell scripts were converted to Python
-  in `42ee6a7` specifically for Windows portability.
+  machine before any project deps exist, so adding any third-party
+  dependency would create a bootstrap problem. Python over shell for
+  cross-platform behavior (bash assumptions don't hold on Windows).
 - **Copy, don't link.** Install copies files into the user's repo so
   users own their customizations. Updates are a manual diff-and-copy
   (see `docs/INSTALL.md` §Updating).
