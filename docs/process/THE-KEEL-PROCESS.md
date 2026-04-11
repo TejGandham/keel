@@ -111,9 +111,19 @@ acceptable. The human writes the north star, approves specs, kicks off
 pipeline stages, reviews output, commits code, and updates the backlog.
 
 The agent reads specs, writes tests, writes code, reviews its own work, and
-reports results. The agent never decides what to build next. The agent may
-execute repo mutations (commits, doc moves, backlog updates) only after
-presenting the action and receiving human approval.
+reports results. The agent never decides what to build next.
+
+**Before Stage 4 Phase 1 (historical):** the agent executed repo mutations
+(commits, doc moves, backlog updates) only after presenting the action and
+receiving human approval at each step.
+
+**Stage 4 Phase 1 and later:** after `landing-verifier` reports LANDED, the
+orchestrator runs a deterministic post-LANDED procedure — doc-gardener,
+handoff archive, commit, push, `gh pr create` — without per-step approval.
+The human's review moves from per-step to PR-level on GitHub. The agent
+still never pushes to main or merges the PR; the human does those via the
+GitHub UI. Escalations (gate ceilings tripped) still halt in-session and
+surface to the human immediately, as before.
 
 The human provides taste, judgment, and strategic direction. The agent provides
 speed, consistency, and tireless attention to spec conformance.

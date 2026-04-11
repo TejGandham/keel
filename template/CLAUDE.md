@@ -73,9 +73,15 @@ Each agent's output is appended. Next agent reads the handoff file.
 Moved to `completed/handoffs/` when feature lands.
 
 ### After landing-verifier reports LANDED
-**Bootstrap:** `git add` artifacts from bootstrap agent → commit
-**Standard:** `git add` files from test-writer + implementer → commit
-All variants: `feat(F{id}): {feature name}` → check off backlog → move handoff to completed
+The orchestrator runs Step 9 (post-LANDED procedure) automatically:
+1. `doc-gardener` agent → apply any reported drift fixes to the working tree
+2. Move handoff: `active/handoffs/F{id}-{slug}.md` → `completed/handoffs/F{id}-{slug}.md`
+3. Log any new shortcuts to `tech-debt-tracker.md`
+4. `git add -A` → commit `feat(F{id}): {title from spec H1}` with spec ref + verdict table
+5. `git push -u origin HEAD` (branch is already `keel/F{id}-{slug}`, set at "Before Starting")
+6. `gh pr create --fill` (ready-for-review; falls back to manual PR instructions if gh is absent)
+
+The human reviews the PR on GitHub, not each step. No per-commit approval.
 
 ## Architecture
 

@@ -31,7 +31,8 @@ graph TD
     OV -->|"UNSOUND"| FIX3["🤖 Findings → implementer fixes"]
     FIX3 --> SR
     PL --> GC["🤖 Doc-gardener sweeps<br/>for stale docs"]
-    GC --> PR["🧑 <b>YOU REVIEW THE RESULT</b>"]
+    GC --> LAND["🤖 Commit · push keel/F{id}<br/>· gh pr create --fill"]
+    LAND --> PR["🧑 <b>YOU REVIEW THE PR</b>"]
 
     SR -.-|"after 2 retries"| ESC["🧑 <b>ESCALATED TO YOU</b>"]
     SA -.-|"after 3 retries"| ESC
@@ -53,6 +54,7 @@ graph TD
     style FIX3 fill:#F57F17,stroke:#E65100,color:#000
     style PL fill:#388E3C,stroke:#1B5E20,color:#fff
     style GC fill:#546E7A,stroke:#37474F,color:#fff
+    style LAND fill:#388E3C,stroke:#1B5E20,color:#fff
     style PR fill:#1976D2,stroke:#0D47A1,color:#fff
     style ESC fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
