@@ -226,7 +226,7 @@ def main():
     print(f"  KEEL installed into {project_dir}")
     print()
     print("  What was added:")
-    print("    .claude/agents/    14 agent definitions")
+    print("    .claude/agents/    15 agent definitions")
     print("    .claude/skills/    3 skills (pipeline, adopt, safety-check)")
     print("    docs/              Spec structure, handoff templates, process guides")
     print("    CLAUDE.md          Project entry point (customize this first)")

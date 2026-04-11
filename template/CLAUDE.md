@@ -52,19 +52,19 @@ config-writer → landing-verifier
 
 ### Backend pipeline
 ```
-pre-check → researcher? → backend-designer? → test-writer → implementer → spec-reviewer → safety-auditor? → landing-verifier
+pre-check → researcher? → backend-designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier
 ```
 Designer skipped when pre-check says `Designer needed: NO`.
 Safety-auditor only for features touching domain-critical modules.
 
 ### Frontend pipeline
 ```
-pre-check → researcher? → frontend-designer → test-writer → implementer → spec-reviewer → landing-verifier
+pre-check → researcher? → frontend-designer → test-writer → implementer → code-reviewer → spec-reviewer → landing-verifier
 ```
 
 ### Cross-cutting pipeline
 ```
-pre-check → test-writer → implementer → landing-verifier
+pre-check → test-writer → implementer → code-reviewer → landing-verifier
 ```
 
 ### Handoffs
