@@ -567,11 +567,14 @@ On completion, move from `active/handoffs/` to `completed/handoffs/`.
 
 ### The Orchestrator Role
 
-The human kicks off features, reviews output, approves commits, and decides when
-to garbage collect. The `keel-pipeline` skill handles the mechanics (staging
-files, drafting commit messages, moving handoffs, updating docs) but presents
-each repo-mutating action for human approval before executing. The orchestrator
-steers — the pipeline executes on their behalf.
+The human kicks off features and reviews the resulting PR on GitHub. The
+`keel-pipeline` skill handles the mechanics: dispatching agents, reading gate
+verdicts, looping on spec-review/safety/arch-advisor findings within their
+ceilings, and (as of Stage 4 Phase 1) running the Step 9 post-LANDED procedure
+automatically — doc-gardener, handoff archive, `git add -A`, commit, `git push`,
+`gh pr create`. The orchestrator steers; the pipeline executes on their behalf
+end-to-end without per-step approval, escalating to the human only on gate
+ceilings or via the resulting PR.
 
 **The orchestrator does not write code.** When code quality issues are found
 (Step 5), findings are sent back to the implementer agent for fixing. When
