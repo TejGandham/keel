@@ -40,6 +40,7 @@ code_review_attempt: 0
 arch_advisor_verdict:        # SOUND | UNSOUND (verify mode only)
 
 # Arch-advisor re-run counters (separate from initial gate passes)
+# Used when arch-advisor UNSOUND triggers a re-run of gates
 arch_retry_spec_review_attempt: 0
 arch_retry_safety_attempt: 0
 ---
