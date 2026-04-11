@@ -31,6 +31,30 @@ If no spec path given, ask for one. If no spec exists yet, tell the user to writ
    These fields MUST be set before dispatching any agent. Downstream agents
    read them for context and routing.
 
+4. **Clean-tree check.**
+   Run `git status --porcelain`. If the output is non-empty after excluding
+   the handoff file just created in step 3, STOP. Print:
+
+     Pipeline requires a clean working tree. Commit, stash, or drop the
+     following uncommitted changes before re-running:
+     <paste the porcelain output>
+
+   Do not proceed. Rationale: Step 9 uses `git add -A` to stage the feature,
+   so any unrelated changes in the tree at pipeline start would be silently
+   swept into the feature's commit. Phase 1 refuses that ambiguity.
+
+5. **Branch safety check.**
+   Run `git rev-parse --abbrev-ref HEAD`. If HEAD is `main` or `master`,
+   auto-create the feature branch BEFORE any agent runs:
+
+     git checkout -b keel/F{id}-{slug}
+
+   where `{slug}` is derived from the handoff filename
+   (`docs/exec-plans/active/handoffs/F{id}-{slug}.md` → `keel/F{id}-{slug}`).
+   Stage 4 never commits to main/master, and branches BEFORE writing code so
+   that a mid-pipeline halt leaves the feature branch — not main — in the
+   partial state.
+
 ## Pipeline Variants
 
 Determine the variant based on what the feature touches:
@@ -157,19 +181,105 @@ Append output to `## arch-advisor-verification` in the handoff file.
 ### Step 8: Landing-verifier
 Dispatch `landing-verifier` with the handoff file. It runs tests and verifies everything landed. If BLOCKED, fix blockers and re-run.
 
-### Step 9: Commit (on behalf of the human orchestrator)
-Only after landing-verifier reports LANDED. Present the commit plan to the human for approval:
-1. Run `git status`, `git diff HEAD`, `git log --oneline -10` to understand what's being committed
-2. Stage only the test + implementation files (not unrelated changes)
-3. Write a commit message that summarizes the **why**, not the what. Follow the repo's convention: `feat(F{id}): {feature name}`
-4. Commit. Do not push unless explicitly asked.
+### Step 9: Post-LANDED procedure (doc GC → archive → commit → push → PR)
 
-### Step 10: Update docs
-1. Move handoff: `docs/exec-plans/active/handoffs/` → `docs/exec-plans/completed/handoffs/`
-2. Re-read `CLAUDE.md` — does it still reflect reality after this feature? If behavior changed, update it.
-3. Re-read `ARCHITECTURE.md` — does the module map, data flow, or diagram need updating?
-4. Check `docs/exec-plans/tech-debt-tracker.md` — any new shortcuts to log? Any resolved items to check off?
-5. Run `doc-gardener` agent for a full sweep if the feature was substantial.
+Only after landing-verifier reports LANDED. The following sub-steps run
+in order; no human approval at any point. If any sub-step fails, STOP
+and print the underlying error verbatim.
+
+1. **Doc garbage collection.**
+   Dispatch `doc-gardener` agent unconditionally. NORTH-STAR §Stage 4
+   lists automatic GC as a core requirement. Always run; let the agent
+   decide whether a sweep finds drift. `doc-gardener` is read-only — it
+   returns a findings report. If the report lists STALE or MISSING
+   items, the orchestrator applies the fixes to the working tree NOW
+   (before commit, so they land in the same commit — no amend, no
+   post-push mutation, stable PR diff from open).
+
+2. **Archive the handoff.**
+   Move the handoff file:
+     `docs/exec-plans/active/handoffs/F{id}-{slug}.md`
+     → `docs/exec-plans/completed/handoffs/F{id}-{slug}.md`
+   This move happens BEFORE staging, so the commit reflects the archived
+   path (not active → then moved next run).
+
+3. **Tech-debt log.**
+   If `docs/exec-plans/tech-debt-tracker.md` exists, append any new
+   shortcuts discovered during the run and check off any resolved items.
+
+4. **Stage and commit.**
+   Because "Before Starting" enforced a clean tree, every modified or
+   new file in the working tree now is this feature's work. Stage
+   everything:
+
+     git add -A
+
+   Compose the commit subject from the spec file:
+   - The orchestrator was invoked with a full spec path (e.g.,
+     `docs/product-specs/mvp-spec.md`) — that's in conversation context
+     from Step 1. Read that file directly. Do NOT attempt to reconstruct
+     the path from the handoff's `spec_ref` YAML field (which is in
+     `filename:section` shorthand like `mvp-spec:4.2` and does not
+     include the full path).
+   - Extract the first `# ` H1 line from the spec file. Use it as the
+     feature title.
+   - If the spec file is missing or has no H1, fall back to the handoff
+     slug with hyphens replaced by spaces (e.g., `F42-oauth-pkce-flow`
+     → `oauth pkce flow`). The fallback is lossy but deterministic.
+
+   Message format (HEREDOC):
+
+     feat(F{id}): {feature title from spec H1}
+
+     Spec: {spec_ref from handoff YAML frontmatter}
+     Pipeline: {pipeline variant: bootstrap|backend|frontend|cross-cutting}
+     Verdicts:
+     {verdict_lines}
+
+     🤖 Generated with KEEL pipeline
+
+   Where `{verdict_lines}` is built by iterating over the handoff YAML
+   frontmatter and emitting one line per verdict field that is set to a
+   non-empty value. Skip any verdict whose field is unset (agent did not
+   run in this pipeline variant). Format per line:
+
+     spec-review: CONFORMANT (attempt 1)
+     safety:      PASS (attempt 1)
+     arch-advisor: SOUND
+     code-review: APPROVED (attempt 1)
+
+   If all verdict fields are unset (bootstrap variant), emit the single
+   line: `Verdicts: n/a (bootstrap variant)`.
+
+   Commit with the constructed message.
+
+5. **Push.**
+   `git push -u origin HEAD`. On failure, STOP and print the raw git
+   error verbatim. Do not retry, do not auto-recover. Push failures
+   (auth, branch protection, network) require human judgment. The
+   commit is still local — the human can fix auth and push manually.
+
+6. **Open PR.**
+   Probe `gh`:
+   - `command -v gh` to check the binary exists.
+   - `gh auth status` to check it's authed.
+
+   If both succeed: run `gh pr create --fill`. `--fill` uses the commit
+   message as both the PR title (first line) and body (remaining lines).
+   Create the PR as ready-for-review (not draft) — the pipeline's gates
+   passed; draft would imply uncertainty the pipeline does not have.
+   Print the PR URL prominently.
+
+   If either probe fails: print a loud message:
+
+     gh CLI not available — branch pushed as keel/F{id}-{slug}.
+     Open PR manually: {push URL from git output, or plain branch name
+     if the remote didn't print one}
+
+   Do not fail the pipeline. The branch is pushed; the human opens the
+   PR by hand.
+
+(Step 10 removed — merged into Step 9 sub-steps 1–3 above.)
 
 ## Rules
 
@@ -186,3 +296,19 @@ Only after landing-verifier reports LANDED. Present the commit plan to the human
   Don't try harder — decompose or fix upstream.
 - **Downstream reads upstream.** Each agent reads upstream Decisions and
   Constraints FIRST before starting its own work.
+- **Stage 4 auto-landing.** After LANDED, the orchestrator runs Step 9
+  end-to-end without asking. The human's review surface is the PR on
+  GitHub, not a per-step prompt. To run the pipeline without auto-landing
+  (e.g., for debugging), interrupt before Step 9 — the orchestrator will
+  stop at the landing boundary.
+- **Clean tree, then branch, then build.** "Before Starting" refuses a
+  dirty working tree and auto-branches from main/master BEFORE any agent
+  runs. This is the only automatic branch creation the pipeline performs.
+  Once inside a feature branch, intermediate pipeline writes cannot
+  pollute main even on a halt.
+- **gh is optional.** The pipeline prints manual PR instructions if gh
+  is missing or not authed. It does not fail the run.
+- **doc-gardener is unconditional.** Step 9 sub-step 1 always dispatches
+  doc-gardener; no more "if the feature was substantial" judgment call.
+  Drift fixes are applied to the working tree BEFORE the commit, so the
+  PR diff is stable from the moment it opens.
