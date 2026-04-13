@@ -16,7 +16,9 @@ graph TD
     R --> OC
     OC --> D["🤖 Designer defines<br/>interfaces + data structures"]
     PC -->|"standard"| D
-    D --> TW["🤖 Test-writer writes tests<br/>from the spec (RED)"]
+    D --> RT1{"🤖 Roundtable:<br/>design review?"}
+    RT1 -->|"APPROVED"| TW["🤖 Test-writer writes tests<br/>from the spec (RED)"]
+    RT1 -->|"CONCERNS"| D
     TW --> IMP["🤖 Implementer writes code<br/>to pass tests (GREEN)"]
     IMP --> CR{"🤖 Code-reviewer:<br/>code quality ok?"}
     CR -->|"APPROVED"| SR{"🤖 Spec-reviewer:<br/>does code match spec?"}
@@ -30,9 +32,11 @@ graph TD
     OV -->|"SOUND"| PL["🤖 Landing-verifier verifies<br/>everything landed"]
     OV -->|"UNSOUND"| FIX3["🤖 Findings → implementer fixes"]
     FIX3 --> SR
-    PL --> GC["🤖 Doc-gardener sweeps<br/>for stale docs"]
-    GC --> LAND["🤖 Commit · push keel/F{id}<br/>· gh pr create --fill"]
-    LAND --> PR["🧑 <b>YOU REVIEW THE PR</b>"]
+    PL --> RT2{"🤖 Roundtable:<br/>landing review?"}
+    RT2 -->|"APPROVED"| GC["🤖 Doc-gardener sweeps<br/>for stale docs"]
+    RT2 -->|"CONCERNS"| IMP
+    GC --> LAND["🤖 Land per strategy<br/>merge or PR"]
+    LAND --> DONE["🧑 <b>DONE</b><br/>merged or PR created"]
 
     SR -.-|"after 2 retries"| ESC["🧑 <b>ESCALATED TO YOU</b>"]
     SA -.-|"after 3 retries"| ESC
@@ -55,11 +59,13 @@ graph TD
     style PL fill:#388E3C,stroke:#1B5E20,color:#fff
     style GC fill:#546E7A,stroke:#37474F,color:#fff
     style LAND fill:#388E3C,stroke:#1B5E20,color:#fff
-    style PR fill:#1976D2,stroke:#0D47A1,color:#fff
+    style RT1 fill:#546E7A,stroke:#37474F,color:#fff
+    style RT2 fill:#546E7A,stroke:#37474F,color:#fff
+    style DONE fill:#1976D2,stroke:#0D47A1,color:#fff
     style ESC fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
-> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and review the result. Everything in between is autonomous.
+> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and configure landing strategy. Everything in between is autonomous.
 
 The pipeline **self-corrects**: when a gate finds a problem, it sends
 specific findings back to the implementer. After bounded retries, it
@@ -131,6 +137,27 @@ MINOR-only deviations get `CONFORMANT` with notes — they don't burn loops.
 
 See [FAILURE-PLAYBOOK.md](process/FAILURE-PLAYBOOK.md) for the full decision
 tree when gates fail.
+
+## Roundtable Integration
+
+When a roundtable MCP server is available and enabled in CLAUDE.md, the
+pipeline gets multi-model advisory review at two points:
+
+| Step | When | Tools | Purpose |
+|-|-|-|-|
+| **2.5** | After designer, before test-writer | `architect` + `challenge` | Review design for architecture issues and assumptions |
+| **8.5** | After landing-verifier, before post-landing | `xray` + `challenge` | Review implementation for code quality and gaps |
+
+`challenge` is universal (both steps). Specialized tools are layered on top.
+
+**Advisory, not authoritative.** Roundtable findings loop back through the
+designer (Step 2.5) or implementer + full gate chain (Step 8.5). Roundtable
+never directly blocks the pipeline. After max 2 attempts, proceed with
+unresolved concerns logged in the handoff.
+
+**Graceful degradation.** MCP availability is re-checked before each call.
+If the server is down, the step is skipped and `roundtable_skipped: true`
+is logged. The pipeline never blocks on a flaky external service.
 
 ## How Pre-check Routes the Pipeline
 
@@ -221,6 +248,9 @@ graph LR
 |-|-|-|
 | **High reasoning** | pre-check, arch-advisor, implementer, code-reviewer, spec-reviewer, safety-auditor, designers, researcher | Routing, design, quality review, gate verdicts, deep analysis |
 | **Standard reasoning** | test-writer, landing-verifier, doc-gardener, scaffolder, config-writer, docker-builder | Pattern-following, verification |
+
+**Roundtable MCP** (not an agent — external multi-model review service) is
+called directly by the orchestrator at Steps 2.5 and 8.5 when available.
 
 See [THE-KEEL-PROCESS.md](process/THE-KEEL-PROCESS.md) for the full agent
 roster with inputs, outputs, and tool access.
