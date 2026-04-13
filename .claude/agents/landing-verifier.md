@@ -58,11 +58,11 @@ You handle ALL pipeline types. Check the handoff file to determine which variant
 **Architecture review:** SOUND | NOT REVIEWED | N/A
 **Doc drift:** NONE | [drift found]
 
-**Status:** LANDED | BLOCKED
+**Status:** VERIFIED | BLOCKED
 **Blockers (if any):**
 - [what's preventing landing]
 
-**Next hop:** orchestrator (runs Step 9 post-LANDED procedure automatically)
+**Next hop:** orchestrator (runs roundtable review if enabled, then Step 9 post-landing procedure)
 ```
 
 ## Rules
@@ -70,4 +70,4 @@ You handle ALL pipeline types. Check the handoff file to determine which variant
 - Run real commands to verify — don't trust claims.
 - Read upstream agent outputs from the handoff file — don't redo their analysis.
 - If anything is off, report BLOCKED with specific blockers.
-- You do NOT commit, archive handoffs, or modify any files. That's the orchestrator's job via Step 9 (the post-LANDED procedure).
+- You do NOT commit, archive handoffs, or modify any files. That's the orchestrator's job via Step 9 (the post-landing procedure).
