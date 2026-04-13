@@ -59,6 +59,21 @@ agent. At minimum, fill in `safety-auditor.md` with your domain invariants.
 | `safety-gate.py` | Pre-edit safety check on critical modules |
 | `doc-gate.py` | Post-commit reminder to check for doc drift |
 
+### Optional: Roundtable MCP server
+
+KEEL integrates with the roundtable MCP server for multi-model advisory
+review at two pipeline points:
+
+- **Post-designer (Step 2.5):** `architect` + `challenge` tools review design output
+- **Pre-landing (Step 8.5):** `xray` + `challenge` tools review implementation
+
+Roundtable is optional. When the MCP server is unavailable, these steps are
+skipped gracefully — the pipeline never blocks on an external service.
+
+To enable: install and configure the roundtable MCP server in your Claude Code
+settings. KEEL detects it automatically. Set `Roundtable review: false` in
+CLAUDE.md to disable even when available.
+
 ### `docs/` — document structure
 
 ```
@@ -154,6 +169,16 @@ rm -rf /tmp/keel
 
 Process docs in `docs/process/` can be updated the same way — they are
 reference material, not project-specific.
+
+### Migration: Stage 4 Phase 2 (landing strategy)
+
+If upgrading from Phase 1:
+- **Handoff status change:** `landing-verifier` now emits `VERIFIED` instead
+  of `LANDED`. Existing completed handoff files with `status: LANDED` remain
+  valid — the validator accepts both.
+- **New CLAUDE.md section:** Add `## Landing Preferences` to your project's
+  CLAUDE.md (see template for format). Default behavior is unchanged (`pr`).
+- **New handoff YAML fields:** Optional. Missing fields are treated as unset.
 
 ## Existing Codebase?
 
