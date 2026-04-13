@@ -87,26 +87,26 @@ files are untouched.
 
 ```
 User writes spec in docs/product-specs/
-  → /keel-pipeline          reads spec, creates handoff
+  → /keel-pipeline          reads spec, creates handoff, resolves landing strategy
   → pre-check                classifies intent, decides variant
   → researcher?              if pre-check flags research needed
   → backend-designer? /      if pre-check flags designer needed
     frontend-designer?
+  → roundtable-review?       architect + challenge (if roundtable enabled + designer ran)
   → test-writer              writes tests from spec
   → implementer              writes code to pass tests
   → code-reviewer            quality gate
   → spec-reviewer            spec-conformance gate (self-correct ≤2)
   → safety-auditor?          invariant gate, if touching critical code
                              (self-correct ≤3)
-  → landing-verifier         final gate — feature landed cleanly
-  → Step 9 post-LANDED procedure (runs automatically after LANDED):
+  → landing-verifier         final gate — feature VERIFIED
+  → roundtable-review?       xray + challenge (if roundtable enabled)
+  → Step 9 post-landing procedure (runs automatically after VERIFIED/READY-TO-LAND):
     → doc-gardener           repo-wide drift sweep; orchestrator applies fixes
     → handoff archived       active/handoffs/ → completed/handoffs/
     → tech-debt-tracker      log shortcuts, check off resolved items
     → git add -A, commit     commit subject from spec H1 + verdict table body
-    → git push -u origin     to keel/F{id}-{slug} feature branch
-    → gh pr create --fill    ready-for-review PR (falls back to manual instructions
-                             if gh is missing or not authed)
+    → land per strategy      merge (ff-only to base) or pr (push + forge CLI)
 ```
 
 Each agent reads and appends to the same handoff file in
