@@ -481,15 +481,15 @@ config-writer, landing-verifier, doc-gardener (6 agents)
 **Bootstrap** (project setup)
 
 ```
-docker-builder --> landing-verifier
-scaffolder     --> landing-verifier
-config-writer  --> landing-verifier
+docker-builder --> landing-verifier --> roundtable-review? --> post-landing
+scaffolder     --> landing-verifier --> roundtable-review? --> post-landing
+config-writer  --> landing-verifier --> roundtable-review? --> post-landing
 ```
 
 **Backend** (foundation and service features)
 
 ```
-pre-check --> researcher? --> arch-advisor? --> backend-designer? --> test-writer --> implementer --> code-reviewer --> spec-reviewer --> safety-auditor? --> arch-advisor-verify? --> landing-verifier
+pre-check --> researcher? --> arch-advisor? --> backend-designer? --> roundtable-review? --> test-writer --> implementer --> code-reviewer --> spec-reviewer --> safety-auditor? --> arch-advisor-verify? --> landing-verifier --> roundtable-review? --> post-landing
 ```
 
 `?` = conditionally included. Pre-check classifies intent and complexity,
@@ -501,7 +501,7 @@ landing).
 **Frontend** (UI features)
 
 ```
-pre-check --> researcher? --> arch-advisor? --> frontend-designer --> test-writer --> implementer --> code-reviewer --> spec-reviewer --> arch-advisor-verify? --> landing-verifier
+pre-check --> researcher? --> arch-advisor? --> frontend-designer --> roundtable-review? --> test-writer --> implementer --> code-reviewer --> spec-reviewer --> arch-advisor-verify? --> landing-verifier --> roundtable-review? --> post-landing
 ```
 
 Frontend-designer always included. No safety-auditor (UI does not execute
@@ -510,7 +510,7 @@ domain-critical operations directly). Arch-advisor for architecture-tier only.
 **Cross-cutting** (test infrastructure, fixtures)
 
 ```
-pre-check --> test-writer --> implementer --> code-reviewer --> landing-verifier
+pre-check --> test-writer --> implementer --> code-reviewer --> landing-verifier --> roundtable-review? --> post-landing
 ```
 
 ### The Handoff Mechanism
@@ -567,14 +567,15 @@ On completion, move from `active/handoffs/` to `completed/handoffs/`.
 
 ### The Orchestrator Role
 
-The human kicks off features and reviews the resulting PR on GitHub. The
-`keel-pipeline` skill handles the mechanics: dispatching agents, reading gate
+The human kicks off features and configures landing strategy. The
+`keel-pipeline` skill handles the mechanics: resolving landing strategy,
+dispatching agents, calling roundtable MCP tools when available, reading gate
 verdicts, looping on spec-review/safety/arch-advisor findings within their
-ceilings, and (as of Stage 4 Phase 1) running the Step 9 post-LANDED procedure
-automatically — doc-gardener, handoff archive, `git add -A`, commit, `git push`,
-`gh pr create`. The orchestrator steers; the pipeline executes on their behalf
-end-to-end without per-step approval, escalating to the human only on gate
-ceilings or via the resulting PR.
+ceilings, and running the post-landing procedure automatically — roundtable
+review, doc-gardener, handoff archive, commit, and landing per configured
+strategy (merge or PR). The orchestrator steers; the pipeline executes on
+their behalf end-to-end without per-step approval, escalating to the human
+only on gate ceilings or via the resulting PR (when pr strategy is used).
 
 **The orchestrator does not write code.** When code quality issues are found
 (Step 5), findings are sent back to the implementer agent for fixing. When
@@ -710,14 +711,16 @@ See `docs/process/FAILURE-PLAYBOOK.md` for the full decision tree.
 
 ### The Commit Ritual
 
-After landing-verifier reports LANDED:
+After landing-verifier reports VERIFIED (and roundtable review completes if enabled):
 
 ```
-1. Stage files by name (never git add -A)
-2. Commit: feat(F{id}): {feature name}
-3. Check off feature in backlog
-4. Move handoff: active/handoffs/ -> completed/handoffs/
-5. (Optional) Garbage collection if milestone feature
+1. Stage files: git add -A (clean tree enforced at pipeline start)
+2. Commit: feat(F{id}): {feature name} with verdict table
+3. Land per configured strategy:
+   - merge: git merge --ff-only to base, push (fallback to PR if rejected)
+   - pr: push branch, create PR via forge CLI
+4. Check off feature in backlog
+5. Move handoff: active/handoffs/ -> completed/handoffs/
 ```
 
 ### Garbage Collection
@@ -759,7 +762,7 @@ Each entry: checkbox, date, source, enough context for a future agent.
 | **1. Full review** | Reviews every output | Single pipeline stages | Base pipeline |
 | **2. Agent-to-agent review** | Reviews final output only | Spec-reviewer + safety-auditor catch issues | Reliable gate agents over 5-10 features |
 | **3. Self-correcting pipeline** | Reviews escalations only | Pipeline diagnoses failures and reroutes | Structured rejection, wisdom accumulation, intent classification |
-| **4. Agent end-to-end** | Approves in batch | Drives features pre-check to landed | Mechanical enforcement + Arch-advisor verification |
+| **4. Agent end-to-end** | Approves in batch or configures auto-merge | Drives features pre-check to landed, configurable landing strategy, roundtable integration | Mechanical enforcement + Arch-advisor + roundtable review |
 
 ### What Enables Each Transition
 
