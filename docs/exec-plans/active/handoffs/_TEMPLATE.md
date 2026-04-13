@@ -43,6 +43,25 @@ arch_advisor_verdict:        # SOUND | UNSOUND (verify mode only)
 # Used when arch-advisor UNSOUND triggers a re-run of gates
 arch_retry_spec_review_attempt: 0
 arch_retry_safety_attempt: 0
+
+# Landing configuration (set by orchestrator at Step 0.5)
+landing_strategy:                    # per-feature override (optional, set by human)
+landing_strategy_resolved:           # computed: merge | pr
+roundtable_enabled:                  # true | false
+
+# Roundtable design review (Step 2.5)
+roundtable_design_attempt: 0
+roundtable_design_verdict:           # APPROVED | CONCERNS
+roundtable_skipped:                  # true (with reason) if MCP unavailable
+
+# Roundtable landing review (Step 8.5)
+roundtable_landing_attempt: 0
+roundtable_landing_verdict:          # APPROVED | CONCERNS
+
+# Roundtable-triggered gate re-run counters (separate from initial passes)
+roundtable_retry_code_review_attempt: 0
+roundtable_retry_spec_review_attempt: 0
+roundtable_retry_safety_attempt: 0
 ---
 
 ## pre-check
@@ -70,6 +89,10 @@ arch_retry_safety_attempt: 0
 <!-- Key choices made and why. Max 5 bullets. -->
 ### Constraints for downstream
 <!-- MUST/MUST NOT directives for downstream agents. Max 5 bullets. -->
+
+## roundtable-design-review
+<!-- Multi-model advisory review of designer output (Step 2.5, if roundtable enabled).
+     Orchestrator calls architect + challenge tools. Output appended here. -->
 
 ## test-writer
 <!-- Test report appended here -->
@@ -108,3 +131,7 @@ arch_retry_safety_attempt: 0
 
 ## landing-verifier
 <!-- Landing report appended here -->
+
+## roundtable-landing-review
+<!-- Multi-model advisory review of implementation (Step 8.5, if roundtable enabled).
+     Orchestrator calls xray + challenge tools. Output appended here. -->
