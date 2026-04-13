@@ -206,13 +206,26 @@ Set the `CRITICAL_PATTERNS` variable to match the project's critical files:
 CRITICAL_PATTERNS="*/auth/*|*/middleware/*|*/transactions/*"
 ```
 
-**Write** all three files.
+**5d. Configure landing preferences**
+
+Fill the `## Landing Preferences` section in CLAUDE.md:
+- Check git history: `git log --format='%ae' | sort -u | wc -l`
+  - 1 author → suggest `Landing strategy: auto`
+  - 2+ authors → suggest `Landing strategy: pr`
+- Roundtable review: `true` (default)
+
+Present the suggestion:
+> "Based on git history, this looks like a [solo/team] project.
+> I suggest landing strategy: [auto/pr]. Change if needed."
+
+**Write** all files and update CLAUDE.md with landing preferences.
 
 **STOP.** Tell the human:
-> "Safety enforcement is configured. Review core-beliefs.md, the
-> safety-auditor agent definition, and safety-gate.py. These control
-> what the auditor enforces on every future feature. When satisfied,
-> we're done with adoption."
+> "Safety enforcement and landing preferences are configured. Review
+> core-beliefs.md, the safety-auditor agent definition, safety-gate.py,
+> and the landing preferences in CLAUDE.md. These control what the
+> auditor enforces and how features land. When satisfied, we're done
+> with adoption."
 
 ---
 

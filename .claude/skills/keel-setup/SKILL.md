@@ -80,6 +80,11 @@ Replace all `<!-- CUSTOMIZE -->` sections with real content derived from
 the stack and context. For sections where you cannot derive a reasonable
 default, use `<!-- HUMAN: [specific question] -->` markers.
 
+Fill the `## Landing Preferences` section with sensible defaults:
+- Solo project (single developer): `Landing strategy: auto`
+- Team project or unclear: `Landing strategy: pr`
+- Roundtable review: `true` (default — gracefully skipped if MCP unavailable)
+
 Present the draft:
 > "Here's CLAUDE.md based on what I know about [project name] ([stack]).
 > Review and tell me what to change."
