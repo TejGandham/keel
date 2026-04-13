@@ -33,7 +33,7 @@ This is intentional. You're calibrating: learning what the agents do well, where
 ## Stage 2: Pipeline Trust
 
 Stop reviewing intermediate steps. Run the full pipeline and review the landed result:
-- Read the handoff file after landing-verifier reports LANDED
+- Read the handoff file after landing-verifier reports VERIFIED
 - Review the git diff (what changed)
 - Run the app and verify behavior
 - Commit if satisfied
@@ -78,11 +78,11 @@ The agent drives a feature from bug report to merged PR:
 3. Record evidence of failure
 4. Implement fix
 5. Validate fix by driving the application
-6. Open pull request
+6. Land per configured strategy (merge or PR)
 7. Respond to agent and human feedback
 8. Detect and remediate build failures
 9. Escalate only when judgment is required
-10. Merge the change
+10. Confirm landing (merge landed or PR merged)
 
 From OpenAI: "We regularly see single Codex runs work on a single task for upwards of six hours (often while the humans are sleeping)."
 

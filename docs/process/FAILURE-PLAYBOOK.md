@@ -40,6 +40,26 @@ Pipeline stalls or produces bad output
   │    → Max 1 Arch-advisor retry. If still UNSOUND → Escalate to human.
   │    → This is an architecture-level problem, not a code-level one.
   │
+  ├─ Roundtable design review raises concerns? (Step 2.5)
+  │    → Send findings back to designer for revision
+  │    → Max 2 roundtable design attempts
+  │    → If still CONCERNS after 2 attempts: proceed anyway (advisory)
+  │    → Roundtable is advisory — it does not block the pipeline
+  │
+  ├─ Roundtable landing review raises concerns? (Step 8.5)
+  │    → Send findings back to implementer
+  │    → Implementer fixes, re-run full gate chain:
+  │      code-reviewer → spec-reviewer → safety-auditor? → arch-advisor? → landing-verifier
+  │    → Max 1 roundtable-triggered gate re-run per gate
+  │    → Re-run roundtable landing review (attempt 2)
+  │    → If still CONCERNS after 2 attempts: proceed anyway (advisory)
+  │    → If a roundtable-triggered gate re-run itself fails: escalate to human
+  │
+  ├─ Merge to base branch rejected? (landing strategy: merge)
+  │    → Auto-fallback to PR strategy
+  │    → Push feature branch, create PR via forge CLI
+  │    → If push also fails: STOP, print error, human lands manually
+  │
   ├─ pre-check routed wrong? (skipped designer when one was needed)
   │    → Insert the missing stage now
   │    → Designer reads the handoff, produces design brief
