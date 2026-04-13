@@ -59,32 +59,47 @@ You MUST obey all six rules. Violating any one of them is a process failure.
 3. Docker for everything. No local runtime dependencies.
 4. Update docs when you change behavior. Docs that lie are worse than no docs.
 
+## Landing Preferences
+
+<!-- CUSTOMIZE: How should completed features land? -->
+- **Landing strategy:** auto
+  <!-- Options:
+       merge  — commit directly to base branch (no PR)
+       pr     — always create a PR for review
+       auto   — heuristic: solo + bootstrap/cross-cutting → merge; otherwise → pr
+  -->
+- **Roundtable review:** true
+  <!-- When roundtable MCP server is available:
+       true  — use roundtable at design stages and pre-landing review
+       false — skip roundtable even if available
+  -->
+
 ## Workflow — Mandatory Pipelines
 
 Every feature MUST go through one of the pipelines below. The orchestrator selects which pipeline based on the feature type. You MUST NOT execute steps outside of the assigned pipeline.
 
 ### Bootstrap pipeline
 ```
-docker-builder → landing-verifier
-scaffolder → landing-verifier
-config-writer → landing-verifier
+docker-builder → landing-verifier → roundtable-review? → post-landing
+scaffolder → landing-verifier → roundtable-review? → post-landing
+config-writer → landing-verifier → roundtable-review? → post-landing
 ```
 
 ### Backend pipeline
 ```
-pre-check → researcher? → backend-designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier
+pre-check → researcher? → backend-designer? → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier → roundtable-review? → post-landing
 ```
 Designer skipped when pre-check says `Designer needed: NO`.
 Safety-auditor only for features touching domain-critical modules.
 
 ### Frontend pipeline
 ```
-pre-check → researcher? → frontend-designer → test-writer → implementer → code-reviewer → spec-reviewer → landing-verifier
+pre-check → researcher? → frontend-designer → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → landing-verifier → roundtable-review? → post-landing
 ```
 
 ### Cross-cutting pipeline
 ```
-pre-check → test-writer → implementer → code-reviewer → landing-verifier
+pre-check → test-writer → implementer → code-reviewer → landing-verifier → roundtable-review? → post-landing
 ```
 
 ### Handoffs
@@ -92,16 +107,19 @@ Each feature gets `docs/exec-plans/active/handoffs/F{id}-{feature-name}.md`.
 Each agent's output is appended. Next agent reads the handoff file.
 Moved to `completed/handoffs/` when feature lands.
 
-### After landing-verifier reports LANDED
-The orchestrator runs Step 9 (post-LANDED procedure) automatically:
-1. `doc-gardener` agent → apply any reported drift fixes to the working tree
-2. Move handoff: `active/handoffs/F{id}-{slug}.md` → `completed/handoffs/F{id}-{slug}.md`
-3. Log any new shortcuts to `tech-debt-tracker.md`
-4. `git add -A` → commit `feat(F{id}): {title from spec H1}` with spec ref + verdict table
-5. `git push -u origin HEAD` (branch is already `keel/F{id}-{slug}`, set at "Before Starting")
-6. `gh pr create --fill` (ready-for-review; falls back to manual PR instructions if gh is absent)
+### After landing-verifier reports VERIFIED
+The orchestrator runs roundtable review (if enabled), then the post-landing
+procedure automatically:
+1. Roundtable landing review (if enabled) → `xray` + `challenge` → advisory feedback
+2. `doc-gardener` agent → apply any reported drift fixes to the working tree
+3. Move handoff: `active/handoffs/F{id}-{slug}.md` → `completed/handoffs/F{id}-{slug}.md`
+4. Log any new shortcuts to `tech-debt-tracker.md`
+5. `git add -A` → commit `feat(F{id}): {title from spec H1}` with spec ref + verdict table
+6. Land per configured strategy:
+   - **merge:** `git merge --ff-only` to base branch, push (fallback to PR if rejected)
+   - **pr:** `git push -u origin HEAD`, create PR via forge CLI (manual instructions if CLI unavailable)
 
-The human reviews the PR on GitHub, not each step. No per-commit approval.
+The human configures the landing strategy. The pipeline executes it.
 
 ## Architecture
 
