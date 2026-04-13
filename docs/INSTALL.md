@@ -28,8 +28,8 @@ copies everything into place.
 | `frontend-designer.md` | high | UI component design |
 | `test-writer.md` | standard | Write tests from specs (never implementation) |
 | `implementer.md` | high | Write code to pass tests (never modifies tests) |
-| `code-reviewer.md` | high | Review code quality — DRY, patterns, edge cases |
-| `spec-reviewer.md` | high | Verify code matches spec — gate agent |
+| `code-reviewer.md` | standard | Review code quality — DRY, patterns, edge cases |
+| `spec-reviewer.md` | standard | Verify code matches spec — gate agent |
 | `safety-auditor.md` | high | Verify domain invariants — gate agent |
 | `landing-verifier.md` | standard | Verify feature landed completely |
 | `doc-gardener.md` | standard | Detect and report doc drift |
