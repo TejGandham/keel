@@ -22,7 +22,7 @@ graph LR
         E2[KEEL runs pipeline]
         E3[Self-corrects]
         E4[Garbage collects]
-        E5[Opens PR]
+        E5[Lands feature<br/>merge or PR]
         E6["Human: batch review · Agent: 95%"]
     end
 
@@ -62,7 +62,7 @@ A feature goes in. KEEL:
 9. Verifies architecture soundness (arch-advisor verify) — for complex features
 10. Verifies everything landed (landing-verifier)
 11. Garbage collects docs (doc-gardener)
-12. Opens a PR
+12. Lands per configured strategy (merge or PR)
 
 The human reviews the PR. Not the pipeline. Not each agent's output.
 
@@ -85,16 +85,17 @@ The end state is: human feeds a feature spec, KEEL produces a PR.
 |-|-|
 | Pick pipeline variant based on intent | Write the feature spec |
 | Route to optional agents | Define domain invariants |
-| Self-correct on spec deviation (max 2) | Review PRs in batch |
-| Self-correct on safety violation (max 3) | Resolve escalations |
-| Self-correct on architecture issues (max 1) | Update north star / specs |
-| Garbage collect docs after landing | Approve PR merge |
-| Open PR with commit message | |
+| Self-correct on spec deviation (max 2) | Resolve escalations |
+| Self-correct on safety violation (max 3) | Update north star / specs |
+| Self-correct on architecture issues (max 1) | Configure landing strategy |
+| Garbage collect docs after landing | |
+| Land feature per configured strategy (merge or PR) | |
+| Roundtable review when available | |
 
 What KEEL does NOT do autonomously:
 - Pick the next feature from the backlog (human decides priority)
 - Modify specs or invariants (human decides what to build)
-- Push to main or merge PRs (human approves)
+- Override landing strategy at runtime (human configures, pipeline follows)
 
 ## How KEEL Evolves
 
@@ -118,7 +119,7 @@ This is an open question.
 | **1. Process framework** | Agents, pipeline, docs, handoff format | Done |
 | **2. Self-correcting pipeline** | Structured rejection, wisdom accumulation, intent classification, Arch-advisor | Done |
 | **3. Install-anywhere** | install.py, uninstall.py, artifact inventory | Done |
-| **4. Full autonomy** | Feature → PR without human at each step, automatic GC | **Phase 1 done** (auto-land + PR). Phase 2 (worktrees, enforcement hooks) deferred. |
+| **4. Full autonomy** | Feature → landed without human at each step, configurable landing strategy, roundtable integration, automatic GC | **Phase 1 done** (auto-land + PR). **Phase 2 done** (landing strategy + roundtable). Phase 3 (worktrees, enforcement hooks) deferred. |
 | **5. Testbed project** | Real-world project that exercises the full pipeline | Open |
 
 ## Principles for Framework Development
