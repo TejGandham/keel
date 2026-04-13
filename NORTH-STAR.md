@@ -64,7 +64,7 @@ A feature goes in. KEEL:
 11. Garbage collects docs (doc-gardener)
 12. Lands per configured strategy (merge or PR)
 
-The human reviews the PR. Not the pipeline. Not each agent's output.
+The human configures landing strategy. The pipeline executes it.
 
 ## What KEEL Does NOT Become
 

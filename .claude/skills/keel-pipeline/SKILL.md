@@ -86,17 +86,17 @@ Bootstrap features are orchestrator-direct: dispatch the specific bootstrap agen
 
 **Backend** — changes to core business logic, services, data layer:
 ```
-pre-check → researcher? → backend-designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier
+pre-check → researcher? → backend-designer? → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier → roundtable-review? → post-landing
 ```
 
 **Frontend** — changes to UI components, templates, styles, client-side logic:
 ```
-pre-check → researcher? → frontend-designer → test-writer → implementer → code-reviewer → spec-reviewer → landing-verifier
+pre-check → researcher? → frontend-designer → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → landing-verifier → roundtable-review? → post-landing
 ```
 
 **Cross-cutting** — test infrastructure, config, Docker, docs:
 ```
-pre-check → test-writer → implementer → code-reviewer → landing-verifier
+pre-check → test-writer → implementer → code-reviewer → landing-verifier → roundtable-review? → post-landing
 ```
 
 **Full-stack** — touches both backend and frontend: run backend pipeline, then frontend pipeline, sharing the same handoff file.

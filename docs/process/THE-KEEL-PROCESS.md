@@ -117,12 +117,11 @@ reports results. The agent never decides what to build next.
 (commits, doc moves, backlog updates) only after presenting the action and
 receiving human approval at each step.
 
-**Stage 4 Phase 1 and later:** after `landing-verifier` reports LANDED, the
-orchestrator runs a deterministic post-LANDED procedure — doc-gardener,
-handoff archive, commit, push, `gh pr create` — without per-step approval.
-The human's review moves from per-step to PR-level on GitHub. The agent
-still never pushes to main or merges the PR; the human does those via the
-GitHub UI. Escalations (gate ceilings tripped) still halt in-session and
+**Stage 4 Phase 1 and later:** after `landing-verifier` reports VERIFIED, the
+orchestrator runs roundtable review (if enabled) and a deterministic post-landing
+procedure — doc-gardener, handoff archive, commit, and landing per configured
+strategy (merge or PR) — without per-step approval. The human configures landing
+strategy; the pipeline executes it. Escalations (gate ceilings tripped) still halt in-session and
 surface to the human immediately, as before.
 
 The human provides taste, judgment, and strategic direction. The agent provides
@@ -674,7 +673,7 @@ change.
 3. Read referenced spec sections.
 4. Create handoff file: `docs/exec-plans/active/handoffs/F{id}-{feature-name}.md`.
 5. Run pipeline stages sequentially, reviewing each output.
-6. Continue until landing-verifier reports LANDED.
+6. Continue until landing-verifier reports VERIFIED.
 
 ### What the Human Does at Each Stage
 
