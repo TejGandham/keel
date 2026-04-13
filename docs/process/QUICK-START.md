@@ -88,8 +88,7 @@ After bootstrap lands, the pipeline becomes your daily workflow:
 1. Pick next feature from backlog
 2. Run `/keel-pipeline F{id} spec-path`
 3. Watch the pipeline — it runs end-to-end, self-corrects at gates, and stops in-session only on escalation
-4. Review the resulting PR on GitHub (the pipeline archives the handoff, commits, pushes, and opens the PR automatically)
-5. Merge the PR when satisfied
+4. Review the result — the pipeline archives the handoff, commits, and lands per your configured strategy (merge to base or PR on your forge)
 
 When the pipeline stalls, see [FAILURE-PLAYBOOK.md](FAILURE-PLAYBOOK.md) for the decision tree.
 

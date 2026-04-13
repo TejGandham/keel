@@ -15,17 +15,17 @@
 **Handoff** — An append-only markdown file (`docs/exec-plans/active/handoffs/F{id}-{feature-name}.md`) that persists context between pipeline agents. Each agent reads upstream context and appends its output. Never rewritten — only appended to.
 
 **Pipeline Variant** — One of four execution paths a feature takes through the agent roster:
-- **Bootstrap:** Three separate features, each dispatching one agent then landing-verifier:
-  - F01: docker-builder → landing-verifier
-  - F02: scaffolder → landing-verifier
-  - F03: config-writer → landing-verifier
-- **Backend:** pre-check → researcher? → arch-advisor? → backend-designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → arch-advisor-verify? → landing-verifier
-- **Frontend:** pre-check → researcher? → arch-advisor? → frontend-designer → test-writer → implementer → code-reviewer → spec-reviewer → arch-advisor-verify? → landing-verifier
-- **Cross-cutting:** pre-check → test-writer → implementer → code-reviewer → landing-verifier
+- **Bootstrap:** Three separate features, each dispatching one agent then landing-verifier then roundtable-review? then post-landing:
+  - F01: docker-builder → landing-verifier → roundtable-review? → post-landing
+  - F02: scaffolder → landing-verifier → roundtable-review? → post-landing
+  - F03: config-writer → landing-verifier → roundtable-review? → post-landing
+- **Backend:** pre-check → researcher? → arch-advisor? → roundtable-review? → backend-designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → arch-advisor-verify? → landing-verifier → roundtable-review? → post-landing
+- **Frontend:** pre-check → researcher? → arch-advisor? → roundtable-review? → frontend-designer → test-writer → implementer → code-reviewer → spec-reviewer → arch-advisor-verify? → landing-verifier → roundtable-review? → post-landing
+- **Cross-cutting:** pre-check → test-writer → implementer → code-reviewer → landing-verifier → roundtable-review? → post-landing
 
 **Execution Brief** — The structured output of the pre-check agent. Contains: intent classification, complexity tier, spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, constraints for downstream (MUST/MUST NOT), and routing decisions (designer needed? researcher needed? arch-advisor needed?).
 
-**Orchestrator** — The human who steers the KEEL process: kicks off features, reviews agent output, and runs the Step 9 post-LANDED procedure (doc-gardener, archive, commit, push, PR). In Stage 4 Phase 1 and later, Step 9 runs automatically without per-step approval; the human's review moves to the PR on GitHub. The orchestrator does not write code.
+**Orchestrator** — The human who steers the KEEL process: kicks off features, configures landing strategy, and reviews results. The `keel-pipeline` skill runs the pipeline end-to-end: dispatching agents, calling roundtable MCP tools when available, running the post-landing procedure (doc-gardener, archive, commit, land per configured strategy). The human's review surface depends on landing strategy: PR on the forge (when strategy is `pr`), or trust in pipeline gates (when strategy is `merge`). The orchestrator does not write code.
 
 **Invariant** — A non-negotiable rule specific to the project's domain, enforced mechanically. Examples: "never force-pull" (git), "validate all input at boundaries" (API), "all transforms must be idempotent" (data pipeline).
 
@@ -43,10 +43,18 @@
 
 **Intent Classification** — Pre-check's mandatory first step. Categorizes work as refactoring, build, mid-sized, architecture, or research. Determines pipeline routing: which optional agents run, complexity tier, and whether Arch-advisor is needed.
 
+**Landing Strategy** — How a completed feature lands after pipeline gates pass. Three options: `merge` (ff-only merge to base branch), `pr` (push branch + create PR via forge CLI), `auto` (heuristic based on collaborator count and pipeline variant). Configured per-project in CLAUDE.md, overridable per-feature in handoff YAML.
+
 **Complexity Tier** — Pre-check's assessment of feature scope: trivial (skip designer), standard (normal pipeline), complex (all gates), architecture-tier (Arch-advisor consultation + verification). Drives pipeline routing decisions.
 
 **Wisdom Accumulation** — Pattern where agents propagate context downstream through structured Decisions (choices made and why) and Constraints (MUST/MUST NOT for downstream agents) in the handoff file. Prevents agents from repeating upstream mistakes or violating upstream decisions.
 
 **Structured Rejection** — Pattern where gate agents (spec-reviewer, safety-auditor) output a machine-readable `**Verdict:**` field as their first line. The pipeline branches on this verdict. Max 2 spec-review loops, max 3 safety-auditor loops before escalating to human.
 
+**VERIFIED** — Handoff status emitted by landing-verifier (was `LANDED` in Stage 4 Phase 1). Indicates all pipeline gates passed and tests pass, but the feature has not yet been committed or pushed. The orchestrator runs roundtable review (if enabled) and then the post-landing procedure to transition through READY-TO-LAND to LANDED.
+
 **Pragmatic Minimalism** — Arch-advisor's core decision framework: bias toward simplicity, leverage what exists, prioritize developer experience, one clear path, match depth to complexity. Ported from OMA (Oh My OpenAgent).
+
+**READY-TO-LAND** — Handoff status set by the orchestrator after roundtable landing review (Step 8.5) completes or is skipped. Indicates the feature has passed all gates, been reviewed (if roundtable enabled), and is ready for the post-landing procedure (Step 9). When roundtable is disabled, this state is skipped — VERIFIED triggers Step 9 directly.
+
+**Roundtable Review** — Advisory multi-model review using the roundtable MCP server. Runs at two pipeline points: post-designer (Step 2.5, tools: `architect` + `challenge`) and pre-landing (Step 8.5, tools: `xray` + `challenge`). Automatic when MCP server is available and enabled in CLAUDE.md. Advisory, not authoritative — findings feed back through existing gates, never directly block landing. Gracefully skipped if MCP server is unavailable.
