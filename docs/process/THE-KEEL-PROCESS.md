@@ -227,7 +227,7 @@ rules, workflow overview, pointers to deeper docs. "Map not manual."
 # Project Name
 ## Quick Facts       - Stack, runtime, key constraints
 ## Safety Rules      - Non-negotiable invariants (3-6 bullets)
-## Workflow          - Pipeline definitions (compact)
+## Workflow — Mandatory Pipelines  - Pipeline definitions (compact)
 ## Architecture      - Link to ARCHITECTURE.md
 ## Specs             - Links to product-specs/, design-docs/
 ## Plans             - Links to exec-plans/active/, completed/
