@@ -1,6 +1,6 @@
 # Quick Start: Your First Afternoon with KEEL
 
-KEEL — Knowledge-Encoded Engineering Lifecycle. From clone to first feature through the pipeline.
+KEEL — Knowledge-Encoded Engineering Lifecycle. From install to first feature through the pipeline.
 
 ## Prerequisites
 
@@ -24,103 +24,63 @@ of your project at each stage:
 Start with whatever you need now. Add the rest as complexity demands it.
 The framework catches you when ad-hoc prompting stops scaling.
 
-## The 10 Steps
+## The 3 Steps
 
 ### 1. Install KEEL
+
 ```bash
 # New project
 mkdir my-project && cd my-project && git init
 
-# Install KEEL into your project
+# Existing project
+cd my-project
+
+# Install KEEL
 git clone --depth 1 https://github.com/TejGandham/keel.git /tmp/keel
 python3 /tmp/keel/scripts/install.py
 rm -rf /tmp/keel
 ```
+
 The installer prompts for project name, stack, and description. It copies
-agents, skills, doc structure, and template files into your project. It
-never overwrites existing files — safe for existing projects too.
+agents, skills, doc structure, and template files into your project,
+replaces placeholders, and cleans up instruction comments. It never
+overwrites existing files.
 
-### 2. Write your North Star
-Open `docs/north-star.md`. Answer the guiding questions:
-- What are we building and why?
-- Who steers? Who (what agent) executes?
-- What do we adopt fully from harness engineering?
-- What do we adapt or skip for now?
-- What does the folder structure look like when fully realized?
-- What are the growth stages?
+### 2. Configure with Claude Code
 
-This is where you encode taste before it becomes linters.
+Open Claude Code in your project directory and run the command the
+installer printed:
 
-### 3. Fill in CLAUDE.md
-The installer already replaced `[PROJECT_NAME]`, `[STACK]`, `[DESCRIPTION]`.
-Now fill in the `<!-- CUSTOMIZE -->` sections: safety rules, test commands,
-source layout. Keep it under 100 lines — table of contents, not encyclopedia.
+- **New project (no existing code):** `/keel-setup`
+- **Existing codebase:** `/keel-adopt`
 
-### 4. Write your Product Spec
-Copy `docs/product-specs/_TEMPLATE.md` to your spec file.
-Define: what to build, actors, features, state machines, constraints.
-Be specific enough that an agent can derive tests without asking questions.
+Both skills walk you through everything interactively:
+- CLAUDE.md refinement (project identity, safety rules, commands)
+- North star (vision, growth stages, principles)
+- Architecture (layers, modules, data flow)
+- Domain invariants (per-item confirmation)
+- Safety enforcement and agent configuration
 
-### 5. Write Core Beliefs + Testing Strategy
-Fill in `docs/design-docs/core-beliefs.md`:
-- Your domain's non-negotiable safety rules
-- Your testing layers (adapt the 6-layer model)
-- Your design principles
+Every phase drafts from context first, then asks you to review.
+You confirm at every gate.
 
-### 6. Define Architecture Layers
-Fill in `ARCHITECTURE.md`:
-- Overview (1-2 sentences)
-- Process/component model
-- Data flow
-- Module map (even if empty — define the categories)
-- Layer dependencies (what calls what)
+### 3. Run Your First Feature
 
-### 7. Define Domain Invariants
-Look at `examples/domain-invariants/` for inspiration.
-Write your invariants in `docs/design-docs/core-beliefs.md`.
-Configure `.claude/agents/safety-auditor.md` with your rules.
-Configure `.claude/hooks/safety-gate.py` with your critical file patterns.
-
-### 8. Configure Agents, Hooks, and Commands
-Several agent definitions contain `<!-- CUSTOMIZE -->` comments marking
-stack-specific commands that need your input. At minimum, configure:
-- `.claude/agents/pre-check.md` — your compile/build command
-- `.claude/agents/test-writer.md` — your test framework, mock framework, test command
-- `.claude/agents/implementer.md` — your formatter, container command, domain invariants
-- `.claude/agents/landing-verifier.md` — your test command for each pipeline variant
-- `.claude/agents/scaffolder.md` — your framework's scaffold command
-- `.claude/agents/docker-builder.md` — your stack's required tools
-- `.claude/agents/config-writer.md` — your compile/build command
-
-Also configure hooks:
-- `.claude/hooks/safety-gate.py` — set the file patterns that trigger safety reminders
-- `.claude/hooks/doc-gate.py` — adjust the doc reference if needed
-
-Hooks are already wired in `.claude/settings.json`.
-
-### 9. Decompose into Feature Backlog
-Open `docs/exec-plans/active/feature-backlog.md`.
-List features as F01, F02, F03... with:
-- Spec reference
-- Dependencies (which features must land first)
-- Pipeline assignment (bootstrap / backend / frontend / cross-cutting)
-
-Start with bootstrap features (Docker, scaffold, config).
-
-### 10. Run Your First Features
-
-Bootstrap features (F01-F03) are orchestrator-direct — they use specialized agents, not the full pipeline:
+Create your feature backlog and write your first product spec:
 ```
-/keel-pipeline F01 docs/design-docs/core-beliefs.md   # docker-builder → landing-verifier
-/keel-pipeline F02 docs/product-specs/your-spec.md     # scaffolder → landing-verifier
-/keel-pipeline F03 docs/design-docs/core-beliefs.md   # config-writer → landing-verifier
+docs/exec-plans/active/feature-backlog.md    # Ordered feature list
+docs/product-specs/my-spec.md                # Your first spec
 ```
 
-After bootstrap, run your first real feature through the full pipeline:
+Then run the pipeline:
 ```
-/keel-pipeline F04 docs/product-specs/your-spec.md
+/keel-pipeline F01 docs/product-specs/my-spec.md
 ```
-The pipeline handles everything: pre-check → designer? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier.
+
+Bootstrap features (F01-F03) use specialized agents — Docker, scaffold,
+config. After bootstrap, the full pipeline handles everything:
+pre-check → designer? → test-writer → implementer → code-reviewer →
+spec-reviewer → safety-auditor? → landing-verifier.
 
 ## What Happens Next
 
@@ -128,7 +88,7 @@ After bootstrap lands, the pipeline becomes your daily workflow:
 1. Pick next feature from backlog
 2. Run `/keel-pipeline F{id} spec-path`
 3. Watch the pipeline — it runs end-to-end, self-corrects at gates, and stops in-session only on escalation
-4. Review the resulting PR on GitHub (Step 9 runs doc-gardener, archives the handoff, commits, pushes, and opens the PR automatically)
+4. Review the resulting PR on GitHub (the pipeline archives the handoff, commits, pushes, and opens the PR automatically)
 5. Merge the PR when satisfied
 
 When the pipeline stalls, see [FAILURE-PLAYBOOK.md](FAILURE-PLAYBOOK.md) for the decision tree.

@@ -43,12 +43,13 @@ description, tools, model). The prompt is the body of the file.
 **Customization:** Look for `<!-- CUSTOMIZE -->` comments inside each
 agent. At minimum, fill in `safety-auditor.md` with your domain invariants.
 
-### `.claude/skills/` — 3 skills
+### `.claude/skills/` — 4 skills
 
 | Skill | Purpose |
 |-|-|
 | `keel-pipeline/SKILL.md` | Orchestrate the full pipeline for a feature |
 | `keel-adopt/SKILL.md` | Adopt KEEL in an existing codebase |
+| `keel-setup/SKILL.md` | Post-install greenfield setup (interactive) |
 | `safety-check/SKILL.md` | Quick safety audit on current changes |
 
 ### `.claude/hooks/` — 2 hooks
@@ -99,13 +100,17 @@ docs/
 
 ## After Install
 
-1. **`CLAUDE.md`** — Fill in `<!-- CUSTOMIZE -->` sections (safety rules,
-   test commands, source layout)
-2. **`docs/north-star.md`** — Define your project vision
-3. **`.claude/agents/safety-auditor.md`** — Add your domain invariants
-4. **`docs/design-docs/core-beliefs.md`** — Testing strategy + golden principles
-5. **`docs/product-specs/`** — Write your first spec
-6. **Run:** `/keel-pipeline my-feature docs/product-specs/my-spec.md`
+Open Claude Code in your project directory and run:
+
+- **New project (no existing code):** `/keel-setup`
+- **Existing codebase:** `/keel-adopt`
+
+The skill walks you through all configuration interactively — CLAUDE.md,
+north star, architecture, domain invariants, agent config. Everything is
+drafted from context first, then presented for your review.
+
+After setup, write your first product spec and run:
+`/keel-pipeline my-feature docs/product-specs/my-spec.md`
 
 ### `scripts/validate-handoff.py` — handoff file validator
 
@@ -152,6 +157,6 @@ reference material, not project-specific.
 
 ## Existing Codebase?
 
-After install, run `/keel-adopt` in Claude Code. It scans your repo and
-drafts CLAUDE.md, ARCHITECTURE.md, and domain invariants from what exists.
+After install, run `/keel-adopt` in Claude Code. It scans your codebase,
+drafts CLAUDE.md, ARCHITECTURE.md, and domain invariants from what it finds.
 See [BROWNFIELD.md](process/BROWNFIELD.md).

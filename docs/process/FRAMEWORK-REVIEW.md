@@ -29,7 +29,7 @@ KEEL solves the **tacit knowledge problem** in AI-agent development. When you gi
 ## 2. Where KEEL Starts and Ends
 
 ### Starts (clear)
-KEEL starts **before the first line of code**, when you decide to run an agent-led, spec-first workflow. The entry point is `bootstrap.py` or manually creating the doc structure.
+KEEL starts **before the first line of code**, when you decide to run an agent-led, spec-first workflow. The entry point is `install.py`, which sets up the scaffolding — then `/keel-setup` (greenfield) or `/keel-adopt` (brownfield) configures everything interactively.
 
 ### Ends (ambiguous — this is a gap)
 KEEL's operational coverage **ends at `git commit`**. "Feature landed" means code is in the repo with passing tests. That's it.

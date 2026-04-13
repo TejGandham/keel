@@ -56,6 +56,31 @@ def copy_if_missing(src: Path, dst: Path) -> bool:
     return True
 
 
+def has_source_code(project_dir: Path) -> bool:
+    """Check if project has existing source code (not KEEL scaffolding)."""
+    source_exts = {
+        ".py", ".js", ".ts", ".jsx", ".tsx", ".ex", ".exs", ".go", ".rs",
+        ".java", ".rb", ".c", ".cpp", ".cs", ".swift", ".kt",
+    }
+    skip_dirs = {".git", ".claude", "docs", "node_modules", "vendor", "__pycache__"}
+    skip_files = {"install.py", "uninstall.py"}
+
+    for f in project_dir.rglob("*"):
+        if not f.is_file():
+            continue
+        if f.name in skip_files:
+            continue
+        try:
+            rel = f.relative_to(project_dir)
+        except ValueError:
+            continue
+        if any(part in skip_dirs for part in rel.parts):
+            continue
+        if f.suffix in source_exts:
+            return True
+    return False
+
+
 def replace_placeholders(project_dir: Path, name: str, stack: str, desc: str, reference_file: Path):
     """Replace [PROJECT_NAME], [STACK], [DESCRIPTION] in text files newer than reference."""
     ref_mtime = reference_file.stat().st_mtime if reference_file.exists() else 0
@@ -156,7 +181,7 @@ def main():
     skills_dst.mkdir(parents=True, exist_ok=True)
 
     skill_count = 0
-    for skill_name in ("keel-pipeline", "keel-adopt", "safety-check"):
+    for skill_name in ("keel-pipeline", "keel-adopt", "keel-setup", "safety-check"):
         skill_src = keel_src / ".claude" / "skills" / skill_name
         skill_dst_dir = skills_dst / skill_name
         if skill_src.is_dir() and not skill_dst_dir.exists():
@@ -221,25 +246,30 @@ def main():
         if src.exists():
             copy_if_missing(src, process_dst / doc_name)
 
+    # --- Detect greenfield vs brownfield ---
+    is_brownfield = has_source_code(project_dir)
+    next_command = "/keel-adopt" if is_brownfield else "/keel-setup"
+    next_desc = (
+        "This will scan your codebase and configure KEEL interactively."
+        if is_brownfield
+        else "This will walk you through project configuration interactively."
+    )
+
     print()
     print("=" * 48)
     print(f"  KEEL installed into {project_dir}")
     print()
     print("  What was added:")
     print("    .claude/agents/    15 agent definitions")
-    print("    .claude/skills/    3 skills (pipeline, adopt, safety-check)")
+    print("    .claude/skills/    4 skills (pipeline, adopt, setup, safety-check)")
     print("    docs/              Spec structure, handoff templates, process guides")
-    print("    CLAUDE.md          Project entry point (customize this first)")
-    print("    ARCHITECTURE.md    Module map (fill in as you build)")
+    print("    CLAUDE.md          Project entry point (placeholders filled)")
+    print("    ARCHITECTURE.md    Module map")
     print()
-    print("  Next steps:")
-    print("    1. Open CLAUDE.md — fill in the <!-- CUSTOMIZE --> sections")
-    print("    2. Open docs/north-star.md — define your vision")
-    print("    3. Write your first product spec in docs/product-specs/")
-    print("    4. Fill in domain invariants in .claude/agents/safety-auditor.md")
-    print("    5. Run: /keel-pipeline my-feature docs/product-specs/my-spec.md")
+    print("  Next step:")
+    print(f"    Open Claude Code and run:  {next_command}")
     print()
-    print("  Process reference: docs/process/QUICK-START.md")
+    print(f"  {next_desc}")
     print("=" * 48)
 
 

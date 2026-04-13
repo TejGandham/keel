@@ -9,10 +9,10 @@ installed into other people's repos. Act accordingly.
 |Path|What it is|
 |-|-|
 |`.claude/agents/`|The 15 agent definitions shipped by KEEL|
-|`.claude/skills/`|Skills. `keel-pipeline`, `keel-adopt`, `safety-check` ship to users via `install.py`. `dev-up` is KEEL-internal — lives in this repo only, not copied to installs.|
+|`.claude/skills/`|Skills. `keel-pipeline`, `keel-adopt`, `keel-setup`, `safety-check` ship to users via `install.py`. `dev-up` is KEEL-internal — lives in this repo only, not copied to installs.|
 |`.claude/hooks/`|`safety-gate.py`, `doc-gate.py` — shipped with KEEL|
 |`template/`|**Install target.** Files here are copied into user projects by `scripts/install.py`. Edits ship to every new install.|
-|`scripts/`|`install.py`, `uninstall.py`, `bootstrap.py`, `validate-handoff.py` — stdlib-only Python 3.10+, cross-platform|
+|`scripts/`|`install.py`, `uninstall.py`, `validate-handoff.py` — stdlib-only Python 3.10+, cross-platform|
 |`docs/process/`|Reference material also copied into user installs (`THE-KEEL-PROCESS.md`, `QUICK-START.md`, `BROWNFIELD.md`, `GLOSSARY.md`, `ANTI-PATTERNS.md`, `FAILURE-PLAYBOOK.md`)|
 |`docs/HOW-IT-WORKS.md`, `docs/INSTALL.md`, `docs/UNINSTALL.md`|Framework docs — **not** copied into installs|
 |`NORTH-STAR.md`|Where KEEL is heading. Read before structural changes.|
@@ -25,7 +25,7 @@ installed into other people's repos. Act accordingly.
    `<!-- CUSTOMIZE -->` markers. The installer strips `DELETE AFTER
    FILLING` comments on copy.
 2. **Scripts stay stdlib-only.** `install.py`, `uninstall.py`,
-   `validate-handoff.py`, `bootstrap.py` must not import anything
+   `validate-handoff.py` must not import anything
    outside the Python 3.10+ stdlib. They run on fresh machines before
    any deps are installed.
 3. **Scripts stay cross-platform.** No POSIX-only path assumptions, no

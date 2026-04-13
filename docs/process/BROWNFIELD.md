@@ -6,9 +6,10 @@ How to adopt KEEL when you already have a codebase.
 
 ## The Key Difference
 
-Greenfield KEEL bootstraps from an empty directory — you write docs, then
-code. Brownfield KEEL does the opposite: you already have code, and you
-backfill enough context that agents can safely build what comes *next*.
+Greenfield KEEL starts from an empty directory — `/keel-setup` drafts docs,
+then you build. Brownfield KEEL does the opposite: you already have code,
+and `/keel-adopt` backfills enough context that agents can safely build
+what comes *next*.
 
 You are NOT documenting everything that exists. The existing code IS the
 documentation of what exists. You're teaching the agent where things are,

@@ -14,7 +14,7 @@ Full guide: `docs/process/BROWNFIELD.md`
 
 - Existing project, no KEEL structure yet
 - Want to start using KEEL's pipeline for new features
-- NOT for greenfield — use `bootstrap.py` + QUICK-START.md instead
+- NOT for greenfield — use `/keel-setup` instead
 
 ## Phases
 

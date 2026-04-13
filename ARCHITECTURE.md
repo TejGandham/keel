@@ -36,7 +36,6 @@ framework ships by being cloned.
                 │  scripts/                   │
                 │    install.py               │
                 │    uninstall.py             │
-                │    bootstrap.py             │
                 │    validate-handoff.py      │
                 │  examples/                  │
                 │    domain-invariants/       │◄── reference for users
@@ -120,10 +119,9 @@ Each agent reads and appends to the same handoff file in
 |-|-|-|-|
 |Installer|`scripts/install.py`|Copy framework artifacts into user project|stdlib only|
 |Uninstaller|`scripts/uninstall.py`|Remove KEEL artifacts while preserving user customizations|stdlib only|
-|Bootstrapper|`scripts/bootstrap.py`|Pre-install bootstrap helper|stdlib only|
 |Handoff validator|`scripts/validate-handoff.py`|Structural checks on pipeline handoff files|stdlib only|
 |Agents|`.claude/agents/*.md`|15 prompts with YAML frontmatter (name, description, tools, model)|read by Claude Code|
-|Skills|`.claude/skills/*/SKILL.md`|Orchestration entry points (`keel-pipeline`, `keel-adopt`, `safety-check`, `dev-up`)|read by Claude Code|
+|Skills|`.claude/skills/*/SKILL.md`|Orchestration entry points (`keel-pipeline`, `keel-adopt`, `keel-setup`, `safety-check`, `dev-up`)|read by Claude Code|
 |Hooks|`.claude/hooks/*.py`|`safety-gate.py` (PreToolUse on Edit/Write), `doc-gate.py` (PostToolUse on Bash)|stdlib only|
 |Template|`template/`|Files copied into user projects verbatim, with placeholder substitution|none|
 |Process docs|`docs/process/*.md`|Reference guides copied into every install|none|

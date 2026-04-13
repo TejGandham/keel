@@ -25,7 +25,7 @@ You function as an on-demand specialist invoked by the pipeline orchestrator whe
 2. The feature spec (referenced in handoff `spec_ref:` field)
 3. `ARCHITECTURE.md` — structural context and layer dependencies
 4. `docs/design-docs/core-beliefs.md` — domain invariants and testing strategy
-   <!-- CUSTOMIZE: this file is created by bootstrap.py. If it doesn't exist yet, skip. -->
+   <!-- CUSTOMIZE: this file is created during setup. If it doesn't exist yet, skip. -->
 
 ## Expertise
 
