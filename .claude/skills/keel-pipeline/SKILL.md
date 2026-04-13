@@ -55,6 +55,23 @@ If no spec path given, ask for one. If no spec exists yet, tell the user to writ
    that a mid-pipeline halt leaves the feature branch — not main — in the
    partial state.
 
+### Step 0.5: Landing strategy resolution
+
+After the clean-tree check and branch creation, before any agent dispatch:
+
+1. Read `Landing strategy` from project CLAUDE.md (default: `pr`).
+2. If handoff YAML has `landing_strategy` set, use that override.
+3. If resolved value is `auto`, run heuristic:
+   - Count unique non-bot authors: `git log --since="90 days ago" --format='%ae' | grep -v '\[bot\]' | sort -u | wc -l`
+   - Count total commits: `git log --since="90 days ago" --oneline | wc -l`
+   - If authors <= 1 AND commits >= 5 AND pipeline is `bootstrap` or `cross-cutting` → resolve to `merge`
+   - Otherwise → resolve to `pr`
+   - If 0 authors or < 5 commits → resolve to `pr`
+4. Store resolved value in handoff YAML: `landing_strategy_resolved: merge|pr`
+5. Check roundtable availability: read `Roundtable review` from CLAUDE.md.
+   If `true` (or absent — default is true), probe roundtable MCP server.
+   Store `roundtable_enabled: true|false` in handoff YAML.
+
 ## Pipeline Variants
 
 Determine the variant based on what the feature touches:
@@ -113,6 +130,27 @@ Append output to `## arch-advisor-consultation` in the handoff file.
 
 ### Step 2: Designer (if needed)
 Dispatch `backend-designer` or `frontend-designer` based on pipeline variant. Append output to handoff file.
+
+### Step 2.5: Roundtable design review (if enabled)
+
+Runs only when `designer_needed: YES` AND `roundtable_enabled: true`.
+
+1. Re-check roundtable MCP availability (120s timeout per tool call).
+   If unavailable: set `roundtable_skipped: true` with reason in handoff YAML,
+   continue to test-writer.
+2. Call `mcp__roundtable__architect` with designer output from handoff.
+3. Call `mcp__roundtable__challenge` with designer output from handoff.
+4. Append combined output to `## roundtable-design-review` in handoff.
+5. Set `roundtable_design_attempt: 1` in YAML.
+6. If critical concerns raised: send findings back to designer, designer
+   revises, increment `roundtable_design_attempt` to 2, re-run architect +
+   challenge.
+7. If still concerns after attempt 2: proceed anyway (advisory, not blocking).
+   Set `roundtable_design_verdict: CONCERNS`. Log unresolved items in handoff.
+8. If no concerns: set `roundtable_design_verdict: APPROVED`.
+
+Roundtable is advisory. It never directly blocks the pipeline — its findings
+feed back through the designer for revision, not through authoritative gates.
 
 ### Step 3: Test-writer
 Dispatch `test-writer` with the handoff file. It writes tests, never implementation. Append output to handoff file.
@@ -179,13 +217,45 @@ If Arch-advisor's verdict is UNSOUND:
 Append output to `## arch-advisor-verification` in the handoff file.
 
 ### Step 8: Landing-verifier
-Dispatch `landing-verifier` with the handoff file. It runs tests and verifies everything landed. If BLOCKED, fix blockers and re-run.
+Dispatch `landing-verifier` with the handoff file. It runs tests and verifies everything is complete. Its output is `VERIFIED` (all gates passed, tests pass) or `BLOCKED`. If BLOCKED, fix blockers and re-run.
 
-### Step 9: Post-LANDED procedure (doc GC → archive → commit → push → PR)
+### Step 8.5: Roundtable landing review (if enabled)
 
-Only after landing-verifier reports LANDED. The following sub-steps run
-in order; no human approval at any point. If any sub-step fails, STOP
-and print the underlying error verbatim.
+Runs for ALL pipeline variants when `roundtable_enabled: true`.
+
+1. Re-check roundtable MCP availability (120s timeout per tool call).
+   If unavailable: set `roundtable_skipped: true` with reason, proceed to Step 9.
+2. Call `mcp__roundtable__xray` with implementation summary from handoff.
+3. Call `mcp__roundtable__challenge` with implementation summary from handoff.
+4. Append combined output to `## roundtable-landing-review` in handoff.
+5. Set `roundtable_landing_attempt: 1` in YAML.
+6. If critical concerns raised: send findings back to implementer, implementer
+   fixes, then re-run the full gate chain with separate counters:
+   `code-reviewer` (roundtable_retry_code_review_attempt) →
+   `spec-reviewer` (roundtable_retry_spec_review_attempt) →
+   `safety-auditor?` (roundtable_retry_safety_attempt) →
+   `arch-advisor?` → `landing-verifier`.
+   Each roundtable-triggered gate re-run gets max 1 attempt. If a re-run gate
+   itself fails, escalate to human — do not loop further.
+7. After gate chain passes, re-run roundtable landing review (attempt 2).
+8. If still concerns after attempt 2: proceed anyway (advisory, not blocking).
+   Set `roundtable_landing_verdict: CONCERNS`. Log unresolved concerns.
+9. If no concerns: set `roundtable_landing_verdict: APPROVED`.
+10. Set handoff status to `READY-TO-LAND`.
+
+When roundtable is disabled (roundtable_enabled: false), skip this step
+entirely. The `VERIFIED` status from Step 8 triggers Step 9 directly.
+
+Roundtable is advisory, not authoritative. Its findings feed back through
+the existing authoritative gates on re-run. Roundtable never directly
+blocks landing; it triggers re-evaluation by the authoritative gates.
+
+### Step 9: Post-landing procedure (doc GC → archive → commit → land)
+
+Triggers on `READY-TO-LAND` (after roundtable review) or `VERIFIED` (when
+roundtable is disabled). The following sub-steps run in order; no human
+approval at any point. If any sub-step fails, STOP and print the underlying
+error verbatim.
 
 1. **Doc garbage collection.**
    Dispatch `doc-gardener` agent unconditionally. NORTH-STAR §Stage 4
@@ -247,39 +317,41 @@ and print the underlying error verbatim.
      safety:      PASS (attempt 1)
      arch-advisor: SOUND
      code-review: APPROVED (attempt 1)
+     roundtable-design: APPROVED (attempt 1)
+     roundtable-landing: APPROVED (attempt 1)
 
    If all verdict fields are unset (bootstrap variant), emit the single
    line: `Verdicts: n/a (bootstrap variant)`.
 
    Commit with the constructed message.
 
-5. **Push.**
+5. **Land.**
+   Read `landing_strategy_resolved` from handoff YAML.
+
+   **If `merge`:**
+   ```
+   git checkout main && git merge --ff-only keel/F{id}-{slug}
+   git push origin main
+   ```
+   If push rejected for any reason (branch protection, auth, hook failure,
+   non-fast-forward): auto-fallback to `pr` strategy. Run
+   `git checkout keel/F{id}-{slug}` and continue to the PR flow below.
+   On success: `git branch -d keel/F{id}-{slug}` to clean up.
+
+   **If `pr`:**
    `git push -u origin HEAD`. On failure, STOP and print the raw git
-   error verbatim. Do not retry, do not auto-recover. Push failures
-   (auth, branch protection, network) require human judgment. The
-   commit is still local — the human can fix auth and push manually.
+   error verbatim. The commit is still local — the human pushes manually.
 
-6. **Open PR.**
-   Probe `gh`:
-   - `command -v gh` to check the binary exists.
-   - `gh auth status` to check it's authed.
+   Then attempt forge CLI PR creation:
+   - Probe `gh`: `command -v gh` and `gh auth status`.
+   - If both succeed: `gh pr create --fill` (ready-for-review).
+   - If gh fails: print manual instructions:
 
-   If both succeed: run `gh pr create --fill`. `--fill` uses the commit
-   message as both the PR title (first line) and body (remaining lines).
-   Create the PR as ready-for-review (not draft) — the pipeline's gates
-   passed; draft would imply uncertainty the pipeline does not have.
-   Print the PR URL prominently.
-
-   If either probe fails: print a loud message:
-
-     gh CLI not available — branch pushed as keel/F{id}-{slug}.
-     Open PR manually: {push URL from git output, or plain branch name
-     if the remote didn't print one}
+         Forge CLI not available — branch pushed as keel/F{id}-{slug}.
+         Open PR manually on your forge.
 
    Do not fail the pipeline. The branch is pushed; the human opens the
-   PR by hand.
-
-(Step 10 removed — merged into Step 9 sub-steps 1–3 above.)
+   PR by hand if needed.
 
 ## Rules
 
@@ -296,7 +368,7 @@ and print the underlying error verbatim.
   Don't try harder — decompose or fix upstream.
 - **Downstream reads upstream.** Each agent reads upstream Decisions and
   Constraints FIRST before starting its own work.
-- **Stage 4 auto-landing.** After LANDED, the orchestrator runs Step 9
+- **Stage 4 auto-landing.** After VERIFIED/READY-TO-LAND, the orchestrator runs Step 9
   end-to-end without asking. The human's review surface is the PR on
   GitHub, not a per-step prompt. To run the pipeline without auto-landing
   (e.g., for debugging), interrupt before Step 9 — the orchestrator will
@@ -312,3 +384,16 @@ and print the underlying error verbatim.
   doc-gardener; no more "if the feature was substantial" judgment call.
   Drift fixes are applied to the working tree BEFORE the commit, so the
   PR diff is stable from the moment it opens.
+- **Roundtable is advisory.** It never directly blocks landing. Findings
+  feed back through authoritative gates (spec-reviewer, safety-auditor) on
+  re-run. If roundtable has concerns after max attempts, proceed anyway.
+- **Re-check MCP before each call.** Don't rely on the roundtable_enabled
+  flag from Step 0.5. Probe availability immediately before each roundtable
+  tool call. Timeout: 120s. On failure: skip, log reason, continue.
+- **Landing strategy is configurable.** Project default in CLAUDE.md,
+  per-feature override in handoff YAML. Auto heuristic resolves at Step 0.5.
+  Merge uses ff-only with fallback to PR on rejection.
+- **VERIFIED → READY-TO-LAND → LANDED.** Landing-verifier emits VERIFIED.
+  Roundtable review (if enabled) transitions to READY-TO-LAND. Step 9
+  transitions to LANDED after commit+push/merge. When roundtable is disabled,
+  VERIFIED triggers Step 9 directly (skip READY-TO-LAND).
