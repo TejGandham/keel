@@ -14,18 +14,36 @@
 - **User:** <!-- CUSTOMIZE: who uses this? Single dev? Team? -->
 - **Claude's role:** Sole builder. Design, development, maintenance, documentation.
 
-## KEEL (Soul)
+## KEEL — Mandatory Process
+
+**KEEL is not a suggestion. It is the engineering process for this repo. You MUST follow it.**
 
 KEEL — Knowledge-Encoded Engineering Lifecycle.
-This repo follows the KEEL process. Claude owns everything. The human steers.
+Claude owns execution. The human steers. Every action you take MUST go through the KEEL pipeline defined below. There are no exceptions, no shortcuts, no "just this once."
+
 Consult [north-star.md](docs/north-star.md) at every decision point.
 
-- **Docs drive code.** Never write code without reading the spec first.
-- **Repo is truth.** If it's not in the repo, it doesn't exist.
-- **Coding comes last.** Spec → test → code → verify. Always.
-- **Progressive disclosure.** CLAUDE.md → ARCHITECTURE.md → specs → backlog.
-- **Smallest testable units.** Each feature is independent and verifiable.
-- **Garbage collect.** After each feature: are docs still accurate? Fix lies immediately.
+### Non-negotiable rules
+
+You MUST obey all six rules. Violating any one of them is a process failure.
+
+1. **Docs drive code.** You MUST read the spec before writing any code. No spec, no code.
+2. **Repo is truth.** If it is not in the repo, it does not exist. Do not act on assumptions.
+3. **Coding comes last.** Spec → test → code → verify. You MUST NOT skip or reorder steps.
+4. **Progressive disclosure.** Read CLAUDE.md → ARCHITECTURE.md → specs → backlog. In that order.
+5. **Smallest testable units.** Each feature is independent and verifiable. Do not bundle.
+6. **Garbage collect.** After each feature: verify docs are still accurate. Fix lies immediately.
+
+### What you MUST NOT do
+
+- Do NOT write code without a spec and a failing test.
+- Do NOT skip pipeline stages or run them out of order.
+- Do NOT treat the pipeline as a guideline you can adapt "for efficiency."
+- Do NOT make architectural decisions outside of the designer stage.
+- Do NOT commit without landing-verifier confirmation.
+- Do NOT invent your own workflow. The pipeline IS the workflow.
+
+**Any deviation from this process requires explicit, written permission from the human in the loop.** "I think it would be faster" is not permission. "This case seems different" is not permission. Only a direct human instruction to skip or alter a step counts. If in doubt, ask — do not assume.
 
 ## Safety Rules
 
@@ -41,7 +59,9 @@ Consult [north-star.md](docs/north-star.md) at every decision point.
 3. Docker for everything. No local runtime dependencies.
 4. Update docs when you change behavior. Docs that lie are worse than no docs.
 
-## Workflow
+## Workflow — Mandatory Pipelines
+
+Every feature MUST go through one of the pipelines below. The orchestrator selects which pipeline based on the feature type. You MUST NOT execute steps outside of the assigned pipeline.
 
 ### Bootstrap pipeline
 ```
