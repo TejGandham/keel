@@ -96,6 +96,7 @@ CONDITIONAL_SECTIONS = {
     "designer_needed": "backend-designer / frontend-designer",
     "safety_auditor_needed": "safety-auditor",
     "arch_advisor_needed": "arch-advisor-consultation",
+    "roundtable_enabled": "roundtable-landing-review",
 }
 
 VALID_INTENTS = {"refactoring", "build", "mid-sized", "architecture", "research"}
@@ -104,6 +105,7 @@ VALID_YES_NO = {"YES", "NO"}
 VALID_SPEC_VERDICTS = {"CONFORMANT", "DEVIATION"}
 VALID_SAFETY_VERDICTS = {"PASS", "VIOLATION"}
 VALID_ARCH_VERDICTS = {"SOUND", "UNSOUND"}
+VALID_ROUNDTABLE_VERDICTS = {"APPROVED", "CONCERNS"}
 
 
 # --- Validator ---
@@ -220,15 +222,18 @@ class HandoffValidator:
 
     def _check_conditional_sections(self):
         fm = self.frontmatter
+        # flags that use YES/NO vs true/false
+        true_values = {"YES", "true"}
         for flag, section_name in CONDITIONAL_SECTIONS.items():
-            if fm.get(flag) == "YES":
+            if fm.get(flag) in true_values:
                 found = self._find_section(section_name)
+                flag_val = fm.get(flag)
                 if found and section_has_content(found):
                     self.ok(f"{section_name}: non-empty (required by {flag})")
                 elif found:
-                    self.warn(f"{section_name}: section exists but empty ({flag}=YES)")
+                    self.warn(f"{section_name}: section exists but empty ({flag}={flag_val})")
                 else:
-                    self.warn(f"{section_name}: section missing ({flag}=YES)")
+                    self.warn(f"{section_name}: section missing ({flag}={flag_val})")
 
     def _check_verdicts(self):
         fm = self.frontmatter
@@ -277,6 +282,21 @@ class HandoffValidator:
             else:
                 self.warn("arch-advisor verdict not set (needed=YES, status=LANDED)")
 
+        # Roundtable verdicts (advisory — warn on CONCERNS, don't fail)
+        rt_enabled = fm.get("roundtable_enabled", "")
+        if rt_enabled == "true":
+            rt_design = fm.get("roundtable_design_verdict", "")
+            if rt_design and rt_design not in VALID_ROUNDTABLE_VERDICTS:
+                self.fail(f"roundtable_design_verdict invalid: {rt_design}")
+            elif rt_design == "CONCERNS":
+                self.warn("roundtable design review had unresolved concerns")
+
+            rt_landing = fm.get("roundtable_landing_verdict", "")
+            if rt_landing and rt_landing not in VALID_ROUNDTABLE_VERDICTS:
+                self.fail(f"roundtable_landing_verdict invalid: {rt_landing}")
+            elif rt_landing == "CONCERNS":
+                self.warn("roundtable landing review had unresolved concerns")
+
     def _check_status_consistency(self, status: str):
         pipeline = self.frontmatter.get("pipeline", "")
         required = REQUIRED_SECTIONS.get(pipeline, [])
@@ -287,6 +307,10 @@ class HandoffValidator:
 
         if status == "LANDED":
             self.ok("Status: LANDED")
+        elif status == "READY-TO-LAND":
+            self.ok("Status: READY-TO-LAND")
+        elif status == "VERIFIED":
+            self.ok("Status: VERIFIED")
         elif status == "IN-PROGRESS" and all_filled:
             self.warn("Status still IN-PROGRESS but all required sections are filled")
         elif status == "IN-PROGRESS":
