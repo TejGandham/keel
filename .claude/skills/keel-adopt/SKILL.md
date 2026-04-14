@@ -206,26 +206,19 @@ Set the `CRITICAL_PATTERNS` variable to match the project's critical files:
 CRITICAL_PATTERNS="*/auth/*|*/middleware/*|*/transactions/*"
 ```
 
-**5d. Configure landing preferences**
+**5d. Configure pipeline preferences**
 
-Fill the `## Landing Preferences` section in CLAUDE.md:
-- Check git history: `git log --format='%ae' | sort -u | wc -l`
-  - 1 author → suggest `Landing strategy: auto`
-  - 2+ authors → suggest `Landing strategy: pr`
-- Roundtable review: `true` (default)
+Fill the `## Pipeline Preferences` section in CLAUDE.md:
+- Roundtable review: `true` (default — gracefully skipped if MCP unavailable)
 
-Present the suggestion:
-> "Based on git history, this looks like a [solo/team] project.
-> I suggest landing strategy: [auto/pr]. Change if needed."
-
-**Write** all files and update CLAUDE.md with landing preferences.
+**Write** all files.
 
 **STOP.** Tell the human:
-> "Safety enforcement and landing preferences are configured. Review
+> "Safety enforcement and pipeline preferences are configured. Review
 > core-beliefs.md, the safety-auditor agent definition, safety-gate.py,
-> and the landing preferences in CLAUDE.md. These control what the
-> auditor enforces and how features land. When satisfied, we're done
-> with adoption."
+> and the pipeline preferences in CLAUDE.md. These control what the
+> auditor enforces and whether roundtable review runs. When satisfied,
+> we're done with adoption."
 
 ---
 

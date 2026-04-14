@@ -35,8 +35,8 @@ graph TD
     PL --> RT2{"🤖 Roundtable:<br/>landing review?"}
     RT2 -->|"APPROVED"| GC["🤖 Doc-gardener sweeps<br/>for stale docs"]
     RT2 -->|"CONCERNS"| IMP
-    GC --> LAND["🤖 Land per strategy<br/>merge or PR"]
-    LAND --> DONE["🧑 <b>DONE</b><br/>merged or PR created"]
+    GC --> LAND["🤖 Commit, push,<br/>open PR"]
+    LAND --> DONE["🧑 <b>DONE</b><br/>PR ready for review"]
 
     SR -.-|"after 2 retries"| ESC["🧑 <b>ESCALATED TO YOU</b>"]
     SA -.-|"after 3 retries"| ESC
@@ -65,7 +65,7 @@ graph TD
     style ESC fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
-> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and configure landing strategy. Everything in between is autonomous — until a gate exhausts its retries and escalates.
+> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and review the resulting PR. Everything in between is autonomous — until a gate exhausts its retries and escalates.
 
 The pipeline **self-corrects**: when a gate finds a problem, it sends
 specific findings back to the implementer. After bounded retries, it

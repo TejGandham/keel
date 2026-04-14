@@ -87,7 +87,7 @@ files are untouched.
 
 ```
 User writes spec in docs/product-specs/
-  → /keel-pipeline          reads spec, creates handoff, resolves landing strategy
+  → /keel-pipeline          reads spec, creates handoff, checks for remote
   → pre-check                classifies intent, decides variant
   → researcher?              if pre-check flags research needed
   → backend-designer? /      if pre-check flags designer needed
@@ -106,7 +106,7 @@ User writes spec in docs/product-specs/
     → handoff archived       active/handoffs/ → completed/handoffs/
     → tech-debt-tracker      log shortcuts, check off resolved items
     → git add -A, commit     commit subject from spec H1 + verdict table body
-    → land per strategy      merge (ff-only to base) or pr (push + forge CLI)
+    → push + open PR         git push -u origin HEAD, gh pr create --fill
 ```
 
 Each agent reads and appends to the same handoff file in

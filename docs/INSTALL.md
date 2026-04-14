@@ -171,15 +171,24 @@ rm -rf /tmp/keel
 Process docs in `docs/process/` can be updated the same way — they are
 reference material, not project-specific.
 
-### Migration: Stage 4 Phase 2 (landing strategy)
+### Migration: PR-only landing
 
-If upgrading from Phase 1:
-- **Handoff status change:** `landing-verifier` now emits `VERIFIED` instead
-  of `LANDED`. Existing completed handoff files with `status: LANDED` remain
-  valid — the validator accepts both.
-- **New CLAUDE.md section:** Add `## Landing Preferences` to your project's
-  CLAUDE.md (see template for format). Default behavior is unchanged (`pr`).
-- **New handoff YAML fields:** Optional. Missing fields are treated as unset.
+Earlier KEEL versions offered configurable landing strategies (`merge`,
+`pr`, `auto`). These were removed — KEEL now always pushes the feature
+branch and opens a PR on your forge.
+
+If upgrading:
+- **CLAUDE.md:** the `## Landing Preferences` section was replaced by
+  `## Pipeline Preferences`, which keeps only the `Roundtable review`
+  knob. Update your project's CLAUDE.md to match the template.
+- **Handoff schema:** `landing_strategy` and `landing_strategy_resolved`
+  fields are gone. A new `pr_url` field is set after `gh pr create`.
+- **Need a different landing flow?** Edit Step 9 of
+  `.claude/skills/keel-pipeline/SKILL.md` in your project — the skill
+  is a first-class customization point.
+- **Handoff status change:** `landing-verifier` now emits `VERIFIED`
+  instead of `LANDED`. Existing completed handoff files with
+  `status: LANDED` remain valid — the validator accepts both.
 
 ## Existing Codebase?
 

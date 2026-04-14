@@ -59,20 +59,20 @@ You MUST obey all six rules. Violating any one of them is a process failure.
 3. Docker for everything. No local runtime dependencies.
 4. Update docs when you change behavior. Docs that lie are worse than no docs.
 
-## Landing Preferences
+## Pipeline Preferences
 
-<!-- CUSTOMIZE: How should completed features land? -->
-- **Landing strategy:** auto
-  <!-- Options:
-       merge  — commit directly to base branch (no PR)
-       pr     — always create a PR for review
-       auto   — heuristic: solo + bootstrap/cross-cutting → merge; otherwise → pr
-  -->
+<!-- CUSTOMIZE: Roundtable review -->
 - **Roundtable review:** true
   <!-- When roundtable MCP server is available:
        true  — use roundtable at design stages and pre-landing review
        false — skip roundtable even if available
   -->
+
+KEEL lands every feature by pushing the feature branch and opening a PR
+on your forge. If you need a different landing flow (direct merge-to-base,
+a custom forge integration, an internal review tool), edit Step 9 of
+`.claude/skills/keel-pipeline/SKILL.md` — the skill lives in your project
+and is a first-class customization point.
 
 ## Workflow — Mandatory Pipelines
 
@@ -116,11 +116,11 @@ procedure automatically:
 3. Move handoff: `active/handoffs/F{id}-{slug}.md` → `completed/handoffs/F{id}-{slug}.md`
 4. Log any new shortcuts to `tech-debt-tracker.md`
 5. `git add -A` → commit `feat(F{id}): {title from spec H1}` with spec ref + verdict table
-6. Land per configured strategy:
-   - **merge:** `git merge --ff-only` to base branch, push (fallback to PR if rejected)
-   - **pr:** `git push -u origin HEAD`, create PR via forge CLI (manual instructions if CLI unavailable)
+6. `git push -u origin HEAD` → push the feature branch
+7. `gh pr create --fill` → open a PR (manual instructions if forge CLI unavailable)
 
-The human configures the landing strategy. The pipeline executes it.
+The pipeline always lands via a PR. The human reviews and merges on their
+forge. To change this, edit Step 9 of `.claude/skills/keel-pipeline/SKILL.md`.
 
 ## Architecture
 

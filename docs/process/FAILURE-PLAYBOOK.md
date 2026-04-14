@@ -55,10 +55,15 @@ Pipeline stalls or produces bad output
   │    → If still CONCERNS after 2 attempts: proceed anyway (advisory)
   │    → If a roundtable-triggered gate re-run itself fails: escalate to human
   │
-  ├─ Merge to base branch rejected? (landing strategy: merge)
-  │    → Auto-fallback to PR strategy
-  │    → Push feature branch, create PR via forge CLI
-  │    → If push also fails: STOP, print error, human lands manually
+  ├─ Push rejected at Step 9?
+  │    → STOP, print the raw git error
+  │    → Human resolves (e.g., auth, branch protection) and reruns push
+  │    → Commit is already local — no work lost
+  │
+  ├─ gh pr create fails at Step 9?
+  │    → Print manual PR instructions — branch is pushed
+  │    → Human opens the PR on the forge UI
+  │    → Do not fail the pipeline
   │
   ├─ pre-check routed wrong? (skipped designer when one was needed)
   │    → Insert the missing stage now

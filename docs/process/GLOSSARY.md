@@ -25,7 +25,7 @@
 
 **Execution Brief** — The structured output of the pre-check agent. Contains: intent classification, complexity tier, spec reference, dependencies, what to build, new/modified files, acceptance tests, edge cases, risks, constraints for downstream (MUST/MUST NOT), and routing decisions (designer needed? researcher needed? arch-advisor needed?).
 
-**Orchestrator** — The human who steers the KEEL process: kicks off features, configures landing strategy, and reviews results. The `keel-pipeline` skill runs the pipeline end-to-end: dispatching agents, calling roundtable MCP tools when available, running the post-landing procedure (doc-gardener, archive, commit, land per configured strategy). The human's review surface depends on landing strategy: PR on the forge (when strategy is `pr`), or trust in pipeline gates (when strategy is `merge`). The orchestrator does not write code.
+**Orchestrator** — The human who steers the KEEL process: kicks off features and reviews the resulting PR. The `keel-pipeline` skill runs the pipeline end-to-end: dispatching agents, calling roundtable MCP tools when available, running the post-landing procedure (doc-gardener, archive, commit, push the feature branch, open a PR). The human's review surface is the PR on their forge. The orchestrator does not write code.
 
 **Invariant** — A non-negotiable rule specific to the project's domain, enforced mechanically. Examples: "never force-pull" (git), "validate all input at boundaries" (API), "all transforms must be idempotent" (data pipeline).
 
@@ -42,8 +42,6 @@
 **Arch-advisor** — Read-only architecture consultant agent with two invocation modes: CONSULT (Step 1.7, before design) provides architecture guidance for complex features; VERIFY (Step 7.5, before landing) performs independent structural review. Gated by pre-check's complexity classification — only runs for architecture-tier features.
 
 **Intent Classification** — Pre-check's mandatory first step. Categorizes work as refactoring, build, mid-sized, architecture, or research. Determines pipeline routing: which optional agents run, complexity tier, and whether Arch-advisor is needed.
-
-**Landing Strategy** — How a completed feature lands after pipeline gates pass. Three options: `merge` (ff-only merge to base branch), `pr` (push branch + create PR via forge CLI), `auto` (heuristic based on collaborator count and pipeline variant). Configured per-project in CLAUDE.md, overridable per-feature in handoff YAML.
 
 **Complexity Tier** — Pre-check's assessment of feature scope: trivial (skip designer), standard (normal pipeline), complex (all gates), architecture-tier (Arch-advisor consultation + verification). Drives pipeline routing decisions.
 

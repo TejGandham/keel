@@ -78,11 +78,11 @@ The agent drives a feature from bug report to merged PR:
 3. Record evidence of failure
 4. Implement fix
 5. Validate fix by driving the application
-6. Land per configured strategy (merge or PR)
+6. Commit, push the feature branch, open a PR
 7. Respond to agent and human feedback
 8. Detect and remediate build failures
 9. Escalate only when judgment is required
-10. Confirm landing (merge landed or PR merged)
+10. Confirm PR merged on the forge
 
 From OpenAI: "We regularly see single Codex runs work on a single task for upwards of six hours (often while the humans are sleeping)."
 

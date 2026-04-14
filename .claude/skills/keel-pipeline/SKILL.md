@@ -51,26 +51,28 @@ If no spec path given, ask for one. If no spec exists yet, tell the user to writ
 
    where `{slug}` is derived from the handoff filename
    (`docs/exec-plans/active/handoffs/F{id}-{slug}.md` → `keel/F{id}-{slug}`).
-   Stage 4 never commits to main/master, and branches BEFORE writing code so
-   that a mid-pipeline halt leaves the feature branch — not main — in the
-   partial state.
+   The pipeline never commits to main/master, and branches BEFORE writing
+   code so that a mid-pipeline halt leaves the feature branch — not main —
+   in the partial state.
 
-### Step 0.5: Landing strategy resolution
+6. **Remote check.**
+   Run `git remote get-url origin`. If it fails or prints nothing, STOP:
 
-After the clean-tree check and branch creation, before any agent dispatch:
+     Pipeline lands features by opening a PR on your forge. No `origin`
+     remote is configured. Add one (e.g., `git remote add origin <url>`)
+     and re-run, or edit `.claude/skills/keel-pipeline/SKILL.md` Step 9
+     locally if you want to land differently.
 
-1. Read `Landing strategy` from project CLAUDE.md (default: `pr`).
-2. If handoff YAML has `landing_strategy` set, use that override.
-3. If resolved value is `auto`, run heuristic:
-   - Count unique non-bot authors: `git log --since="90 days ago" --format='%ae' | grep -v '\[bot\]' | sort -u | wc -l`
-   - Count total commits: `git log --since="90 days ago" --oneline | wc -l`
-   - If authors <= 1 AND commits >= 5 AND pipeline is `bootstrap` or `cross-cutting` → resolve to `merge`
-   - Otherwise → resolve to `pr`
-   - If 0 authors or < 5 commits → resolve to `pr`
-4. Store resolved value in handoff YAML: `landing_strategy_resolved: merge|pr`
-5. Check roundtable availability: read `Roundtable review` from CLAUDE.md.
-   If `true` (or absent — default is true), probe roundtable MCP server.
-   Store `roundtable_enabled: true|false` in handoff YAML.
+   This catches a missing remote early instead of at Step 9, an hour into
+   the pipeline.
+
+### Step 0.5: Roundtable availability
+
+After the clean-tree/branch/remote checks, before any agent dispatch:
+
+Check roundtable availability: read `Roundtable review` from CLAUDE.md.
+If `true` (or absent — default is true), probe roundtable MCP server.
+Store `roundtable_enabled: true|false` in handoff YAML.
 
 ## Pipeline Variants
 
@@ -325,33 +327,28 @@ error verbatim.
 
    Commit with the constructed message.
 
-5. **Land.**
-   Read `landing_strategy_resolved` from handoff YAML.
-
-   **If `merge`:**
-   ```
-   git checkout main && git merge --ff-only keel/F{id}-{slug}
-   git push origin main
-   ```
-   If push rejected for any reason (branch protection, auth, hook failure,
-   non-fast-forward): auto-fallback to `pr` strategy. Run
-   `git checkout keel/F{id}-{slug}` and continue to the PR flow below.
-   On success: `git branch -d keel/F{id}-{slug}` to clean up.
-
-   **If `pr`:**
+5. **Push the branch.**
    `git push -u origin HEAD`. On failure, STOP and print the raw git
-   error verbatim. The commit is still local — the human pushes manually.
+   error verbatim. The commit is still local — the human pushes manually
+   once they've resolved the error.
 
-   Then attempt forge CLI PR creation:
-   - Probe `gh`: `command -v gh` and `gh auth status`.
-   - If both succeed: `gh pr create --fill` (ready-for-review).
-   - If gh fails: print manual instructions:
+6. **Open a PR.**
+   Probe `gh`: `command -v gh` and `gh auth status`.
+   - If both succeed: `gh pr create --fill` (ready-for-review). Record the
+     returned PR URL in the handoff YAML as `pr_url`.
+   - If `gh` is unavailable or not authenticated: print manual instructions:
 
          Forge CLI not available — branch pushed as keel/F{id}-{slug}.
-         Open PR manually on your forge.
+         Open a PR on your forge manually.
 
-   Do not fail the pipeline. The branch is pushed; the human opens the
-   PR by hand if needed.
+     Do not fail the pipeline. The branch is pushed; the human opens the
+     PR by hand. Leave `pr_url` unset.
+
+   KEEL only ships a PR-based landing flow. If a project needs direct
+   merge-to-base or a different forge integration, edit this skill file
+   in the installed `.claude/skills/keel-pipeline/SKILL.md` — the skill
+   is installed into each project and is a first-class customization
+   point.
 
 ## Rules
 
@@ -390,10 +387,10 @@ error verbatim.
 - **Re-check MCP before each call.** Don't rely on the roundtable_enabled
   flag from Step 0.5. Probe availability immediately before each roundtable
   tool call. Timeout: 120s. On failure: skip, log reason, continue.
-- **Landing strategy is configurable.** Project default in CLAUDE.md,
-  per-feature override in handoff YAML. Auto heuristic resolves at Step 0.5.
-  Merge uses ff-only with fallback to PR on rejection.
+- **PR-only landing.** Every feature lands by pushing the feature branch
+  and opening a PR. No merge-to-base, no strategy selection. To change the
+  landing flow, edit Step 9 in the installed skill file.
 - **VERIFIED → READY-TO-LAND → LANDED.** Landing-verifier emits VERIFIED.
   Roundtable review (if enabled) transitions to READY-TO-LAND. Step 9
-  transitions to LANDED after commit+push/merge. When roundtable is disabled,
+  transitions to LANDED after commit+push+PR. When roundtable is disabled,
   VERIFIED triggers Step 9 directly (skip READY-TO-LAND).

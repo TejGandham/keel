@@ -19,7 +19,7 @@ graph LR
 
 ## The Solution
 
-You write a spec. KEEL figures out what's needed, writes tests first, writes code to pass them, verifies everything against the spec and your safety rules, then lands the work — commits, pushes, and (if configured) opens a PR.
+You write a spec. KEEL figures out what's needed, writes tests first, writes code to pass them, verifies everything against the spec and your safety rules, then lands the work — commits, pushes the feature branch, and opens a PR for your review.
 
 ```mermaid
 graph TD
@@ -32,10 +32,10 @@ graph TD
     Gate -->|Yes| Safe{"🤖 Does it violate<br/>safety rules?"}
     Gate -->|No| Fix["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix --> Gate
-    Safe -->|No violations| Land["🤖 Commit, push,<br/>land per strategy"]
+    Safe -->|No violations| Land["🤖 Commit, push,<br/>open PR"]
     Safe -->|Violation found| Fix2["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix2 --> Safe
-    Land --> PR["🧑 <b>MERGED OR PR OPENED</b>"]
+    Land --> PR["🧑 <b>PR READY FOR YOU TO REVIEW</b>"]
 
     Gate -.-|"after 2 retries"| Esc["🧑 <b>ESCALATED TO YOU</b>"]
     Safe -.-|"after 3 retries"| Esc
@@ -58,7 +58,7 @@ graph TD
 
 If the code doesn't match the spec, it goes back and gets fixed. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing. You start with full oversight and reduce it as the gates earn your trust.
 
-You configure how features land (`merge` direct to base, `pr` for review, or `auto`) and whether to layer in [roundtable](docs/HOW-IT-WORKS.md#roundtable-integration) multi-model review at design and pre-landing checkpoints — defaults are set per project in `CLAUDE.md`.
+Every landed feature becomes a PR on your forge — your review surface is the PR, not a per-step prompt. Optionally layer in [roundtable](docs/HOW-IT-WORKS.md#roundtable-integration) multi-model review at design and pre-landing checkpoints. One config knob (`Roundtable review: true|false` in `CLAUDE.md`), not a matrix.
 
 After each feature lands, a **garbage collection** pass updates docs, fixes drift, and encodes lessons learned back into the repo. The next feature starts with better specs, tighter constraints, and sharper invariants — because the repo got smarter from the last one.
 

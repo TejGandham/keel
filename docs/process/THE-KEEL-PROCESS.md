@@ -119,10 +119,10 @@ receiving human approval at each step.
 
 **Stage 4 Phase 1 and later:** after `landing-verifier` reports VERIFIED, the
 orchestrator runs roundtable review (if enabled) and a deterministic post-landing
-procedure — doc-gardener, handoff archive, commit, and landing per configured
-strategy (merge or PR) — without per-step approval. The human configures landing
-strategy; the pipeline executes it. Escalations (gate ceilings tripped) still halt in-session and
-surface to the human immediately, as before.
+procedure — doc-gardener, handoff archive, commit, push the feature branch, and
+open a PR — without per-step approval. Every feature becomes a PR on the forge;
+the human reviews and merges there. Escalations (gate ceilings tripped) still
+halt in-session and surface to the human immediately, as before.
 
 The human provides taste, judgment, and strategic direction. The agent provides
 speed, consistency, and tireless attention to spec conformance.
@@ -571,15 +571,14 @@ On completion, move from `active/handoffs/` to `completed/handoffs/`.
 
 ### The Orchestrator Role
 
-The human kicks off features and configures landing strategy. The
-`keel-pipeline` skill handles the mechanics: resolving landing strategy,
-dispatching agents, calling roundtable MCP tools when available, reading gate
-verdicts, looping on spec-review/safety/arch-advisor findings within their
-ceilings, and running the post-landing procedure automatically — roundtable
-review, doc-gardener, handoff archive, commit, and landing per configured
-strategy (merge or PR). The orchestrator steers; the pipeline executes on
-their behalf end-to-end without per-step approval, escalating to the human
-only on gate ceilings or via the resulting PR (when pr strategy is used).
+The human kicks off features. The `keel-pipeline` skill handles the
+mechanics: dispatching agents, calling roundtable MCP tools when available,
+reading gate verdicts, looping on spec-review/safety/arch-advisor findings
+within their ceilings, and running the post-landing procedure automatically —
+roundtable review, doc-gardener, handoff archive, commit, push the feature
+branch, open a PR. The orchestrator steers; the pipeline executes on their
+behalf end-to-end without per-step approval, escalating to the human only
+on gate ceilings or via the resulting PR.
 
 **The orchestrator does not write code.** When code quality issues are found
 (Step 5), findings are sent back to the implementer agent for fixing. When
@@ -766,7 +765,7 @@ Each entry: checkbox, date, source, enough context for a future agent.
 | **1. Full review** | Reviews every output | Single pipeline stages | Base pipeline |
 | **2. Agent-to-agent review** | Reviews final output only | Spec-reviewer + safety-auditor catch issues | Reliable gate agents over 5-10 features |
 | **3. Self-correcting pipeline** | Reviews escalations only | Pipeline diagnoses failures and reroutes | Structured rejection, wisdom accumulation, intent classification |
-| **4. Agent end-to-end** | Approves in batch or configures auto-merge | Drives features pre-check to landed, configurable landing strategy, roundtable integration | Mechanical enforcement + Arch-advisor + roundtable review |
+| **4. Agent end-to-end** | Reviews and merges the resulting PR | Drives features pre-check to PR open, roundtable integration | Mechanical enforcement + Arch-advisor + roundtable review |
 
 ### What Enables Each Transition
 

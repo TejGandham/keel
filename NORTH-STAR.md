@@ -62,9 +62,9 @@ A feature goes in. KEEL:
 9. Verifies architecture soundness (arch-advisor verify) — for complex features
 10. Verifies everything landed (landing-verifier)
 11. Garbage collects docs (doc-gardener)
-12. Lands per configured strategy (merge or PR)
+12. Commits, pushes the feature branch, and opens a PR
 
-The human configures landing strategy. The pipeline executes it.
+The human reviews and merges the PR on their forge.
 
 ## What KEEL Does NOT Become
 
@@ -87,15 +87,15 @@ The end state is: human feeds a feature spec, KEEL produces a PR.
 | Route to optional agents | Define domain invariants |
 | Self-correct on spec deviation (max 2) | Resolve escalations |
 | Self-correct on safety violation (max 3) | Update north star / specs |
-| Self-correct on architecture issues (max 1) | Configure landing strategy |
+| Self-correct on architecture issues (max 1) | Review and merge the PR |
 | Garbage collect docs after landing | |
-| Land feature per configured strategy (merge or PR) | |
+| Commit, push, open PR for every feature | |
 | Roundtable review when available | |
 
 What KEEL does NOT do autonomously:
 - Pick the next feature from the backlog (human decides priority)
 - Modify specs or invariants (human decides what to build)
-- Override landing strategy at runtime (human configures, pipeline follows)
+- Merge the PR (human reviews on their forge)
 
 ## How KEEL Evolves
 
@@ -119,7 +119,7 @@ This is an open question.
 | **1. Process framework** | Agents, pipeline, docs, handoff format | Done |
 | **2. Self-correcting pipeline** | Structured rejection, wisdom accumulation, intent classification, Arch-advisor | Done |
 | **3. Install-anywhere** | install.py, uninstall.py, artifact inventory | Done |
-| **4. Full autonomy** | Feature → landed without human at each step, configurable landing strategy, roundtable integration, automatic GC | **Phase 1 done** (auto-land + PR). **Phase 2 done** (landing strategy + roundtable). Phase 3 (worktrees, enforcement hooks) deferred. |
+| **4. Full autonomy** | Feature → PR without human at each step, roundtable integration, automatic GC | Done — the pipeline commits, pushes, and opens a PR on every run. Roundtable review is optional. |
 | **5. Testbed project** | Real-world project that exercises the full pipeline | Open |
 
 ## Principles for Framework Development

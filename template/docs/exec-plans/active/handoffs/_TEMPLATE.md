@@ -44,10 +44,9 @@ arch_advisor_verdict:        # SOUND | UNSOUND (verify mode only)
 arch_retry_spec_review_attempt: 0
 arch_retry_safety_attempt: 0
 
-# Landing configuration (set by orchestrator at Step 0.5)
-landing_strategy:                    # per-feature override (optional, set by human)
-landing_strategy_resolved:           # computed: merge | pr
+# Pipeline configuration (set by orchestrator at Step 0.5)
 roundtable_enabled:                  # true | false
+pr_url:                              # set after gh pr create at Step 9
 
 # Roundtable design review (Step 2.5)
 roundtable_design_attempt: 0
