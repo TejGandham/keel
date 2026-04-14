@@ -13,7 +13,7 @@ installed into other people's repos. Act accordingly.
 |`.claude/hooks/`|`safety-gate.py`, `doc-gate.py` — shipped with KEEL|
 |`template/`|**Install target.** Files here are copied into user projects by `scripts/install.py`. Edits ship to every new install.|
 |`scripts/`|`install.py`, `uninstall.py`, `validate-handoff.py` — stdlib-only Python 3.10+, cross-platform|
-|`docs/process/`|Reference material also copied into user installs (`THE-KEEL-PROCESS.md`, `QUICK-START.md`, `BROWNFIELD.md`, `GLOSSARY.md`, `ANTI-PATTERNS.md`, `FAILURE-PLAYBOOK.md`)|
+|`docs/process/`|Reference material also copied into user installs (`THE-KEEL-PROCESS.md`, `QUICK-START.md`, `BROWNFIELD.md`, `GLOSSARY.md`, `ANTI-PATTERNS.md`, `FAILURE-PLAYBOOK.md`, `AUTONOMY-PROGRESSION.md`)|
 |`docs/HOW-IT-WORKS.md`, `docs/INSTALL.md`, `docs/UNINSTALL.md`|Framework docs — **not** copied into installs|
 |`NORTH-STAR.md`|Where KEEL is heading. Read before structural changes.|
 |`examples/domain-invariants/`|Reference invariants users crib from when filling `safety-auditor.md`|

@@ -102,6 +102,7 @@ docs/
     GLOSSARY.md                         # KEEL terminology
     ANTI-PATTERNS.md                    # What to avoid
     FAILURE-PLAYBOOK.md                 # Pipeline failure decision tree
+    AUTONOMY-PROGRESSION.md             # Stages of agent autonomy
 ```
 
 ### Root files

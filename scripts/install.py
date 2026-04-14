@@ -241,7 +241,8 @@ def main():
     process_dst.mkdir(parents=True, exist_ok=True)
 
     for doc_name in ("THE-KEEL-PROCESS.md", "QUICK-START.md", "BROWNFIELD.md",
-                      "GLOSSARY.md", "ANTI-PATTERNS.md", "FAILURE-PLAYBOOK.md"):
+                      "GLOSSARY.md", "ANTI-PATTERNS.md", "FAILURE-PLAYBOOK.md",
+                      "AUTONOMY-PROGRESSION.md"):
         src = keel_src / "docs" / "process" / doc_name
         if src.exists():
             copy_if_missing(src, process_dst / doc_name)

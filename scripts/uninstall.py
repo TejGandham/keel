@@ -31,6 +31,7 @@ KEEL_HOOKS = ["safety-gate.py", "doc-gate.py"]
 KEEL_PROCESS_DOCS = [
     "THE-KEEL-PROCESS.md", "QUICK-START.md", "BROWNFIELD.md",
     "GLOSSARY.md", "ANTI-PATTERNS.md", "FAILURE-PLAYBOOK.md",
+    "AUTONOMY-PROGRESSION.md",
 ]
 
 
