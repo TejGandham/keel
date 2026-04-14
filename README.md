@@ -93,7 +93,7 @@ Installs 15 agents, 4 skills, 2 hooks, and doc structure into your project. Neve
  4. /keel-pipeline                ← run it
 ```
 
-`/keel-setup` walks a new project through CLAUDE.md, north-star, architecture, domain invariants, and landing preferences. `/keel-adopt` scans an existing codebase and drafts the same artifacts from what it finds. Every agent reads CLAUDE.md first, so this is how KEEL learns about your project.
+`/keel-setup` walks a new project through CLAUDE.md, north-star, architecture, domain invariants, and pipeline preferences. `/keel-adopt` scans an existing codebase and drafts the same artifacts from what it finds. Every agent reads CLAUDE.md first, so this is how KEEL learns about your project.
 
 **Full manifest:** [INSTALL.md](docs/INSTALL.md) | **Remove:** [UNINSTALL.md](docs/UNINSTALL.md)
 

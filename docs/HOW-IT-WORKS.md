@@ -77,9 +77,19 @@ designer, and arch-advisor verify only runs for architecture-tier work.
 Pre-check routes the feature to the right variant (see §Pre-check Routes).
 
 **Status progression:** the landing-verifier emits `VERIFIED` when all
-artifacts are in place. Roundtable landing review (if enabled) and the
-doc-gardener sweep advance it to `READY-TO-LAND`. The orchestrator then
-lands the feature per the configured strategy, moving it to `LANDED`.
+artifacts are in place. Roundtable landing review (if enabled) advances
+it to `READY-TO-LAND`. The orchestrator then runs Step 9 — doc-gardener
+sweep, tech-debt log, commit, push the feature branch, open a PR — and
+finally archives the handoff, moving the status to `LANDED`. Archive is
+the **last** sub-step, so any failure before it leaves the handoff in
+`active/` and a re-run resumes from the halt point.
+
+**Pre-flight at Step 0.** Before any agent runs, the pipeline enforces a
+clean working tree, auto-branches off `main`/`master` if needed, and
+resolves which remote to push to (`git remote` → sole remote, or current
+branch's upstream, or `origin` on multi-remote repos). The resolved name
+is stored in the handoff so Step 9's push and PR creation never hardcode
+`origin`.
 
 ## How Agents Pass Context
 
@@ -166,8 +176,11 @@ never directly blocks the pipeline. After max 2 attempts, proceed with
 unresolved concerns logged in the handoff.
 
 **Graceful degradation.** MCP availability is re-checked before each call.
-If the server is down, the step is skipped and `roundtable_skipped: true`
-is logged. The pipeline never blocks on a flaky external service.
+If the server is down, the step is skipped, `roundtable_skipped: true`
+is logged in the handoff, a visible `!!` warning is printed to stderr,
+and a `roundtable: SKIPPED ({reason})` line is included in the commit
+verdict block — so the skip is surfaced in real time *and* persists in
+git history. The pipeline never blocks on a flaky external service.
 
 ## How Pre-check Routes the Pipeline
 
