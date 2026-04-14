@@ -454,7 +454,7 @@ Fifteen specialized agents, each with bounded responsibility.
 | **spec-reviewer** | Verify spec match | Spec, implementation | Verdict: CONFORMANT or DEVIATION | Modify code |
 | **safety-auditor** | Verify invariants | Core-beliefs, implementation | Verdict: PASS or VIOLATION | Modify code |
 | **arch-advisor** | Architecture consultation + verification | Spec, handoff, ARCHITECTURE.md | Guidance (CONSULT) or Verdict: SOUND/UNSOUND (VERIFY) | Modify code |
-| **landing-verifier** | Verify completeness | All handoff entries | LANDED or BLOCKED | Write code or tests |
+| **landing-verifier** | Verify completeness | All handoff entries | VERIFIED or BLOCKED | Write code or tests |
 | **doc-gardener** | Fix doc drift | All docs, codebase | Updated docs, drift report | Write feature code |
 
 ### Reasoning Tiers
@@ -465,14 +465,19 @@ in agent frontmatter (`model:` field). Other platforms should map to their
 equivalent tiers.
 
 | Tier | Intent | Claude Code | Other platforms |
-|---|---|---|---|
-| **high** | Design decisions, gate verdicts, deep analysis | opus | Your platform's highest-tier model |
+|-|-|-|-|
+| **high** | Design decisions, novel work, deep analysis | opus | Your platform's highest-tier model |
+| **high, lighter model** | Gate verdicts — pattern matching against existing code or spec | sonnet (`reasoning: high`) | A mid-tier model with extended thinking enabled |
 | **standard** | Routing, pattern-following, verification | sonnet | Your platform's standard-tier model |
 
-**High reasoning agents:** pre-check, arch-advisor, implementer, code-reviewer,
-spec-reviewer, safety-auditor, backend-designer, frontend-designer, researcher (9 agents)
+**High reasoning (opus):** pre-check, arch-advisor, implementer, safety-auditor,
+backend-designer, frontend-designer, researcher (7 agents)
 
-**Standard reasoning agents:** test-writer, docker-builder, scaffolder,
+**High reasoning, sonnet:** code-reviewer, spec-reviewer (2 agents) — the
+reasoning depth matters, but generation cost does not, because these agents
+compare existing code against a spec rather than authoring new code.
+
+**Standard reasoning (sonnet):** test-writer, docker-builder, scaffolder,
 config-writer, landing-verifier, doc-gardener (6 agents)
 
 ### The Four Pipeline Variants
@@ -555,7 +560,7 @@ spec-review-attempt: 1
 No --force, no --rebase. Task.Supervisor isolates crashes.
 
 ## landing-verifier
-Status: LANDED
+Status: VERIFIED
 ```
 
 Each agent reads upstream **Decisions** and **Constraints** before starting
@@ -735,7 +740,7 @@ an agent produces surprising output.
 - [ ] Core beliefs still hold?
 - [ ] Tech debt tracker updated?
 - [ ] Backlog accurate?
-- [ ] LANDED handoffs archived?
+- [ ] Completed handoffs archived (active → completed)?
 
 Docs that lie are worse than no docs. A missing doc causes the agent to ask.
 A lying doc causes the agent to act on false information with confidence.

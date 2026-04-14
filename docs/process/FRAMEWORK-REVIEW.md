@@ -153,7 +153,7 @@ How to retrofit KEEL onto a brownfield codebase:
 5. Start pipeline from the next new feature
 
 **6.5 Deployment Bridge**
-Even minimal guidance: "After landing-verifier reports LANDED, your CI pipeline takes over. Here's how teams connect KEEL to GitHub Actions / GitLab CI." Include a sample workflow file.
+Even minimal guidance: "After landing-verifier reports VERIFIED and the orchestrator lands the feature, your CI pipeline takes over. Here's how teams connect KEEL to GitHub Actions / GitLab CI." Include a sample workflow file.
 
 **6.6 KEEL Lite (Incremental Adoption Path)**
 ```

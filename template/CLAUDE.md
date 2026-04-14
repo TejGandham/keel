@@ -87,14 +87,15 @@ config-writer → landing-verifier → roundtable-review? → post-landing
 
 ### Backend pipeline
 ```
-pre-check → researcher? → backend-designer? → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → landing-verifier → roundtable-review? → post-landing
+pre-check → researcher? → arch-advisor? → backend-designer? → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → safety-auditor? → arch-advisor-verify? → landing-verifier → roundtable-review? → post-landing
 ```
 Designer skipped when pre-check says `Designer needed: NO`.
 Safety-auditor only for features touching domain-critical modules.
+Arch-advisor consult + verify only for architecture-tier complexity.
 
 ### Frontend pipeline
 ```
-pre-check → researcher? → frontend-designer → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → landing-verifier → roundtable-review? → post-landing
+pre-check → researcher? → arch-advisor? → frontend-designer → roundtable-review? → test-writer → implementer → code-reviewer → spec-reviewer → arch-advisor-verify? → landing-verifier → roundtable-review? → post-landing
 ```
 
 ### Cross-cutting pipeline
