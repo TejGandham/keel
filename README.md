@@ -19,7 +19,7 @@ graph LR
 
 ## The Solution
 
-You write a spec. KEEL figures out what's needed, writes tests first, writes code to pass them, then verifies everything before landing.
+You write a spec. KEEL figures out what's needed, writes tests first, writes code to pass them, verifies everything against the spec and your safety rules, then lands the work — commits, pushes, and (if configured) opens a PR.
 
 ```mermaid
 graph TD
@@ -32,10 +32,10 @@ graph TD
     Gate -->|Yes| Safe{"🤖 Does it violate<br/>safety rules?"}
     Gate -->|No| Fix["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix --> Gate
-    Safe -->|No violations| Land["🤖 Feature landed.<br/>Docs updated."]
+    Safe -->|No violations| Land["🤖 Commit, push,<br/>land per strategy"]
     Safe -->|Violation found| Fix2["🤖 Findings sent back.<br/>Implementer fixes."]
     Fix2 --> Safe
-    Land --> PR["🧑 <b>YOU REVIEW THE RESULT</b>"]
+    Land --> PR["🧑 <b>MERGED OR PR OPENED</b>"]
 
     Gate -.-|"after 2 retries"| Esc["🧑 <b>ESCALATED TO YOU</b>"]
     Safe -.-|"after 3 retries"| Esc
@@ -58,6 +58,8 @@ graph TD
 
 If the code doesn't match the spec, it goes back and gets fixed. If it violates safety rules, same thing. After bounded retries it escalates to you instead of thrashing. You start with full oversight and reduce it as the gates earn your trust.
 
+You configure how features land (`merge` direct to base, `pr` for review, or `auto`) and whether to layer in [roundtable](docs/HOW-IT-WORKS.md#roundtable-integration) multi-model review at design and pre-landing checkpoints — defaults are set per project in `CLAUDE.md`.
+
 After each feature lands, a **garbage collection** pass updates docs, fixes drift, and encodes lessons learned back into the repo. The next feature starts with better specs, tighter constraints, and sharper invariants — because the repo got smarter from the last one.
 
 **[How it works in detail →](docs/HOW-IT-WORKS.md)**
@@ -79,31 +81,20 @@ python3 /tmp/keel/scripts/install.py
 rm -rf /tmp/keel
 ```
 
-Installs 15 agents, 3 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
+Installs 15 agents, 4 skills, 2 hooks, and doc structure into your project. Never overwrites existing files.
 
-**First thing to do:** teach KEEL about your project. Paste this prompt into your AI agent:
-
-```
-Read CLAUDE.md, then fill in every <!-- CUSTOMIZE --> section using what
-you learn from the codebase. Read the source files, test files, and any
-existing docs. For each CUSTOMIZE marker: replace the placeholder with
-project-specific content. Don't leave any CUSTOMIZE markers unfilled.
-Then do the same for .claude/agents/safety-auditor.md — read the domain
-invariant examples in examples/domain-invariants/ and write rules that
-match this project's domain.
-```
-
-This is how KEEL learns about your project. Every agent reads CLAUDE.md first.
+**Next, teach KEEL about your project.** The installer detects greenfield vs brownfield and tells you which command to run:
 
 ```
  After install:
- 1. Teach KEEL            ← paste the prompt above
- 2. docs/north-star.md   ← your project vision
- 3. Write a spec         ← docs/product-specs/
- 4. /keel-pipeline       ← run it
+ 1. /keel-setup or /keel-adopt   ← interactive setup (greenfield vs brownfield)
+ 2. docs/north-star.md            ← your project vision
+ 3. Write a spec                  ← docs/product-specs/
+ 4. /keel-pipeline                ← run it
 ```
 
-**Existing codebase?** Run `/keel-adopt` after install — it does step 1 automatically.
+`/keel-setup` walks a new project through CLAUDE.md, north-star, architecture, domain invariants, and landing preferences. `/keel-adopt` scans an existing codebase and drafts the same artifacts from what it finds. Every agent reads CLAUDE.md first, so this is how KEEL learns about your project.
+
 **Full manifest:** [INSTALL.md](docs/INSTALL.md) | **Remove:** [UNINSTALL.md](docs/UNINSTALL.md)
 
 ## Case Study

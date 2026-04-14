@@ -26,10 +26,10 @@ graph TD
     SR -->|"CONFORMANT"| SA{"🤖 Safety-auditor:<br/>any invariant violations?"}
     SR -->|"DEVIATION"| FIX1["🤖 Findings → implementer fixes"]
     FIX1 --> SR
-    SA -->|"PASS"| OV{"🤖 Arch-advisor verify:<br/>architecture sound?"}
+    SA -->|"PASS"| OV{"🤖 Arch-advisor verify:<br/>architecture sound?<br/><i>(arch-tier only)</i>"}
     SA -->|"VIOLATION"| FIX2["🤖 Findings → implementer fixes"]
     FIX2 --> SA
-    OV -->|"SOUND"| PL["🤖 Landing-verifier verifies<br/>everything landed"]
+    OV -->|"SOUND / skipped"| PL["🤖 Landing-verifier:<br/>VERIFIED?"]
     OV -->|"UNSOUND"| FIX3["🤖 Findings → implementer fixes"]
     FIX3 --> SR
     PL --> RT2{"🤖 Roundtable:<br/>landing review?"}
@@ -65,11 +65,21 @@ graph TD
     style ESC fill:#D32F2F,stroke:#B71C1C,color:#fff
 ```
 
-> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and configure landing strategy. Everything in between is autonomous.
+> 🧑 = you &nbsp;&nbsp; 🤖 = agents &nbsp;&nbsp; You write the spec and configure landing strategy. Everything in between is autonomous — until a gate exhausts its retries and escalates.
 
 The pipeline **self-corrects**: when a gate finds a problem, it sends
 specific findings back to the implementer. After bounded retries, it
 escalates to you instead of thrashing.
+
+The diagram shows the maximal backend path. Frontend pipelines skip
+safety-auditor, cross-cutting pipelines skip both safety-auditor and
+designer, and arch-advisor verify only runs for architecture-tier work.
+Pre-check routes the feature to the right variant (see §Pre-check Routes).
+
+**Status progression:** the landing-verifier emits `VERIFIED` when all
+artifacts are in place. Roundtable landing review (if enabled) and the
+doc-gardener sweep advance it to `READY-TO-LAND`. The orchestrator then
+lands the feature per the configured strategy, moving it to `LANDED`.
 
 ## How Agents Pass Context
 
@@ -218,7 +228,7 @@ graph LR
     end
 
     subgraph "🏁 Landing"
-        PL2[landing-verifier<br/>LANDED?]
+        PL2[landing-verifier<br/>VERIFIED?]
     end
 
     subgraph "⚙️ Bootstrap"
@@ -246,8 +256,9 @@ graph LR
 
 | Tier | Agents | Why |
 |-|-|-|
-| **High reasoning** | pre-check, arch-advisor, implementer, code-reviewer, spec-reviewer, safety-auditor, designers, researcher | Routing, design, quality review, gate verdicts, deep analysis |
-| **Standard reasoning** | test-writer, landing-verifier, doc-gardener, scaffolder, config-writer, docker-builder | Pattern-following, verification |
+| **High reasoning** | pre-check, arch-advisor, implementer, safety-auditor, designers (backend/frontend), researcher | Routing, design, gate verdicts on novel work, deep analysis |
+| **High reasoning, lighter model** | code-reviewer, spec-reviewer | Pattern matching against existing code/spec — reasoning depth matters, generation cost doesn't |
+| **Standard reasoning** | test-writer, landing-verifier, doc-gardener, scaffolder, config-writer, docker-builder | Pattern-following, verification, template execution |
 
 **Roundtable MCP** (not an agent — external multi-model review service) is
 called directly by the orchestrator at Steps 2.5 and 8.5 when available.
@@ -272,4 +283,9 @@ The reference implementation uses Claude Code. The process is agent-agnostic.
 | Tier | Claude Code | Other platforms |
 |-|-|-|
 | **High reasoning** | opus | Your platform's highest-tier model |
+| **High reasoning, lighter model** | sonnet (`reasoning: high`) | A mid-tier model with extended thinking enabled |
 | **Standard reasoning** | sonnet | Your platform's standard-tier model |
+
+Reasoning level is set per-agent in the YAML frontmatter so each agent's
+cost matches its job — gates that compare existing code against a spec
+don't need the same generation budget as agents that author new code.
