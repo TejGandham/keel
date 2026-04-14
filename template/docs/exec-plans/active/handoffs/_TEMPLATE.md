@@ -45,6 +45,7 @@ arch_retry_spec_review_attempt: 0
 arch_retry_safety_attempt: 0
 
 # Pipeline configuration
+remote_name:                         # resolved at Step 0 item 6 (e.g., origin, upstream)
 roundtable_enabled:                  # true | false (set at Step 0.5)
 pr_url:                              # set after gh pr create at Step 9
 

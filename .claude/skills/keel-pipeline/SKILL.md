@@ -55,16 +55,24 @@ If no spec path given, ask for one. If no spec exists yet, tell the user to writ
    code so that a mid-pipeline halt leaves the feature branch — not main —
    in the partial state.
 
-6. **Remote check.**
-   Run `git remote get-url origin`. If it fails or prints nothing, STOP:
+6. **Remote resolution.**
+   Resolve which remote Step 9 will push to. Run `git remote` to list
+   configured remotes, then pick one:
 
-     Pipeline lands features by opening a PR on your forge. No `origin`
-     remote is configured. Add one (e.g., `git remote add origin <url>`)
-     and re-run, or edit `.claude/skills/keel-pipeline/SKILL.md` Step 9
-     locally if you want to land differently.
+   - **0 remotes** → STOP: "Pipeline lands by opening a PR on a forge,
+     but this repo has no remotes configured. Add one with
+     `git remote add <name> <url>` and re-run, or edit Step 9 of
+     `.claude/skills/keel-pipeline/SKILL.md` if you want different
+     landing behavior."
+   - **1 remote** → use it.
+   - **2+ remotes** → check the current branch's upstream
+     (`git rev-parse --abbrev-ref @{upstream}` — if the branch doesn't
+     yet have an upstream this returns an error, that's fine). If an
+     upstream is set, use its remote. Otherwise use `origin` if present.
+     Otherwise STOP and list the available remotes so the human picks.
 
-   This catches a missing remote early instead of at Step 9, an hour into
-   the pipeline.
+   Store the resolved name in the handoff YAML as `remote_name`. Step 9
+   reads this field and never hardcodes a remote.
 
 ### Step 0.5: Roundtable availability
 
@@ -138,8 +146,15 @@ Dispatch `backend-designer` or `frontend-designer` based on pipeline variant. Ap
 Runs only when `designer_needed: YES` AND `roundtable_enabled: true`.
 
 1. Re-check roundtable MCP availability (120s timeout per tool call).
-   If unavailable: set `roundtable_skipped: true` with reason in handoff YAML,
-   continue to test-writer.
+   If unavailable: set `roundtable_skipped: true` in handoff YAML with a
+   one-line reason, print a visible warning to stderr:
+
+     !! Roundtable MCP unavailable ({reason}) — skipping design review.
+     !! Configured roundtable_enabled=true in CLAUDE.md; proceeding without it.
+
+   Continue to test-writer. Roundtable is advisory, so a flap doesn't halt
+   the pipeline — but the skip is surfaced in the commit verdict block
+   (Step 9 sub-step 3) so it's visible after the fact.
 2. Call `mcp__roundtable__architect` with designer output from handoff.
 3. Call `mcp__roundtable__challenge` with designer output from handoff.
 4. Append combined output to `## roundtable-design-review` in handoff.
@@ -226,7 +241,14 @@ Dispatch `landing-verifier` with the handoff file. It runs tests and verifies ev
 Runs for ALL pipeline variants when `roundtable_enabled: true`.
 
 1. Re-check roundtable MCP availability (120s timeout per tool call).
-   If unavailable: set `roundtable_skipped: true` with reason, proceed to Step 9.
+   If unavailable: set `roundtable_skipped: true` in handoff YAML with a
+   one-line reason, print a visible warning to stderr:
+
+     !! Roundtable MCP unavailable ({reason}) — skipping landing review.
+     !! Configured roundtable_enabled=true in CLAUDE.md; proceeding without it.
+
+   Proceed to Step 9. The skip is surfaced in the commit verdict block
+   (Step 9 sub-step 3) so it's visible after the fact.
 2. Call `mcp__roundtable__xray` with implementation summary from handoff.
 3. Call `mcp__roundtable__challenge` with implementation summary from handoff.
 4. Append combined output to `## roundtable-landing-review` in handoff.
@@ -252,12 +274,14 @@ Roundtable is advisory, not authoritative. Its findings feed back through
 the existing authoritative gates on re-run. Roundtable never directly
 blocks landing; it triggers re-evaluation by the authoritative gates.
 
-### Step 9: Post-landing procedure (doc GC → archive → commit → land)
+### Step 9: Post-landing procedure (doc GC → commit → push → PR → archive)
 
 Triggers on `READY-TO-LAND` (after roundtable review) or `VERIFIED` (when
-roundtable is disabled). The following sub-steps run in order; no human
-approval at any point. If any sub-step fails, STOP and print the underlying
-error verbatim.
+roundtable is disabled). Sub-steps run in order. **Archive is the last
+step** — it only happens when commit, push, and PR creation all succeed.
+If any earlier sub-step fails, STOP and print the error. The handoff
+stays in `active/`, the orchestrator halts, and the human resolves the
+failure before any further action.
 
 1. **Doc garbage collection.**
    Dispatch `doc-gardener` agent unconditionally. NORTH-STAR §Stage 4
@@ -268,18 +292,11 @@ error verbatim.
    (before commit, so they land in the same commit — no amend, no
    post-push mutation, stable PR diff from open).
 
-2. **Archive the handoff.**
-   Move the handoff file:
-     `docs/exec-plans/active/handoffs/F{id}-{slug}.md`
-     → `docs/exec-plans/completed/handoffs/F{id}-{slug}.md`
-   This move happens BEFORE staging, so the commit reflects the archived
-   path (not active → then moved next run).
-
-3. **Tech-debt log.**
+2. **Tech-debt log.**
    If `docs/exec-plans/tech-debt-tracker.md` exists, append any new
    shortcuts discovered during the run and check off any resolved items.
 
-4. **Stage and commit.**
+3. **Stage and commit.**
    Because "Before Starting" enforced a clean tree, every modified or
    new file in the working tree now is this feature's work. Stage
    everything:
@@ -322,33 +339,66 @@ error verbatim.
      roundtable-design: APPROVED (attempt 1)
      roundtable-landing: APPROVED (attempt 1)
 
+   If `roundtable_skipped: true` is set, emit a SKIPPED line in place of
+   the roundtable verdicts so the skip survives in git history:
+
+     roundtable: SKIPPED ({reason from handoff})
+
    If all verdict fields are unset (bootstrap variant), emit the single
    line: `Verdicts: n/a (bootstrap variant)`.
 
    Commit with the constructed message.
 
-5. **Push the branch.**
-   `git push -u origin HEAD`. On failure, STOP and print the raw git
-   error verbatim. The commit is still local — the human pushes manually
-   once they've resolved the error.
+4. **Push the branch.**
+   Read `remote_name` from the handoff YAML (set at Step 0 item 6) and
+   run `git push -u <remote_name> HEAD`. On failure, STOP and print the
+   raw git error. The commit is still local; the handoff stays in
+   `active/`. The human resolves the error and re-runs — Step 9 picks
+   up from sub-step 4 because the handoff is still active.
 
-6. **Open a PR.**
+5. **Open a PR.**
    Probe `gh`: `command -v gh` and `gh auth status`.
-   - If both succeed: `gh pr create --fill` (ready-for-review). Record the
-     returned PR URL in the handoff YAML as `pr_url`.
-   - If `gh` is unavailable or not authenticated: print manual instructions:
+   - If both succeed: `gh pr create --fill` (ready-for-review). On
+     success, record the returned URL in the handoff YAML as `pr_url`.
+   - If `gh pr create` errors (auth expired, rate limit, branch policy,
+     network): STOP and print:
 
-         Forge CLI not available — branch pushed as keel/F{id}-{slug}.
-         Open a PR on your forge manually.
+         PR creation failed: <raw error>
+         Branch keel/F{id}-{slug} is pushed to <remote_name>.
+         Open a PR manually, or resolve the error and re-run the
+         pipeline to retry PR creation.
 
-     Do not fail the pipeline. The branch is pushed; the human opens the
-     PR by hand. Leave `pr_url` unset.
+     Handoff stays in `active/`; no archive, no status change.
+
+   - If `gh` is missing or unauthenticated: print:
+
+         No forge CLI available — branch keel/F{id}-{slug} is pushed
+         to <remote_name>. Open a PR manually on your forge.
+
+     This is not an error — it's an environment gap. Continue to
+     sub-step 6. The human opens the PR by hand; `pr_url` stays unset.
 
    KEEL only ships a PR-based landing flow. If a project needs direct
    merge-to-base or a different forge integration, edit this skill file
    in the installed `.claude/skills/keel-pipeline/SKILL.md` — the skill
    is installed into each project and is a first-class customization
    point.
+
+6. **Archive the handoff.**
+   Move the handoff file:
+     `docs/exec-plans/active/handoffs/F{id}-{slug}.md`
+     → `docs/exec-plans/completed/handoffs/F{id}-{slug}.md`
+
+   Archive is the LAST sub-step. Only runs when commit, push, and PR
+   creation (or the "no gh" print-manual-instructions path) all succeed.
+   If any earlier sub-step halts, the handoff stays in `active/` and the
+   human can re-run the pipeline after resolving the issue.
+
+   Amend this move into the feature commit with `git commit --amend
+   --no-edit` and re-push (`--force-with-lease`). The PR diff now reflects
+   the archived path, matching what a reviewer sees. Skip the amend if the
+   forge rejects force-with-lease — the handoff move lands in a
+   follow-up commit on the same branch.
 
 ## Rules
 
@@ -392,5 +442,10 @@ error verbatim.
   landing flow, edit Step 9 in the installed skill file.
 - **VERIFIED → READY-TO-LAND → LANDED.** Landing-verifier emits VERIFIED.
   Roundtable review (if enabled) transitions to READY-TO-LAND. Step 9
-  transitions to LANDED after commit+push+PR. When roundtable is disabled,
-  VERIFIED triggers Step 9 directly (skip READY-TO-LAND).
+  transitions to LANDED after commit+push+PR+archive succeed. When
+  roundtable is disabled, VERIFIED triggers Step 9 directly (skip
+  READY-TO-LAND).
+- **Archive is the last step.** Step 9 moves the handoff to `completed/`
+  only after commit, push, and PR-creation (or the no-gh fallback) all
+  succeed. Any earlier halt leaves the handoff in `active/` so re-running
+  the pipeline picks up from where it stopped.
