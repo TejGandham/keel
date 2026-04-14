@@ -124,6 +124,7 @@ This is how KEEL learns about your project. Every agent reads CLAUDE.md first.
 | [FAILURE-PLAYBOOK.md](docs/process/FAILURE-PLAYBOOK.md) | When the pipeline stalls |
 | [GLOSSARY.md](docs/process/GLOSSARY.md) | Terminology |
 | [ANTI-PATTERNS.md](docs/process/ANTI-PATTERNS.md) | What not to do |
+| [AUTONOMY-PROGRESSION.md](docs/process/AUTONOMY-PROGRESSION.md) | Stages of agent autonomy |
 
 ## License
 

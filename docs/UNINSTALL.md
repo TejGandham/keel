@@ -87,6 +87,7 @@ rm -f docs/process/BROWNFIELD.md
 rm -f docs/process/GLOSSARY.md
 rm -f docs/process/ANTI-PATTERNS.md
 rm -f docs/process/FAILURE-PLAYBOOK.md
+rm -f docs/process/AUTONOMY-PROGRESSION.md
 rmdir docs/process 2>/dev/null
 ```
 
