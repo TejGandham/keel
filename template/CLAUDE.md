@@ -113,11 +113,11 @@ The orchestrator runs roundtable review (if enabled), then the post-landing
 procedure automatically:
 1. Roundtable landing review (if enabled) → `xray` + `challenge` → advisory feedback
 2. `doc-gardener` agent → apply any reported drift fixes to the working tree
-3. Move handoff: `active/handoffs/F{id}-{slug}.md` → `completed/handoffs/F{id}-{slug}.md`
-4. Log any new shortcuts to `tech-debt-tracker.md`
-5. `git add -A` → commit `feat(F{id}): {title from spec H1}` with spec ref + verdict table
-6. `git push -u origin HEAD` → push the feature branch
-7. `gh pr create --fill` → open a PR (manual instructions if forge CLI unavailable)
+3. Log any new shortcuts to `tech-debt-tracker.md`
+4. `git add -A` → commit `feat(F{id}): {title from spec H1}` with spec ref + verdict table
+5. `git push -u <remote_name> HEAD` → push the feature branch (remote resolved at Step 0)
+6. `gh pr create --fill` → open a PR (manual instructions if forge CLI unavailable)
+7. Move handoff: `active/handoffs/F{id}-{slug}.md` → `completed/handoffs/F{id}-{slug}.md` (amended into the feature commit)
 
 The pipeline always lands via a PR. The human reviews and merges on their
 forge. To change this, edit Step 9 of `.claude/skills/keel-pipeline/SKILL.md`.

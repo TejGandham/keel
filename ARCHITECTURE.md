@@ -103,10 +103,10 @@ User writes spec in docs/product-specs/
   → roundtable-review?       xray + challenge (if roundtable enabled)
   → Step 9 post-landing procedure (runs automatically after VERIFIED/READY-TO-LAND):
     → doc-gardener           repo-wide drift sweep; orchestrator applies fixes
-    → handoff archived       active/handoffs/ → completed/handoffs/
     → tech-debt-tracker      log shortcuts, check off resolved items
     → git add -A, commit     commit subject from spec H1 + verdict table body
-    → push + open PR         git push -u origin HEAD, gh pr create --fill
+    → push + open PR         git push -u <remote_name> HEAD, gh pr create --fill
+    → handoff archived       active/ → completed/ (amended into the feature commit)
 ```
 
 Each agent reads and appends to the same handoff file in

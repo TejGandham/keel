@@ -717,12 +717,14 @@ See `docs/process/FAILURE-PLAYBOOK.md` for the full decision tree.
 After landing-verifier reports VERIFIED (and roundtable review completes if enabled):
 
 ```
-1. Stage files: git add -A (clean tree enforced at pipeline start)
-2. Commit: feat(F{id}): {feature name} with verdict table
-3. Push the feature branch: git push -u origin HEAD
-4. Open a PR: gh pr create --fill (manual instructions if forge CLI unavailable)
-5. Check off feature in backlog
-6. Move handoff: active/handoffs/ -> completed/handoffs/
+1. doc-gardener sweep: apply drift fixes in the working tree
+2. Log new shortcuts / check off resolved items in tech-debt-tracker.md
+3. Stage files: git add -A (clean tree enforced at pipeline start)
+4. Commit: feat(F{id}): {feature name} with verdict table
+5. Push the feature branch: git push -u <remote_name> HEAD
+6. Open a PR: gh pr create --fill (manual instructions if forge CLI unavailable)
+7. Check off feature in backlog
+8. Move handoff: active/handoffs/ -> completed/handoffs/ (amended into the feature commit)
 ```
 
 ### Garbage Collection
