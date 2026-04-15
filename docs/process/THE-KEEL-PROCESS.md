@@ -460,15 +460,14 @@ Fifteen specialized agents, each with bounded responsibility.
 ### Reasoning Tiers
 
 Each agent is assigned a reasoning tier based on the cognitive demands of
-its task. The reference implementation maps these to Claude Code model names
-in agent frontmatter (`model:` field). Other platforms should map to their
-equivalent tiers.
+its task. Tiers map to Claude Code model names in agent frontmatter
+(`model:` field).
 
-| Tier | Intent | Claude Code | Other platforms |
-|-|-|-|-|
-| **high** | Design decisions, novel work, deep analysis | opus | Your platform's highest-tier model |
-| **high, lighter model** | Gate verdicts — pattern matching against existing code or spec | sonnet (`reasoning: high`) | A mid-tier model with extended thinking enabled |
-| **standard** | Routing, pattern-following, verification | sonnet | Your platform's standard-tier model |
+| Tier | Intent | Claude Code |
+|-|-|-|
+| **high** | Design decisions, novel work, deep analysis | opus |
+| **high, lighter model** | Gate verdicts — pattern matching against existing code or spec | sonnet (`reasoning: high`) |
+| **standard** | Routing, pattern-following, verification | sonnet |
 
 **High reasoning (opus):** pre-check, arch-advisor, implementer, safety-auditor,
 backend-designer, frontend-designer, researcher (7 agents)

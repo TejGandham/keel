@@ -147,9 +147,9 @@ the install bundle.
 ## Key Design Decisions
 
 - **Markdown-driven, no runtime.** The framework is a bundle of
-  prompts and Python install scripts. This keeps KEEL portable across
-  any agent platform that reads markdown — and avoids a package-manager
-  dependency for users.
+  prompts and Python install scripts. Ships for Claude Code today; the
+  markdown-only surface area keeps a future port to other agent
+  platforms cheap, and avoids a package-manager dependency for users.
 - **Stdlib-only Python 3.10+.** The installer must run on a clean
   machine before any project deps exist, so adding any third-party
   dependency would create a bootstrap problem. Python over shell for
