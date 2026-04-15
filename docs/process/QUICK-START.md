@@ -6,7 +6,7 @@ KEEL — Knowledge-Encoded Engineering Lifecycle. From install to first feature 
 
 ## Prerequisites
 
-- An AI coding agent (Claude Code, Codex, Cursor, etc.)
+- [Claude Code](https://claude.com/claude-code) — the only supported agent runtime today
 - Docker installed (or your stack's runtime)
 - A product idea (even rough is fine)
 

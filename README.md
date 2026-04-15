@@ -68,7 +68,7 @@ After each feature lands, a **garbage collection** pass updates docs, fixes drif
 
 - **Solo devs or small teams (1-3)** with an AI agent as primary implementer
 - **Projects that grow** — today's 3 features become next month's 30
-- **Any AI agent platform** — process is agent-agnostic; reference implementation uses Claude Code
+- **Claude Code** — the only supported agent runtime today
 
 Not for: one-off scripts, throwaway prototypes, <5 feature projects.
 

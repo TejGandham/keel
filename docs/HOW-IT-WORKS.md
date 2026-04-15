@@ -291,16 +291,16 @@ Pre-check flags these anti-patterns for downstream agents:
 - **Documentation bloat** — docstrings on code you didn't write
 - **Gold-plating** — feature flags and backwards compatibility when not required
 
-## Platform Mapping
+## Reasoning Tiers
 
-The reference implementation uses Claude Code. The process is agent-agnostic.
+KEEL ships for [Claude Code](https://claude.com/claude-code) only. Each
+agent declares a reasoning tier in its YAML frontmatter:
 
-| Tier | Claude Code | Other platforms |
-|-|-|-|
-| **High reasoning** | opus | Your platform's highest-tier model |
-| **High reasoning, lighter model** | sonnet (`reasoning: high`) | A mid-tier model with extended thinking enabled |
-| **Standard reasoning** | sonnet | Your platform's standard-tier model |
+| Tier | Claude Code model |
+|-|-|
+| **High reasoning** | opus |
+| **High reasoning, lighter model** | sonnet (`reasoning: high`) |
+| **Standard reasoning** | sonnet |
 
-Reasoning level is set per-agent in the YAML frontmatter so each agent's
-cost matches its job — gates that compare existing code against a spec
+Cost matches the job — gates that compare existing code against a spec
 don't need the same generation budget as agents that author new code.

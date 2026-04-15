@@ -8,7 +8,7 @@ and agents execute through specialized pipelines.
 Adapted from OpenAI's "Harness Engineering" article (February 2026, Ryan
 Lopopolo), where a team shipped a product with zero manually-written code
 using Codex agents. KEEL adapts those principles into concrete, repeatable
-mechanics for any AI coding agent.
+mechanics on top of Claude Code — the only supported agent runtime today.
 
 ---
 
@@ -88,7 +88,7 @@ This is the foundational principle. Everything else in KEEL follows from it.
 - Projects that grow organically — where today's 3 features become next month's 30
 - Long-lived projects where institutional knowledge must compound, not evaporate
 - Projects where safety invariants must be mechanically enforced
-- Any AI agent platform — the process is agent-agnostic
+- Claude Code as the agent runtime (the only platform KEEL supports today)
 
 ### When KEEL Is Right
 
