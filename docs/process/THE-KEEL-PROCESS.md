@@ -46,6 +46,11 @@ downstream concerns that take over where KEEL leaves off.
 
 ### Where KEEL Came From
 
+The name comes from a ship's [keel](https://en.wikipedia.org/wiki/Keel) —
+the structural spine laid down first, before any hull goes on top. Lay it
+straight and the ship holds. Same idea here: encode the structure, and
+every feature built on top inherits it.
+
 In February 2026, Ryan Lopopolo's team at OpenAI published "Harness
 Engineering" describing how they shipped a product with Codex agents writing
 all the code. Their key insight: the repository must be the complete system of
