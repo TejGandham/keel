@@ -2,6 +2,8 @@
 
 **Knowledge-Encoded Engineering Lifecycle** — a process framework for AI-assisted development. Spec in, stable tested code out.
 
+> Named for a ship's [keel](https://en.wikipedia.org/wiki/Keel) — the structural spine laid down first, before any hull goes on top. Lay it straight and the ship holds. Same idea here: encode the structure, and every feature built on top inherits it.
+
 ## The Problem
 
 AI agents forget between sessions. Feature 2 breaks Feature 1. A rules file works until ~10 features — then you need structure.
