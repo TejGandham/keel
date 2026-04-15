@@ -2,3 +2,8 @@
 .netrc
 .DS_Store
 .letta/
+
+# Superpowers scratch space — never committed.
+# If an artifact inside matters, copy it into docs/ explicitly.
+docs/superpowers/
+superpowers/
