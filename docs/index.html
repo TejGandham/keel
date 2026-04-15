@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEEL — Knowledge Encoded Engineering Lifecycle</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#ffffff;--bg2:#f7f7f5;--bg3:#eeeeea;
+    --text:#111;--text2:#444;--text3:#888;
+    --border:rgba(0,0,0,.08);
+    --blue:#3B82F6;--teal:#06B6D4;--green:#22C55E;
+    --lime:#84CC16;--yellow:#F59E0B;--red:#EF4444;
+    --pink:#EC4899;--orange:#F97316;--indigo:#6366F1;
+    --font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden}
+  .world{max-width:800px;margin:0 auto;padding:40px 20px 80px;position:relative}
+
+  header{text-align:center;margin-bottom:56px}
+  header h1{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:8px;
+    background:linear-gradient(135deg,var(--blue),var(--teal),var(--green));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  header p{font-size:15px;color:var(--text2);max-width:460px;margin:0 auto}
+
+  /* Phase banner */
+  .phase-banner{text-align:center;margin:52px 0 12px}
+  .phase-banner span{
+    display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;
+    letter-spacing:1px;text-transform:uppercase;padding:8px 24px;border-radius:24px;
+    color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12);
+  }
+  .phase-banner.p1 span{background:linear-gradient(135deg,var(--blue),var(--teal))}
+  .phase-banner.p2 span{background:linear-gradient(135deg,var(--green),var(--lime))}
+  .phase-banner.p3 span{background:linear-gradient(135deg,var(--indigo),var(--blue))}
+  .phase-banner.p4 span{background:linear-gradient(135deg,var(--teal),var(--green))}
+
+  /* Winding path */
+  .path-segment{
+    width:4px;height:44px;margin:0 auto;
+    background:repeating-linear-gradient(to bottom,var(--blue) 0 6px,transparent 6px 12px);
+    opacity:.25;
+  }
+
+  /* Agent stop */
+  .stop{display:flex;align-items:flex-start;gap:0;margin:0;position:relative}
+  .stop.left{flex-direction:row}
+  .stop.right{flex-direction:row-reverse}
+
+  .stop .character{
+    flex-shrink:0;width:140px;display:flex;flex-direction:column;align-items:center;
+    position:relative;z-index:2;
+  }
+  .stop .character svg{
+    filter:drop-shadow(0 6px 20px rgba(0,0,0,.10));
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .stop:hover .character svg{transform:scale(1.15) translateY(-6px) rotate(-2deg)}
+  .stop .character .name{
+    font-family:var(--mono);font-size:12px;font-weight:600;margin-top:8px;
+    text-align:center;letter-spacing:-.3px;
+  }
+
+  .stop .bubble{
+    flex:1;position:relative;padding:18px 22px;border-radius:18px;
+    background:#fff;border:2px solid var(--bg3);
+    margin-top:20px;min-height:60px;
+    box-shadow:0 2px 12px rgba(0,0,0,.04);
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .stop:hover .bubble{border-color:var(--blue);box-shadow:0 4px 20px rgba(59,130,246,.12)}
+  .stop .bubble::before{
+    content:'';position:absolute;top:22px;width:18px;height:18px;
+    background:#fff;border:2px solid var(--bg3);
+    transform:rotate(45deg);transition:border-color .2s;
+  }
+  .stop:hover .bubble::before{border-color:var(--blue)}
+  .stop.left .bubble::before{left:-11px;border-right:none;border-top:none}
+  .stop.right .bubble::before{right:-11px;border-left:none;border-bottom:none}
+  .stop .bubble .role{font-size:16px;font-weight:700;margin-bottom:4px}
+  .stop .bubble .desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+  /* Branch */
+  .branch-row{display:flex;gap:14px}
+  .branch-row .mini-stop{
+    flex:1;display:flex;flex-direction:column;align-items:center;
+    padding:18px 10px;border-radius:16px;background:#fff;
+    border:2px solid var(--bg3);box-shadow:0 2px 12px rgba(0,0,0,.04);
+    transition:transform .2s,border-color .2s,box-shadow .2s;
+  }
+  .branch-row .mini-stop:hover{transform:translateY(-6px);border-color:var(--teal);box-shadow:0 6px 24px rgba(6,182,212,.15)}
+  .branch-row .mini-stop svg{margin-bottom:10px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.08))}
+  .branch-row .mini-stop .blbl{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px}
+  .branch-row .mini-stop .bname{font-size:14px;font-weight:700;text-align:center}
+
+  /* Path badges */
+  .path-badge{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    margin:6px auto;padding:7px 18px;border-radius:24px;width:fit-content;
+    font-size:12px;font-family:var(--mono);font-weight:600;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+  }
+  .path-badge.loop{background:var(--yellow);color:#fff}
+  .path-badge.esc{background:var(--red);color:#fff}
+
+  /* Finish */
+  .finish{
+    text-align:center;margin-top:16px;padding:28px;border-radius:20px;
+    background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(6,182,212,.08));
+    border:3px solid var(--green);
+  }
+  .finish .big{font-size:26px;font-weight:800;color:var(--green);margin-bottom:4px}
+  .finish .sub{font-size:14px;color:var(--text2)}
+
+  /* Summary */
+  .summary{margin-top:56px;text-align:center}
+  .summary h3{font-size:14px;font-weight:600;margin-bottom:14px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);font-size:11px}
+  .pills{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+    border-radius:24px;background:#fff;border:2px solid var(--bg3);
+    font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .pill .pn{font-family:var(--mono);font-weight:800;color:var(--red);font-size:18px}
+</style>
+</head>
+<body>
+<div class="world">
+  <header>
+    <h1>KEEL</h1>
+    <p>Knowledge Encoded Engineering Lifecycle — feature spec in, PR out. Your robot squad handles the rest.</p>
+  </header>
+
+  <div class="phase-banner p1"><span>Phase 1 &mdash; Intake & design</span></div>
+  <div class="path-segment"></div>
+
+  <div class="stop left" id="s-you">
+    <div class="character"><div id="r-you"></div><div class="name" style="color:var(--blue)">You</div></div>
+    <div class="bubble"><div class="role" style="color:var(--blue)">Feature spec</div><div class="desc">You write the spec. Everything starts here. Make it count.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="stop right" id="s-precheck">
+    <div class="character"><div id="r-precheck"></div><div class="name" style="color:var(--teal)">Pre-check</div></div>
+    <div class="bubble"><div class="role" style="color:var(--teal)">Classify & route</div><div class="desc">Reads intent, gauges complexity, decides the path forward.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="branch-row" id="branch1"></div>
+  <div class="path-segment"></div>
+
+  <div class="stop left" id="s-designer">
+    <div class="character"><div id="r-designer"></div><div class="name" style="color:var(--green)">Designer</div></div>
+    <div class="bubble"><div class="role" style="color:var(--green)">Interfaces & data</div><div class="desc">Defines the contracts, structures, and shapes of the solution.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="stop right" id="s-rt1">
+    <div class="character"><div id="r-rt1"></div><div class="name" style="color:var(--indigo)">Roundtable 1</div></div>
+    <div class="bubble"><div class="role" style="color:var(--indigo)">Design review</div><div class="desc">The squad debates the design. Approved or bounced back.</div></div>
+  </div>
+  <div class="path-badge loop">&#8635; concerns loop back to Designer</div>
+
+  <div class="phase-banner p2"><span>Phase 2 &mdash; Build</span></div>
+  <div class="path-segment"></div>
+
+  <div class="stop left" id="s-tw">
+    <div class="character"><div id="r-tw"></div><div class="name" style="color:var(--red)">Test-writer</div></div>
+    <div class="bubble"><div class="role" style="color:var(--red)">RED tests</div><div class="desc">Writes failing tests straight from the spec. If it ain't red, it ain't right.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="stop right" id="s-impl">
+    <div class="character"><div id="r-impl"></div><div class="name" style="color:var(--green)">Implementer</div></div>
+    <div class="bubble"><div class="role" style="color:var(--green)">GREEN code</div><div class="desc">Writes code until every test goes green. The workhorse of the squad.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="stop left" id="s-cr">
+    <div class="character"><div id="r-cr"></div><div class="name" style="color:var(--orange)">Code-reviewer</div></div>
+    <div class="bubble"><div class="role" style="color:var(--orange)">Quality gate</div><div class="desc">Checks code quality. Changes needed? Back to Implementer.</div></div>
+  </div>
+  <div class="path-badge loop">&#8635; changes loop back</div>
+  <div class="path-badge esc">&#9888; escalates to you after 1 retry</div>
+
+  <div class="phase-banner p3"><span>Phase 3 &mdash; Verification</span></div>
+  <div class="path-segment"></div>
+
+  <div class="stop right" id="s-sr">
+    <div class="character"><div id="r-sr"></div><div class="name" style="color:var(--indigo)">Spec-reviewer</div></div>
+    <div class="bubble"><div class="role" style="color:var(--indigo)">Spec conformance</div><div class="desc">Obsessively compares code against the original spec. No drift allowed.</div></div>
+  </div>
+  <div class="path-badge loop">&#8635; deviation &#8594; findings &#8594; fix</div>
+  <div class="path-badge esc">&#9888; escalates after 2 retries</div>
+  <div class="path-segment"></div>
+
+  <div class="stop left" id="s-sa">
+    <div class="character"><div id="r-sa"></div><div class="name" style="color:var(--red)">Safety-auditor</div></div>
+    <div class="bubble"><div class="role" style="color:var(--red)">Invariant check</div><div class="desc">Checks for invariant violations. The paranoid one. Rightfully so.</div></div>
+  </div>
+  <div class="path-badge loop">&#8635; violation &#8594; findings &#8594; fix</div>
+  <div class="path-badge esc">&#9888; escalates after 3 retries</div>
+  <div class="path-segment"></div>
+
+  <div class="stop right" id="s-av">
+    <div class="character"><div id="r-av"></div><div class="name" style="color:var(--blue)">Arch-verify</div></div>
+    <div class="bubble"><div class="role" style="color:var(--blue)">Architecture sound?</div><div class="desc">Arch-tier only. The wise one returns to bless (or reject) the build.</div></div>
+  </div>
+  <div class="path-badge esc">&#9888; escalates after 1 retry</div>
+
+  <div class="phase-banner p4"><span>Phase 4 &mdash; Landing</span></div>
+  <div class="path-segment"></div>
+
+  <div class="stop left" id="s-lv">
+    <div class="character"><div id="r-lv"></div><div class="name" style="color:var(--teal)">Landing-verifier</div></div>
+    <div class="bubble"><div class="role" style="color:var(--teal)">Final check</div><div class="desc">Last verification before the landing review.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="stop right" id="s-rt2">
+    <div class="character"><div id="r-rt2"></div><div class="name" style="color:var(--indigo)">Roundtable 2</div></div>
+    <div class="bubble"><div class="role" style="color:var(--indigo)">Landing review</div><div class="desc">Final squad huddle. Approved or kicked back to Implementer.</div></div>
+  </div>
+  <div class="path-badge loop">&#8635; concerns loop back</div>
+  <div class="path-segment"></div>
+
+  <div class="stop left" id="s-dg">
+    <div class="character"><div id="r-dg"></div><div class="name" style="color:var(--lime)">Doc-gardener</div></div>
+    <div class="bubble"><div class="role" style="color:var(--lime)">Stale doc sweep</div><div class="desc">Weeds out outdated docs. Keeps the garden tidy.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="stop right" id="s-commit">
+    <div class="character"><div id="r-commit"></div><div class="name" style="color:var(--green)">Commit & PR</div></div>
+    <div class="bubble"><div class="role" style="color:var(--green)">Ship it</div><div class="desc">Commit, push, open the PR. Almost there.</div></div>
+  </div>
+  <div class="path-segment"></div>
+
+  <div class="finish">
+    <div class="big">PR ready for review</div>
+    <div class="sub">KEEL delivered. Back to you.</div>
+  </div>
+
+  <div class="summary">
+    <h3>Escalation thresholds</h3>
+    <div class="pills">
+      <div class="pill"><span class="pn">2</span> spec-reviewer retries</div>
+      <div class="pill"><span class="pn">3</span> safety-auditor retries</div>
+      <div class="pill"><span class="pn">1</span> arch-advisor retry</div>
+      <div class="pill"><span class="pn">1</span> code-reviewer retry</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const d = '#222', bg = '#f7f7f5', metal = '#ccc', white = '#fff';
+
+function bot(w, h, parts) {
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">${parts}</svg>`;
+}
+
+function fullBot(accent, opts={}) {
+  let s = '';
+  // Antenna
+  s += `<line x1="40" y1="10" x2="40" y2="22" stroke="${metal}" stroke-width="2.5" stroke-linecap="round"/>`;
+  s += `<circle cx="40" cy="8" r="5.5" fill="${accent}"/><circle cx="40" cy="7" r="2" fill="${white}" opacity=".6"/>`;
+  // Head
+  s += `<rect x="18" y="22" width="44" height="34" rx="11" fill="${white}" stroke="${accent}" stroke-width="2.5"/>`;
+  s += `<rect x="22" y="26" width="36" height="26" rx="8" fill="${accent}" opacity=".08"/>`;
+  // Eyes
+  s += opts.eyeL || `<circle cx="33" cy="37" r="4" fill="${d}"/><circle cx="34.5" cy="35.5" r="1.5" fill="${white}"/>`;
+  s += opts.eyeR || `<circle cx="47" cy="37" r="4" fill="${d}"/><circle cx="48.5" cy="35.5" r="1.5" fill="${white}"/>`;
+  // Mouth
+  s += opts.mouth || `<path d="M32 48Q40 54 48 48" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`;
+  // Body
+  s += `<rect x="20" y="60" width="40" height="36" rx="8" fill="${accent}" stroke="${accent}" stroke-width="1.5"/>`;
+  s += `<rect x="24" y="64" width="32" height="28" rx="5" fill="${white}" opacity=".2"/>`;
+  s += opts.bodyDeco || `<circle cx="40" cy="76" r="5" fill="${white}" opacity=".35"/><circle cx="40" cy="76" r="2.5" fill="${white}" opacity=".6"/>`;
+  // Arms
+  s += opts.armL || `<rect x="4" y="64" width="14" height="8" rx="4" fill="${accent}"/><circle cx="6" cy="68" r="3" fill="${accent}" stroke="${white}" stroke-width="1" opacity=".6"/>`;
+  s += opts.armR || `<rect x="62" y="64" width="14" height="8" rx="4" fill="${accent}"/><circle cx="74" cy="68" r="3" fill="${accent}" stroke="${white}" stroke-width="1" opacity=".6"/>`;
+  // Legs
+  s += `<rect x="27" y="96" width="11" height="14" rx="5" fill="${accent}"/><rect x="42" y="96" width="11" height="14" rx="5" fill="${accent}"/>`;
+  s += `<rect x="24" y="106" width="16" height="6" rx="3" fill="${accent}" opacity=".7"/><rect x="40" y="106" width="16" height="6" rx="3" fill="${accent}" opacity=".7"/>`;
+  // Accessories
+  s += opts.topAcc || '';
+  s += opts.hat || '';
+  return bot(80, 114, s);
+}
+
+const c = getComputedStyle(document.documentElement);
+const blue='#3B82F6',teal='#06B6D4',green='#22C55E',lime='#84CC16',
+      yellow='#F59E0B',red='#EF4444',pink='#EC4899',orange='#F97316',indigo='#6366F1';
+
+const robots = {
+  you: (()=>{
+    let s = '';
+    s += `<circle cx="40" cy="36" r="24" fill="${blue}" opacity=".08"/>`;
+    s += `<circle cx="40" cy="34" r="20" fill="#fde1c5" stroke="${blue}" stroke-width="2"/>`;
+    s += `<path d="M20 28Q24 12 40 10Q56 12 60 28" fill="#5B3A1A" opacity=".6"/>`;
+    s += `<rect x="26" y="28" width="13" height="11" rx="3.5" fill="none" stroke="${d}" stroke-width="2"/>`;
+    s += `<rect x="41" y="28" width="13" height="11" rx="3.5" fill="none" stroke="${d}" stroke-width="2"/>`;
+    s += `<line x1="39" y1="33" x2="41" y2="33" stroke="${d}" stroke-width="2"/>`;
+    s += `<circle cx="32" cy="33" r="2.5" fill="${d}"/><circle cx="33" cy="32" r="1" fill="${white}"/>`;
+    s += `<circle cx="48" cy="33" r="2.5" fill="${d}"/><circle cx="49" cy="32" r="1" fill="${white}"/>`;
+    s += `<path d="M34 44Q40 49 46 44" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`;
+    s += `<rect x="22" y="60" width="36" height="30" rx="6" fill="${blue}" opacity=".15" stroke="${blue}" stroke-width="1.5"/>`;
+    s += `<rect x="50" y="58" width="26" height="20" rx="3" fill="${white}" stroke="${blue}" stroke-width="1.5"/>`;
+    s += `<text x="63" y="69" text-anchor="middle" font-size="8" font-family="var(--mono)" fill="${blue}" font-weight="700">SPEC</text>`;
+    s += `<line x1="54" y1="73" x2="72" y2="73" stroke="${blue}" stroke-width=".8" opacity=".4"/>`;
+    s += `<rect x="30" y="90" width="9" height="16" rx="4" fill="${blue}" opacity=".2" stroke="${blue}" stroke-width="1"/>`;
+    s += `<rect x="41" y="90" width="9" height="16" rx="4" fill="${blue}" opacity=".2" stroke="${blue}" stroke-width="1"/>`;
+    return bot(80, 108, s);
+  })(),
+
+  precheck: fullBot(teal, {
+    eyeL:`<line x1="28" y1="37" x2="38" y2="37" stroke="${teal}" stroke-width="4" stroke-linecap="round"/>`,
+    eyeR:`<line x1="42" y1="37" x2="52" y2="37" stroke="${teal}" stroke-width="4" stroke-linecap="round"/>`,
+    bodyDeco:`<text x="40" y="76" text-anchor="middle" font-size="8" font-family="var(--mono)" fill="${white}" font-weight="700">SCAN</text><rect x="28" y="82" width="24" height="4" rx="2" fill="${white}" opacity=".25"/><rect x="28" y="82" width="14" height="4" rx="2" fill="${white}" opacity=".5"/>`,
+  }),
+
+  researcher: fullBot(teal, {
+    topAcc:`<line x1="64" y1="16" x2="78" y2="4" stroke="${d}" stroke-width="2.5" stroke-linecap="round"/><circle cx="80" cy="2" r="7" fill="none" stroke="${teal}" stroke-width="2.5"/><circle cx="80" cy="2" r="2.5" fill="${teal}"/>`,
+    eyeL:`<circle cx="33" cy="37" r="5" fill="${teal}" opacity=".25"/><circle cx="33" cy="37" r="2.5" fill="${d}"/><circle cx="34" cy="36" r="1" fill="${white}"/>`,
+    eyeR:`<circle cx="47" cy="37" r="5" fill="${teal}" opacity=".25"/><circle cx="47" cy="37" r="2.5" fill="${d}"/><circle cx="48" cy="36" r="1" fill="${white}"/>`,
+  }),
+
+  archadv: fullBot(indigo, {
+    hat:`<path d="M16 24L40 10L64 24" fill="${indigo}" opacity=".2" stroke="${indigo}" stroke-width="1.5"/>`,
+    eyeL:`<circle cx="33" cy="37" r="5.5" fill="none" stroke="${d}" stroke-width="2"/><circle cx="33" cy="37" r="2" fill="${d}"/>`,
+    eyeR:`<circle cx="47" cy="37" r="5.5" fill="none" stroke="${d}" stroke-width="2"/><circle cx="47" cy="37" r="2" fill="${d}"/><line x1="41" y1="37" x2="36" y2="37" stroke="${d}" stroke-width="1.5" opacity=".3"/>`,
+    mouth:`<path d="M34 48L38 51L46 47" fill="none" stroke="${d}" stroke-width="1.5" stroke-linecap="round"/>`,
+    bodyDeco:`<path d="M30 68L40 63L50 68L40 88Z" fill="${white}" opacity=".15" stroke="${white}" stroke-width=".8"/>`,
+  }),
+
+  designer: fullBot(green, {
+    armR:`<line x1="68" y1="58" x2="80" y2="42" stroke="${green}" stroke-width="3.5" stroke-linecap="round"/><polygon points="80,42 84,38 76,38" fill="${yellow}"/>`,
+    bodyDeco:`<rect x="28" y="68" width="24" height="16" rx="3" fill="${white}" opacity=".3" stroke="${white}" stroke-width=".8"/><line x1="32" y1="73" x2="48" y2="73" stroke="${white}" stroke-width="1" opacity=".5"/><line x1="32" y1="78" x2="44" y2="78" stroke="${white}" stroke-width="1" opacity=".5"/>`,
+  }),
+
+  roundtable: (()=>{
+    let s = '';
+    s += `<rect x="8" y="52" width="64" height="10" rx="4" fill="${indigo}" opacity=".15" stroke="${indigo}" stroke-width="1.5"/>`;
+    s += `<rect x="30" y="62" width="20" height="18" rx="3" fill="${indigo}" opacity=".1"/>`;
+    // Bot left
+    s += `<rect x="2" y="20" width="24" height="30" rx="7" fill="${white}" stroke="${teal}" stroke-width="2"/>`;
+    s += `<circle cx="10" cy="32" r="2.5" fill="${d}"/><circle cx="20" cy="32" r="2.5" fill="${d}"/>`;
+    s += `<line x1="8" y1="18" x2="8" y2="12" stroke="${metal}" stroke-width="2"/><circle cx="8" cy="10" r="3.5" fill="${teal}"/>`;
+    // Bot center
+    s += `<rect x="24" y="12" width="32" height="38" rx="9" fill="${white}" stroke="${blue}" stroke-width="2"/>`;
+    s += `<circle cx="34" cy="28" r="3" fill="${d}"/><circle cx="35" cy="27" r="1" fill="${white}"/>`;
+    s += `<circle cx="46" cy="28" r="3" fill="${d}"/><circle cx="47" cy="27" r="1" fill="${white}"/>`;
+    s += `<path d="M35 38Q40 43 45 38" fill="none" stroke="${d}" stroke-width="1.5" stroke-linecap="round"/>`;
+    s += `<line x1="40" y1="10" x2="40" y2="4" stroke="${metal}" stroke-width="2"/><circle cx="40" cy="2" r="3.5" fill="${blue}"/>`;
+    // Bot right
+    s += `<rect x="54" y="20" width="24" height="30" rx="7" fill="${white}" stroke="${green}" stroke-width="2"/>`;
+    s += `<circle cx="62" cy="32" r="2.5" fill="${d}"/><circle cx="72" cy="32" r="2.5" fill="${d}"/>`;
+    s += `<line x1="72" y1="18" x2="72" y2="12" stroke="${metal}" stroke-width="2"/><circle cx="72" cy="10" r="3.5" fill="${green}"/>`;
+    return bot(80, 82, s);
+  })(),
+
+  testwriter: fullBot(red, {
+    armR:`<rect x="62" y="56" width="20" height="26" rx="3" fill="${white}" stroke="${red}" stroke-width="2"/><line x1="67" y1="64" x2="76" y2="74" stroke="${red}" stroke-width="2.5" stroke-linecap="round"/><line x1="76" y1="64" x2="67" y2="74" stroke="${red}" stroke-width="2.5" stroke-linecap="round"/>`,
+    bodyDeco:`<text x="40" y="78" text-anchor="middle" font-size="10" font-family="var(--mono)" fill="${white}" font-weight="800">RED</text>`,
+    mouth:`<path d="M32 48Q40 53 48 48" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`,
+  }),
+
+  implementer: fullBot(green, {
+    armR:`<path d="M64 62Q72 56 78 64L74 70Q66 72 64 62Z" fill="${yellow}" opacity=".8"/><line x1="74" y1="66" x2="84" y2="52" stroke="${yellow}" stroke-width="3" stroke-linecap="round"/>`,
+    mouth:`<path d="M30 48Q40 56 50 48" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`,
+    bodyDeco:`<text x="40" y="78" text-anchor="middle" font-size="9" font-family="var(--mono)" fill="${white}" font-weight="800">GREEN</text>`,
+  }),
+
+  coderev: fullBot(orange, {
+    armR:`<circle cx="74" cy="50" r="10" fill="none" stroke="${orange}" stroke-width="2.5"/><line x1="82" y1="56" x2="86" y2="64" stroke="${orange}" stroke-width="3" stroke-linecap="round"/><circle cx="74" cy="50" r="3" fill="${orange}" opacity=".2"/>`,
+    eyeL:`<rect x="28" y="33" width="11" height="8" rx="3" fill="${orange}" opacity=".2"/><circle cx="33" cy="37" r="2" fill="${d}"/>`,
+    eyeR:`<rect x="41" y="33" width="11" height="8" rx="3" fill="${orange}" opacity=".2"/><circle cx="47" cy="37" r="2" fill="${d}"/>`,
+  }),
+
+  specrev: fullBot(indigo, {
+    armL:`<rect x="-2" y="56" width="20" height="24" rx="3" fill="${white}" stroke="${indigo}" stroke-width="1.5"/><line x1="3" y1="63" x2="14" y2="63" stroke="${d}" stroke-width=".8" opacity=".3"/><line x1="3" y1="67" x2="14" y2="67" stroke="${d}" stroke-width=".8" opacity=".3"/><line x1="3" y1="71" x2="10" y2="71" stroke="${d}" stroke-width=".8" opacity=".3"/>`,
+    armR:`<rect x="62" y="56" width="20" height="24" rx="3" fill="${white}" stroke="${indigo}" stroke-width="1.5"/><line x1="67" y1="63" x2="78" y2="63" stroke="${d}" stroke-width=".8" opacity=".3"/><line x1="67" y1="67" x2="78" y2="67" stroke="${d}" stroke-width=".8" opacity=".3"/><line x1="67" y1="71" x2="74" y2="71" stroke="${d}" stroke-width=".8" opacity=".3"/>`,
+    eyeL:`<polygon points="33,31 28,40 38,40" fill="${indigo}" opacity=".6"/><circle cx="33" cy="36" r="1.5" fill="${d}"/>`,
+    eyeR:`<polygon points="47,31 42,40 52,40" fill="${indigo}" opacity=".6"/><circle cx="47" cy="36" r="1.5" fill="${d}"/>`,
+  }),
+
+  safety: fullBot(red, {
+    topAcc:`<path d="M58 26L68 22L78 26L78 42Q68 52 58 42Z" fill="${red}" opacity=".2" stroke="${red}" stroke-width="2"/><path d="M65 32L68 35L76 27" fill="none" stroke="${red}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+    eyeL:`<circle cx="33" cy="37" r="4.5" fill="${d}"/><circle cx="34.5" cy="35.5" r="1.5" fill="${white}"/>`,
+    eyeR:`<circle cx="47" cy="37" r="4.5" fill="${d}"/><circle cx="48.5" cy="35.5" r="1.5" fill="${white}"/>`,
+    mouth:`<line x1="33" y1="49" x2="47" y2="49" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`,
+    bodyDeco:`<path d="M30 68L40 63L50 68L50 84Q40 92 30 84Z" fill="${white}" opacity=".15" stroke="${white}" stroke-width="1"/>`,
+  }),
+
+  archver: fullBot(blue, {
+    hat:`<path d="M16 24L40 10L64 24" fill="${blue}" opacity=".15" stroke="${blue}" stroke-width="1.5"/>`,
+    eyeL:`<circle cx="33" cy="37" r="5" fill="none" stroke="${d}" stroke-width="1.5"/><circle cx="33" cy="37" r="2" fill="${d}"/>`,
+    eyeR:`<circle cx="47" cy="37" r="5" fill="none" stroke="${d}" stroke-width="1.5"/><circle cx="47" cy="37" r="2" fill="${d}"/>`,
+    mouth:`<path d="M34 48L38 52L50 44" fill="none" stroke="${green}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  }),
+
+  landing: fullBot(teal, {
+    armR:`<line x1="70" y1="56" x2="70" y2="32" stroke="${d}" stroke-width="2.5" stroke-linecap="round"/><polygon points="70,30 82,38 70,38" fill="${teal}"/><circle cx="82" cy="34" r="2" fill="${teal}" opacity=".4"/>`,
+    mouth:`<path d="M30 48Q40 56 50 48" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`,
+    bodyDeco:`<path d="M35 72L40 67L45 72L40 77Z" fill="${white}" opacity=".4"/><path d="M35 80L40 75L45 80L40 85Z" fill="${white}" opacity=".25"/>`,
+  }),
+
+  docgarden: fullBot(lime, {
+    armR:`<line x1="68" y1="62" x2="74" y2="38" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"/><circle cx="74" cy="34" r="6" fill="#22C55E" opacity=".5"/><circle cx="68" cy="42" r="4" fill="#22C55E" opacity=".35"/><circle cx="80" cy="42" r="4" fill="#22C55E" opacity=".35"/><circle cx="74" cy="28" r="3" fill="#22C55E" opacity=".25"/>`,
+    mouth:`<path d="M32 48Q40 54 48 48" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`,
+  }),
+
+  commit: fullBot(green, {
+    topAcc:`<circle cx="68" cy="28" r="7" fill="none" stroke="${green}" stroke-width="2.5"/><circle cx="68" cy="28" r="3" fill="${green}"/><line x1="68" y1="35" x2="68" y2="50" stroke="${green}" stroke-width="2.5"/><circle cx="68" cy="54" r="5" fill="${green}" opacity=".3" stroke="${green}" stroke-width="1.5"/>`,
+    mouth:`<path d="M30 48Q40 56 50 48" fill="none" stroke="${d}" stroke-width="2" stroke-linecap="round"/>`,
+    bodyDeco:`<text x="40" y="80" text-anchor="middle" font-size="7" font-family="var(--mono)" fill="${white}" font-weight="700">git push</text>`,
+  }),
+};
+
+const place = {
+  'r-you':robots.you,'r-precheck':robots.precheck,
+  'r-designer':robots.designer,'r-rt1':robots.roundtable,
+  'r-tw':robots.testwriter,'r-impl':robots.implementer,'r-cr':robots.coderev,
+  'r-sr':robots.specrev,'r-sa':robots.safety,'r-av':robots.archver,
+  'r-lv':robots.landing,'r-rt2':robots.roundtable,'r-dg':robots.docgarden,
+  'r-commit':robots.commit,
+};
+Object.entries(place).forEach(([id,svg])=>{const el=document.getElementById(id);if(el)el.innerHTML=svg});
+
+document.getElementById('branch1').innerHTML=`
+  <div class="mini-stop">${robots.researcher}<div class="blbl">research needed</div><div class="bname" style="color:${teal}">Researcher</div></div>
+  <div class="mini-stop">${robots.archadv}<div class="blbl">architecture-tier</div><div class="bname" style="color:${indigo}">Arch-advisor</div></div>
+  <div class="mini-stop"><div style="height:114px;display:flex;align-items:center;font-size:32px;color:#ccc">&#8594;</div><div class="blbl">standard</div><div class="bname">Skip to Designer</div></div>
+`;
+</script>
+</body>
+</html>
