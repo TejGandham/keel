@@ -62,7 +62,7 @@ Every landed feature becomes a PR on your forge — your review surface is the P
 
 After each feature lands, a **garbage collection** pass updates docs, fixes drift, and encodes lessons learned back into the repo. The next feature starts with better specs, tighter constraints, and sharper invariants — because the repo got smarter from the last one.
 
-**[How it works in detail →](docs/HOW-IT-WORKS.md)**
+**[Visual walkthrough →](https://tejgandham.github.io/keel/)** &nbsp;·&nbsp; **[How it works in detail →](docs/HOW-IT-WORKS.md)**
 
 ## Who This Is For
 
