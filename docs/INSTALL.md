@@ -3,6 +3,8 @@
 KEEL installs into your project — your code stays yours, KEEL adds the
 scaffolding (agents, skills, doc structure). Nothing is overwritten.
 
+> New to KEEL? See the visual walkthrough at [tejgandham.github.io/keel](https://tejgandham.github.io/keel/) before installing.
+
 ## Quick Install
 
 ```bash

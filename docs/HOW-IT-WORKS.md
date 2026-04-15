@@ -4,6 +4,8 @@ KEEL encodes everything into the repo — specs, invariants, architecture,
 testing strategy — and runs a self-correcting pipeline that gates quality
 at every step.
 
+> Prefer a picture? Visual walkthrough at [tejgandham.github.io/keel](https://tejgandham.github.io/keel/).
+
 ## The Pipeline
 
 A feature flows through the pipeline like this:
