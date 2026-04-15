@@ -2,6 +2,8 @@
 
 KEEL — Knowledge-Encoded Engineering Lifecycle. From install to first feature through the pipeline.
 
+> New here? Visual walkthrough at [tejgandham.github.io/keel](https://tejgandham.github.io/keel/).
+
 ## Prerequisites
 
 - An AI coding agent (Claude Code, Codex, Cursor, etc.)
